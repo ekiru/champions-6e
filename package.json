@@ -1,4 +1,17 @@
 {
   "name": "champions-6e",
-  "packageManager": "yarn@3.2.3"
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "yarn@3.2.3",
+
+  "private": true,
+  "license": "GPL-3.0-or-later",
+
+  "scripts": {
+    "test": "jest"
+  },
+
+  "devDependencies": {
+    "jest": "^29.0.1"
+  }
 }
