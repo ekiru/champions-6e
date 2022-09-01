@@ -5,8 +5,9 @@
   "version": "0.1.0",
 
   "compatibility": {
-    "minimum": 9,
-    "verified": 10
+    "minimum": "9",
+    "verified": "10.283",
+    "maximum": "10"
   },
 
   "authors": [
