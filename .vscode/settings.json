@@ -9,5 +9,6 @@
     "**/.pnp.*": true
   },
   "eslint.nodePath": ".yarn/sdks",
+  "jest.jestCommandLine": "yarn test",
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js"
 }
