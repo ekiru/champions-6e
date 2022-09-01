@@ -4,7 +4,7 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "prettier"],
+  "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "prettier"],
   "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -13,5 +13,6 @@
   "rules": {},
   "globals": {
     "Hooks": "readonly"
-  }
+  },
+  "plugins": ["jsdoc"]
 }
