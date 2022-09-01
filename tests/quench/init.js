@@ -1,6 +1,11 @@
 const SYSTEM = "champions-6e";
 
-export function runTests(quench) {
+/**
+ * Registers end-to-end tests with Quench.
+ *
+ * @param {*} quench The Quench module
+ */
+export function registerTests(quench) {
   quench.registerBatch(
     `${SYSTEM}.quench.test-working`,
     (context) => {
