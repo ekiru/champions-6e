@@ -1,9 +1,7 @@
 {
-    "Actor": {
-        "types": ["character"],
-        "character": {
-
-        }
-    },
-    "Item": {}
+  "Actor": {
+    "types": ["character"],
+    "character": {}
+  },
+  "Item": {}
 }
