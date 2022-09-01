@@ -4,7 +4,10 @@
         "es2021": true,
         "node": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "prettier"
+    ],
     "overrides": [
     ],
     "parserOptions": {
@@ -12,5 +15,13 @@
         "sourceType": "module"
     },
     "rules": {
+    },
+    "globals": {
+        "Hooks": "readonly",
+
+        // for jest tests
+        "describe": "readonly",
+        "expect": "readonly",
+        "test": "readonly"
     }
 }
