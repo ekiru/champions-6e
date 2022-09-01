@@ -20,7 +20,8 @@
   "globals": {
     "CONFIG": "writable",
     "Actor": "readonly",
-    "Hooks": "readonly"
+    "Hooks": "readonly",
+    "Item": "readonly"
   },
   "plugins": ["jest", "jsdoc"]
 }
