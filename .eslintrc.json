@@ -4,7 +4,13 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:jest/style",
+    "plugin:jsdoc/recommended",
+    "prettier"
+  ],
   "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -14,5 +20,5 @@
   "globals": {
     "Hooks": "readonly"
   },
-  "plugins": ["jsdoc"]
+  "plugins": ["jest", "jsdoc"]
 }
