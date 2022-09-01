@@ -18,6 +18,8 @@
   },
   "rules": {},
   "globals": {
+    "CONFIG": "writable",
+    "Actor": "readonly",
     "Hooks": "readonly"
   },
   "plugins": ["jest", "jsdoc"]
