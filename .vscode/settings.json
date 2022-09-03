@@ -9,6 +9,10 @@
     "**/.pnp.*": true
   },
   "eslint.nodePath": ".yarn/sdks",
+  "jest.autoRun": {
+    "watch": true,
+    "onStartup": ["all-tests"]
+  },
   "jest.jestCommandLine": "yarn test",
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js"
 }
