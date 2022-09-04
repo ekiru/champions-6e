@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+import subprocess
+import sys
+
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
+
+
+class EventHandler(FileSystemEventHandler):
+    def __init__(self):
+        self._seen_event = False
+
+    def on_any_event(self, event):
+        self._seen_event = True
+
+    def has_seen_event(self):
+        if self._seen_event:
+            self._seen_event = False
+            return True
+        else:
+            return False
+
+
+def run_build():
+    subprocess.run("bin/build")
+
+
+def main(args: list[str]):
+    observer = Observer()
+    handler = EventHandler()
+
+    observer.schedule(handler, ".", recursive=True)
+
+    run_build()
+    observer.start()
+
+    try:
+        while observer.is_alive():
+            observer.join(0.1)
+            if handler.has_seen_event():
+                run_build()
+    finally:
+        observer.stop()
+        observer.join()
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
