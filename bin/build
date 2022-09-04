@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+from collections import namedtuple
+import subprocess
+import sys
+
+CheckStatus = namedtuple("CheckStatus", ["name", "success", "output", "error"])
+
+
+def run_check(name: str, check: list[str]) -> CheckStatus:
+    proc = subprocess.run(check, capture_output=True)
+    return CheckStatus(
+        name=name,
+        success=proc.returncode == 0,
+        output=proc.stdout.decode('utf-8'),
+        error=proc.stderr.decode('utf-8'),
+    )
+
+
+def main(args: list[str]):
+    prettier = run_check("prettier", ["yarn", "run", "prettier", "-c", "."])
+    eslint = run_check("eslint", ["yarn", "lint"])
+    jest = run_check("jest", ["yarn", "test"])
+
+    for check in [prettier, eslint, jest]:
+        if check.success:
+            print("OK {name}".format(name=check.name))
+        else:
+            print("FAIL {name}".format(name=check.name))
+            print(check.output)
+            print(check.error)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
