@@ -33,6 +33,7 @@ export default class CharacterSheet extends ActorSheet {
       context.characteristics.main[name] = {
         label: name.toUpperCase(),
         value: this.actor.system.characteristics[name].value,
+        path: `system.characteristics.${name}.value`,
       };
     }
 
@@ -40,6 +41,7 @@ export default class CharacterSheet extends ActorSheet {
       context.characteristics.cvs[name] = {
         label: name.toUpperCase(),
         value: this.actor.system.characteristics[name].value,
+        path: `system.characteristics.${name}.value`,
       };
     }
 
@@ -51,6 +53,7 @@ export default class CharacterSheet extends ActorSheet {
       context.characteristics.defenses[name] = {
         label,
         value: this.actor.system.characteristics[name].value,
+        path: `system.characteristics.${name}.value`,
       };
     }
 
@@ -60,6 +63,8 @@ export default class CharacterSheet extends ActorSheet {
         label: name.toUpperCase(),
         value: this.actor.system.characteristics[name].value,
         max: this.actor.system.characteristics[name].max,
+        path: `system.characteristics.${name}.value`,
+        maxPath: `system.characteristics.${name}.max`,
       };
     }
 

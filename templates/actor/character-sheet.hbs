@@ -9,39 +9,15 @@
       <input type="text" id="alter-egos" value="" disabled />
     </div>
     <div class="resources">
-      <div class="resource">
-        <label for="current-body">BODY</label>
-        <input
-          type="text"
-          id="current-body"
-          value="{{resources.body.value}}"
-          disabled
-        />
-        <span>/</span>
-        <input type="text" value="{{resources.body.max}}" disabled />
-      </div>
-      <div class="resource">
-        <label for="current-stun">STUN</label>
-        <input
-          type="text"
-          id="current-stun"
-          value="{{resources.stun.value}}"
-          disabled
-        />
-        <span>/</span>
-        <input type="text" value="{{resources.stun.max}}" disabled />
-      </div>
-      <div class="resource">
-        <label for="current-end">END</label>
-        <input
-          type="text"
-          id="current-end"
-          value="{{resources.end.value}}"
-          disabled
-        />
-        <span>/</span>
-        <input type="text" value="{{resources.end.max}}" disabled />
-      </div>
+      {{#each resources}}
+        <div class="resource">
+          <label>{{label}}</label>
+          {{log @key}}
+          {{numberInput value name=path}}
+          <span>/</span>
+          {{numberInput max name=maxPath}}
+        </div>
+      {{/each}}
     </div>
   </header>
 
@@ -66,7 +42,7 @@
             <tr>
               <td>{{label}}</td>
               <td>
-                <input type="text" value="{{value}}" disabled />
+                {{numberInput value name=path}}
               </td>
               <td></td>
               <td></td>
@@ -76,7 +52,7 @@
             {{#with characteristics.speed}}
               <td>{{label}}</td>
               <td>
-                <input type="text" value="{{value}}" disabled />
+                {{numberInput value name=path}}
               </td>
             {{/with}}
             {{#with characteristics.phases}}
@@ -98,7 +74,7 @@
             <tr>
               <td>{{label}}</td>
               <td>
-                <input type="text" value="{{value}}" disabled />
+                {{numberInput value name=path}}
               </td>
             </tr>
           {{/each}}
@@ -114,7 +90,7 @@
             <tr>
               <td>{{label}}</td>
               <td>
-                <input type="text" value="{{value}}" disabled />
+                {{numberInput value name=path}}
               </td>
             </tr>
           {{/each}}
@@ -130,10 +106,10 @@
             <tr>
               <td>{{label}}</td>
               <td>
-                <input type="text" value="{{value}}" disabled />
+                {{value}}
               </td>
               <td>
-                <input type="text" value="{{max}}" disabled />
+                {{max}}
               </td>
             </tr>
           {{/each}}
