@@ -44,4 +44,58 @@
       </div>
     </div>
   </header>
+
+  <nav class="tab-bar">
+    <a class="tab">Characteristics</a>
+    <a class="tab">Notes</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab characteristics">
+      <table class="main-characteristics">
+        <thead>
+          <tr>
+            <th>Char</th>
+            <th>Val</th>
+            <th>Roll</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each characteristics.main}}
+            <tr>
+              <td>{{label}}</td>
+              <td>
+                <input type="text" value="{{value}}" disabled />
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <table class="cvs">
+        <thead>
+          <tr><th>Char</th> <th>Val</th></tr>
+        </thead>
+        <tbody>
+          {{#each characteristics.cvs}}
+            <tr>
+              <td>{{label}}</td>
+              <td>
+                <input type="text" value="{{value}}" disabled />
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <table class="defenses">
+        <thead>
+          <tr><th>Char</th> <th>Val</th></tr>
+        </thead>
+        <tbody>
+          <!-- TKTK -->
+        </tbody>
+      </table>
+    </div>
+  </section>
 </form>

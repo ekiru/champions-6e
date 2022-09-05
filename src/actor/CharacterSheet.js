@@ -20,6 +20,20 @@ export default class CharacterSheet extends ActorSheet {
       cvs: {},
     };
 
+    for (const name of ["str", "dex", "con", "int", "pre"]) {
+      context.characteristics.main[name] = {
+        label: name.toUpperCase(),
+        value: this.actor.system.characteristics[name].value,
+      };
+    }
+
+    for (const name of ["ocv", "dcv", "omcv", "dmcv"]) {
+      context.characteristics.cvs[name] = {
+        label: name.toUpperCase(),
+        value: this.actor.system.characteristics[name].value,
+      };
+    }
+
     context.resources = {
       body: this.actor.system.characteristics.body,
       stun: this.actor.system.characteristics.stun,
