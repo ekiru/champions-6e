@@ -18,8 +18,11 @@
   },
   "rules": {},
   "globals": {
+    "foundry": "readonly",
     "CONFIG": "writable",
     "Actor": "readonly",
+    "ActorSheet": "readonly",
+    "Actors": "readonly",
     "Hooks": "readonly",
     "Item": "readonly"
   },

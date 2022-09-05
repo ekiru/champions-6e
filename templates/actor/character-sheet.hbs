@@ -1,0 +1,47 @@
+<form class="{{cssClass}} {{actor.type}}" autocomplete="off">
+  <header>
+    <div class="names-and-pronouns">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" value="{{actor.name}}" />
+      <label for="pronouns">Pronouns</label>
+      <input type="text" id="pronouns" value="" disabled />
+      <label for="alter-egos">Alter Egos</label>
+      <input type="text" id="alter-egos" value="" disabled />
+    </div>
+    <div class="resources">
+      <div class="resource">
+        <label for="current-body">BODY</label>
+        <input
+          type="text"
+          id="current-body"
+          value="{{resources.body.value}}"
+          disabled
+        />
+        <span>/</span>
+        <input type="text" value="{{resources.body.max}}" disabled />
+      </div>
+      <div class="resource">
+        <label for="current-stun">STUN</label>
+        <input
+          type="text"
+          id="current-stun"
+          value="{{resources.stun.value}}"
+          disabled
+        />
+        <span>/</span>
+        <input type="text" value="{{resources.stun.max}}" disabled />
+      </div>
+      <div class="resource">
+        <label for="current-end">END</label>
+        <input
+          type="text"
+          id="current-end"
+          value="{{resources.end.value}}"
+          disabled
+        />
+        <span>/</span>
+        <input type="text" value="{{resources.end.max}}" disabled />
+      </div>
+    </div>
+  </header>
+</form>
