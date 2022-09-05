@@ -58,6 +58,7 @@
             <th>Char</th>
             <th>Val</th>
             <th>Roll</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -67,8 +68,24 @@
               <td>
                 <input type="text" value="{{value}}" disabled />
               </td>
+              <td></td>
+              <td></td>
             </tr>
           {{/each}}
+          <tr>
+            {{#with characteristics.speed}}
+              <td>{{label}}</td>
+              <td>
+                <input type="text" value="{{value}}" disabled />
+              </td>
+            {{/with}}
+            {{#with characteristics.phases}}
+              <td>{{label}}</td>
+              <td>
+                <input type="text" value="{{value}}" disabled />
+              </td>
+            {{/with}}
+          </tr>
         </tbody>
       </table>
 
@@ -93,7 +110,47 @@
           <tr><th>Char</th> <th>Val</th></tr>
         </thead>
         <tbody>
-          <!-- TKTK -->
+          {{#each characteristics.defenses}}
+            <tr>
+              <td>{{label}}</td>
+              <td>
+                <input type="text" value="{{value}}" disabled />
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr><th>Char</th> <th>Cur</th> <th>Max</th></tr>
+        </thead>
+        <tbody>
+          {{#each resources}}
+            <tr>
+              <td>{{label}}</td>
+              <td>
+                <input type="text" value="{{value}}" disabled />
+              </td>
+              <td>
+                <input type="text" value="{{max}}" disabled />
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr><th>Movement</th> <th>Val (m)</th></tr>
+        </thead>
+        <tbody>
+          {{#each movements}}
+            <tr>
+              <td>{{label}}</td>
+              <td>{{value}}</td>
+            </tr>
+          {{/each}}
         </tbody>
       </table>
     </div>

@@ -17,7 +17,16 @@ export default class CharacterSheet extends ActorSheet {
 
     context.characteristics = {
       main: {},
+      speed: {
+        label: "SPD",
+        value: this.actor.system.characteristics.spd.value,
+      },
+      phases: {
+        label: "Phases",
+        value: "6, 12",
+      },
       cvs: {},
+      defenses: {},
     };
 
     for (const name of ["str", "dex", "con", "int", "pre"]) {
@@ -34,10 +43,39 @@ export default class CharacterSheet extends ActorSheet {
       };
     }
 
-    context.resources = {
-      body: this.actor.system.characteristics.body,
-      stun: this.actor.system.characteristics.stun,
-      end: this.actor.system.characteristics.end,
+    for (const name of ["pd", "ed", "rpd", "red"]) {
+      const label =
+        name.length == 2
+          ? name.toUpperCase()
+          : name.substring(0, 1) + name.substring(1).toUpperCase();
+      context.characteristics.defenses[name] = {
+        label,
+        value: this.actor.system.characteristics[name].value,
+      };
+    }
+
+    context.resources = {};
+    for (const name of ["body", "stun", "end"]) {
+      context.resources[name] = {
+        label: name.toUpperCase(),
+        value: this.actor.system.characteristics[name].value,
+        max: this.actor.system.characteristics[name].max,
+      };
+    }
+
+    context.movements = {
+      run: {
+        label: "Run",
+        value: 12,
+      },
+      leap: {
+        label: "Leap",
+        value: 4,
+      },
+      swim: {
+        label: "Swim",
+        value: 2,
+      },
     };
 
     return context;
