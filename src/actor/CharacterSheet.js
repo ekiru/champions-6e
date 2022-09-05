@@ -68,20 +68,14 @@ export default class CharacterSheet extends ActorSheet {
       };
     }
 
-    context.movements = {
-      run: {
-        label: "Run",
-        value: 12,
-      },
-      leap: {
-        label: "Leap",
-        value: 4,
-      },
-      swim: {
-        label: "Swim",
-        value: 2,
-      },
-    };
+    context.movements = {};
+    for (const name of ["run", "leap", "swim"]) {
+      context.movements[name] = {
+        label: name.charAt(0).toUpperCase() + name.substring(1),
+        value: this.actor.system.movements[name].value,
+        path: `system.movements.${name}.value`,
+      };
+    }
 
     return context;
   }

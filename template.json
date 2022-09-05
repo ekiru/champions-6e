@@ -35,6 +35,17 @@
           "value": 20,
           "max": 20
         }
+      },
+      "movements": {
+        "run": {
+          "value": 12
+        },
+        "leap": {
+          "value": 4
+        },
+        "swim": {
+          "value": 4
+        }
       }
     }
   },
