@@ -30,3 +30,17 @@ div.resource > span {
   grid-area: 2 / auto / 2 / span 1;
   text-align: center;
 }
+
+div.tab.characteristics {
+  grid-template-columns: fr fr;
+  display: grid;
+  column-gap: 1em;
+}
+
+div.tab.characteristics > table.main-characteristics {
+  grid-column-end: span 2;
+}
+
+div.tab.characteristics > table {
+  grid-column-end: span 1;
+}
