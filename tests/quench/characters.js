@@ -76,6 +76,23 @@ export function register(system, quench) {
           expectCharacteristicMax(character, "body").to.equal(10);
           expectCharacteristicMax(character, "stun").to.equal(20);
         });
+
+        it("should have current END/BODY/STUN equal to their max", function () {
+          /**
+           * Expects the value field of the characteristic to equal the maximum field.
+           *
+           * @param {*} char The lowercase name of the characteristic.
+           */
+          function expectValueEqualsMax(char) {
+            expect(
+              character.system.characteristics[char].value,
+              `${char.toUpperCase()} current should equal max`
+            ).to.equal(character.system.characteristics[char].max);
+          }
+          expectValueEqualsMax("end");
+          expectValueEqualsMax("body");
+          expectValueEqualsMax("stun");
+        });
       });
     },
     {

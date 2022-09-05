@@ -24,12 +24,15 @@
 
         "rec": { "value": 4 },
         "end": {
+          "value": 20,
           "max": 20
         },
         "body": {
+          "value": 10,
           "max": 10
         },
         "stun": {
+          "value": 20,
           "max": 20
         }
       }
