@@ -28,5 +28,8 @@
   ],
 
   "gridDistance": 1,
-  "gridUnits": "m"
+  "gridUnits": "m",
+
+  "primaryTokenAttribute": "characteristics.stun",
+  "secondaryTokenAttribute": "characteristics.end"
 }
