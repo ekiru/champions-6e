@@ -1,5 +1,7 @@
 const SYSTEM = "champions-6e";
 
+import * as characters from "./characters.js";
+
 /**
  * Registers end-to-end tests with Quench.
  *
@@ -19,4 +21,6 @@ export function registerTests(quench) {
     },
     { displayName: `${SYSTEM}: Test Quench is working` }
   );
+
+  characters.register(SYSTEM, quench);
 }

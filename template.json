@@ -1,7 +1,39 @@
 {
   "Actor": {
     "types": ["character"],
-    "character": {}
+    "character": {
+      "characteristics": {
+        "str": { "value": 10 },
+        "dex": { "value": 10 },
+        "con": { "value": 10 },
+        "int": { "value": 10 },
+        "ego": { "value": 10 },
+        "pre": { "value": 10 },
+
+        "ocv": { "value": 3 },
+        "dcv": { "value": 3 },
+        "omcv": { "value": 3 },
+        "dmcv": { "value": 3 },
+
+        "spd": { "value": 2 },
+
+        "pd": { "value": 2 },
+        "ed": { "value": 2 },
+        "rpd": { "value": 0 },
+        "red": { "value": 0 },
+
+        "rec": { "value": 4 },
+        "end": {
+          "max": 20
+        },
+        "body": {
+          "max": 10
+        },
+        "stun": {
+          "max": 20
+        }
+      }
+    }
   },
   "Item": {}
 }
