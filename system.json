@@ -2,7 +2,7 @@
   "id": "champions-6e",
   "title": "Champions 6E",
   "description": "A new implementation of HERO System 6E, focused on Champions.",
-  "version": "0.1.0",
+  "version": "0.1.1",
 
   "compatibility": {
     "minimum": "9",

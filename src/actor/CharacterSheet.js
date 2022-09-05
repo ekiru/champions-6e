@@ -15,15 +15,28 @@ export default class CharacterSheet extends ActorSheet {
   getData(options = {}) {
     const context = super.getData(options);
 
+    context.bio = {
+      pronouns: {
+        value: this.actor.system.bio.pronouns,
+        path: "system.bio.pronouns",
+      },
+      alterEgos: {
+        value: this.actor.system.bio.alterEgos,
+        path: "system.bio.alterEgos",
+      },
+    };
+
     context.characteristics = {
       main: {},
       speed: {
         label: "SPD",
         value: this.actor.system.characteristics.spd.value,
+        path: "system.characteristics.spd.value",
       },
       phases: {
         label: "Phases",
-        value: "6, 12",
+        value: this.actor.system.phases,
+        path: "system.phases",
       },
       cvs: {},
       defenses: {},

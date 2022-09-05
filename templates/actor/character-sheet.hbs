@@ -4,9 +4,19 @@
       <label for="name">Name</label>
       <input type="text" id="name" name="name" value="{{actor.name}}" />
       <label for="pronouns">Pronouns</label>
-      <input type="text" id="pronouns" value="" disabled />
+      <input
+        type="text"
+        id="pronouns"
+        name="{{bio.pronouns.path}}"
+        value="{{bio.pronouns.value}}"
+      />
       <label for="alter-egos">Alter Egos</label>
-      <input type="text" id="alter-egos" value="" disabled />
+      <input
+        type="text"
+        id="alter-egos"
+        name="{{bio.alterEgos.path}}"
+        value="{{bio.alterEgos.value}}"
+      />
     </div>
     <div class="resources">
       {{#each resources}}
@@ -57,7 +67,7 @@
             {{#with characteristics.phases}}
               <td>{{label}}</td>
               <td>
-                <input type="text" value="{{value}}" disabled />
+                <input type="text" name="{{path}}" value="{{value}}" />
               </td>
             {{/with}}
           </tr>

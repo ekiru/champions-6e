@@ -2,6 +2,10 @@
   "Actor": {
     "types": ["character"],
     "character": {
+      "bio": {
+        "alterEgos": "",
+        "pronouns": "they/them"
+      },
       "characteristics": {
         "str": { "value": 10 },
         "dex": { "value": 10 },
@@ -36,6 +40,7 @@
           "max": 20
         }
       },
+      "phases": "6, 12",
       "movements": {
         "run": {
           "value": 12
