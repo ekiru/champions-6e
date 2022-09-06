@@ -19,7 +19,7 @@ const everypersonSkillData = [
   return {
     type: "skill",
     name,
-    system: { targetNumber: tn },
+    system: { targetNumber: { value: tn } },
   };
 });
 

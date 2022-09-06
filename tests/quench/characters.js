@@ -105,7 +105,7 @@ export function register(system, quench) {
           function expectSkill(skill, name, targetNumber) {
             expect(skill).to.exist;
             expect(skill.name).to.equal(name);
-            expect(skill.system.targetNumber).equal(targetNumber);
+            expect(skill.system.targetNumber.value).equal(targetNumber);
           }
 
           return new Promise((resolve, reject) => {
