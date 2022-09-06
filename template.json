@@ -58,7 +58,7 @@
   "Item": {
     "types": ["skill"],
     "skill": {
-      "description": "",
+      "description": "<p></p>",
       "targetNumber": {
         "value": 11
       }

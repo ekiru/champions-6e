@@ -24,8 +24,8 @@ export function register(system, quench) {
           expect(skill.system.targetNumber.value).to.equal(11);
         });
 
-        it("should have an empty description", function () {
-          expect(skill.system.description).to.equal("");
+        it("should have an empty paragraph for a description", function () {
+          expect(skill.system.description).to.equal("<p></p>");
         });
       });
     },
