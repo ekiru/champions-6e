@@ -4,6 +4,7 @@
     "character": {
       "bio": {
         "alterEgos": "",
+        "notes": "<p></p>",
         "pronouns": "they/them"
       },
       "characteristics": {

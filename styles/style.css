@@ -44,3 +44,7 @@ div.tab.characteristics > table.main-characteristics {
 div.tab.characteristics > table {
   grid-column-end: span 1;
 }
+
+.sheet .notes .editor-edit {
+  display: block;
+}

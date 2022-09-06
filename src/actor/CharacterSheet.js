@@ -14,8 +14,7 @@ export default class CharacterSheet extends ActorSheet {
   }
 
   /** @override */
-  getData(options = {}) {
-    console.log("options", this.defaultOptions);
+  async getData(options = {}) {
     const context = super.getData(options);
 
     context.bio = {
@@ -26,6 +25,12 @@ export default class CharacterSheet extends ActorSheet {
       alterEgos: {
         value: this.actor.system.bio.alterEgos,
         path: "system.bio.alterEgos",
+      },
+      notes: {
+        value: await TextEditor.enrichHTML(this.actor.system.bio.notes, {
+          async: true,
+        }),
+        path: "system.bio.notes",
       },
     };
 

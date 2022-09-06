@@ -141,8 +141,13 @@
         </table>
       </div>
     </div>
-    <div class="tab notes" data-tab="notes">
-      <p>Notes</p>
+    <div class="tab notes flexcol" data-tab="notes">
+      {{editor
+        bio.notes.value
+        target=bio.notes.path
+        button=true
+        editable=editable
+      }}
     </div>
   </section>
 </form>
