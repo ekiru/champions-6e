@@ -1,6 +1,7 @@
 const SYSTEM = "champions-6e";
 
 import * as characters from "./characters.js";
+import * as skills from "./skills.js";
 
 /**
  * Registers end-to-end tests with Quench.
@@ -23,4 +24,5 @@ export function registerTests(quench) {
   );
 
   characters.register(SYSTEM, quench);
+  skills.register(SYSTEM, quench);
 }

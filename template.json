@@ -55,5 +55,13 @@
       }
     }
   },
-  "Item": {}
+  "Item": {
+    "types": ["skill"],
+    "skill": {
+      "description": "",
+      "targetNumber": {
+        "value": 11
+      }
+    }
+  }
 }
