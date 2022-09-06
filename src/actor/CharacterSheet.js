@@ -106,11 +106,43 @@ export default class CharacterSheet extends ActorSheet {
         targetNumber = "N/A";
       }
       return {
+        id: skill.id,
         name: skill.name,
         targetNumber,
       };
     });
 
     return context;
+  }
+
+  /* override */
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    if (this.isEditable) {
+      const actor = this.actor;
+      html.find(".item-create").click(function () {
+        const { type } = this.dataset;
+        actor.createEmbeddedDocuments("Item", [
+          {
+            type,
+            name: `New ${type}`,
+          },
+        ]);
+      });
+      html.find("[data-item-id]").each(function () {
+        const { itemId } = this.dataset;
+        $(this)
+          .find(".item-edit")
+          .click(() => {
+            actor.items.get(itemId).sheet.render(true);
+          });
+        $(this)
+          .find(".item-delete")
+          .click(() => {
+            actor.deleteEmbeddedDocuments("Item", [itemId]);
+          });
+      });
+    }
   }
 }

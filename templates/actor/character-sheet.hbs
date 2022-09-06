@@ -155,17 +155,26 @@
           <tr>
             <th>Skill</th>
             <th>Roll</th>
-            <th><i class="fas fa-plus"></i> Add Skill</th>
+            <th>
+              <a class="item-create" data-type="skill">
+                <i class="fas fa-plus"></i>
+                Add Skill
+              </a>
+            </th>
           </tr>
         </thead>
         <tbody>
           {{#each skills}}
-            <tr>
+            <tr class="actor-item" data-item-id="{{id}}">
               <td>{{name}}</td>
               <td>{{targetNumber}}</td>
-              <td>
-                <i class="fas fa-edit"></i>
-                <i class="fas fa-trash"></i>
+              <td class="item-controls">
+                <a class="item-control item-edit" title="Edit Skill">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="item-control item-delete" title="Edit Skill">
+                  <i class="fas fa-trash"></i>
+                </a>
               </td>
             </tr>
           {{/each}}
