@@ -39,6 +39,7 @@
 
   <nav class="tabs">
     <a class="item" data-tab="characteristics">Characteristics</a>
+    <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="notes">Notes</a>
   </nav>
 
@@ -147,6 +148,29 @@
           </tbody>
         </table>
       </div>
+    </div>
+    <div class="tab skills" data-tab="skills">
+      <table class="skills">
+        <thead>
+          <tr>
+            <th>Skill</th>
+            <th>Roll</th>
+            <th><i class="fas fa-plus"></i> Add Skill</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each skills}}
+            <tr>
+              <td>{{name}}</td>
+              <td>{{targetNumber}}</td>
+              <td>
+                <i class="fas fa-edit"></i>
+                <i class="fas fa-trash"></i>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
     </div>
     <div class="tab notes flexcol" data-tab="notes">
       {{editor

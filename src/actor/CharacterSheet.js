@@ -98,6 +98,19 @@ export default class CharacterSheet extends ActorSheet {
       };
     }
 
+    context.skills = this.actor.itemTypes.skill.map(function (skill) {
+      let targetNumber = skill.system.targetNumber.value;
+      if (targetNumber > 0) {
+        targetNumber = `${targetNumber}-`;
+      } else {
+        targetNumber = "N/A";
+      }
+      return {
+        name: skill.name,
+        targetNumber,
+      };
+    });
+
     return context;
   }
 }
