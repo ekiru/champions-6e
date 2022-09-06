@@ -1,0 +1,36 @@
+<form class="{{cssClass}} {{item.type}}" autocomplete="off">
+  <header>
+    <img
+      src="{{item.img}}"
+      data-edit="img"
+      title="{{item.name}}"
+      height="64"
+      width="64"
+    />
+    <div class="name">
+      <input type="text" id="name" name="name" value="{{item.name}}" />
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a class="item" data-tab="attributes">Attributes</a>
+    <a class="item" data-tab="description">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab attributes" data-tab="attributes">
+      {{#with attributes.targetNumber}}
+        <label>{{label}}</label>
+        {{numberInput value name=path}}
+      {{/with}}
+    </div>
+    <div class="tab notes flexcol" data-tab="description">
+      {{editor
+        bio.description.value
+        target=bio.description.path
+        button=true
+        editable=editable
+      }}
+    </div>
+  </section>
+</form>

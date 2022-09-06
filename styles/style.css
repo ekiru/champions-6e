@@ -1,3 +1,11 @@
+/* Shared styles */
+
+.sheet .notes .editor-edit {
+  display: block;
+}
+
+/* Character sheets */
+
 form.character > header {
   display: grid;
 }
@@ -49,6 +57,21 @@ div.tab.characteristics > table {
   grid-column-end: span 1;
 }
 
-.sheet .notes .editor-edit {
-  display: block;
+/* Skill sheets */
+form.skill header {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1em;
+}
+
+form.skill header > img {
+  flex: 0;
+}
+form.skill header > .name {
+  flex: 1;
+  font-size: large;
+}
+
+form.skill .tab.notes {
+  min-height: 200px;
 }

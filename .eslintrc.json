@@ -26,6 +26,8 @@
     "Actors": "readonly",
     "Hooks": "readonly",
     "Item": "readonly",
+    "ItemSheet": "readonly",
+    "Items": "readonly",
     "TextEditor": "readonly"
   },
   "plugins": ["jest", "jsdoc"]
