@@ -30,114 +30,119 @@
     </div>
   </header>
 
-  <nav class="tab-bar">
-    <a class="tab">Characteristics</a>
-    <a class="tab">Notes</a>
+  <nav class="tabs">
+    <a class="item" data-tab="characteristics">Characteristics</a>
+    <a class="item" data-tab="notes">Notes</a>
   </nav>
 
   <section class="sheet-body">
-    <div class="tab characteristics">
-      <table class="main-characteristics">
-        <thead>
-          <tr>
-            <th>Char</th>
-            <th>Val</th>
-            <th>Roll</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each characteristics.main}}
+    <div class="tab characteristics" data-tab="characteristics">
+      <div class="characteristics">
+        <table class="main-characteristics">
+          <thead>
             <tr>
-              <td>{{label}}</td>
-              <td>
-                {{numberInput value name=path}}
-              </td>
-              <td></td>
-              <td></td>
+              <th>Char</th>
+              <th>Val</th>
+              <th>Roll</th>
+              <th></th>
             </tr>
-          {{/each}}
-          <tr>
-            {{#with characteristics.speed}}
-              <td>{{label}}</td>
-              <td>
-                {{numberInput value name=path}}
-              </td>
-            {{/with}}
-            {{#with characteristics.phases}}
-              <td>{{label}}</td>
-              <td>
-                <input type="text" name="{{path}}" value="{{value}}" />
-              </td>
-            {{/with}}
-          </tr>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {{#each characteristics.main}}
+              <tr>
+                <td>{{label}}</td>
+                <td>
+                  {{numberInput value name=path}}
+                </td>
+                <td></td>
+                <td></td>
+              </tr>
+            {{/each}}
+            <tr>
+              {{#with characteristics.speed}}
+                <td>{{label}}</td>
+                <td>
+                  {{numberInput value name=path}}
+                </td>
+              {{/with}}
+              {{#with characteristics.phases}}
+                <td>{{label}}</td>
+                <td>
+                  <input type="text" name="{{path}}" value="{{value}}" />
+                </td>
+              {{/with}}
+            </tr>
+          </tbody>
+        </table>
 
-      <table class="cvs">
-        <thead>
-          <tr><th>Char</th> <th>Val</th></tr>
-        </thead>
-        <tbody>
-          {{#each characteristics.cvs}}
-            <tr>
-              <td>{{label}}</td>
-              <td>
-                {{numberInput value name=path}}
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+        <table class="cvs">
+          <thead>
+            <tr><th>Char</th> <th>Val</th></tr>
+          </thead>
+          <tbody>
+            {{#each characteristics.cvs}}
+              <tr>
+                <td>{{label}}</td>
+                <td>
+                  {{numberInput value name=path}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
 
-      <table class="defenses">
-        <thead>
-          <tr><th>Char</th> <th>Val</th></tr>
-        </thead>
-        <tbody>
-          {{#each characteristics.defenses}}
-            <tr>
-              <td>{{label}}</td>
-              <td>
-                {{numberInput value name=path}}
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+        <table class="defenses">
+          <thead>
+            <tr><th>Char</th> <th>Val</th></tr>
+          </thead>
+          <tbody>
+            {{#each characteristics.defenses}}
+              <tr>
+                <td>{{label}}</td>
+                <td>
+                  {{numberInput value name=path}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
 
-      <table>
-        <thead>
-          <tr><th>Char</th> <th>Cur</th> <th>Max</th></tr>
-        </thead>
-        <tbody>
-          {{#each resources}}
-            <tr>
-              <td>{{label}}</td>
-              <td>
-                {{value}}
-              </td>
-              <td>
-                {{max}}
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr><th>Char</th> <th>Cur</th> <th>Max</th></tr>
+          </thead>
+          <tbody>
+            {{#each resources}}
+              <tr>
+                <td>{{label}}</td>
+                <td>
+                  {{value}}
+                </td>
+                <td>
+                  {{max}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
 
-      <table>
-        <thead>
-          <tr><th>Movement</th> <th>Val (m)</th></tr>
-        </thead>
-        <tbody>
-          {{#each movements}}
-            <tr>
-              <td>{{label}}</td>
-              <td>{{numberInput value name=path}}</td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr><th>Movement</th> <th>Val (m)</th></tr>
+          </thead>
+          <tbody>
+            {{#each movements}}
+              <tr>
+                <td>{{label}}</td>
+                <td>{{numberInput value name=path}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tab notes" data-tab="notes">
+      <p>Notes</p>
     </div>
   </section>
 </form>

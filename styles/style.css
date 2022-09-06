@@ -31,7 +31,7 @@ div.resource > span {
   text-align: center;
 }
 
-div.tab.characteristics {
+div.characteristics {
   grid-template-columns: fr fr;
   display: grid;
   column-gap: 1em;

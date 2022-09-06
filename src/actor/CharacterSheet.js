@@ -1,18 +1,21 @@
 export default class CharacterSheet extends ActorSheet {
   /** @override */
-  get template() {
-    return "systems/champions-6e/templates/actor/character-sheet.hbs";
-  }
-
-  /** @override */
-  get defaultOptions() {
+  static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
+      tabs: [
+        {
+          navSelector: "nav.tabs",
+          contentSelector: "section.sheet-body",
+          initial: "characteristics",
+        },
+      ],
       template: "systems/champions-6e/templates/actor/character-sheet.hbs",
     });
   }
 
   /** @override */
   getData(options = {}) {
+    console.log("options", this.defaultOptions);
     const context = super.getData(options);
 
     context.bio = {
