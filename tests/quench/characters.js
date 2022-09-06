@@ -93,6 +93,54 @@ export function register(system, quench) {
           expectValueEqualsMax("body");
           expectValueEqualsMax("stun");
         });
+
+        it("should have Everyperson skills", function () {
+          /**
+           * Asserts that the skill has the specified name and target number.
+           *
+           * @param {Item} skill A skill.
+           * @param {string} name The expected name of the skill.
+           * @param {number} targetNumber The expected target number of the skill.
+           */
+          function expectSkill(skill, name, targetNumber) {
+            expect(skill).to.exist;
+            expect(skill.name).to.equal(name);
+            expect(skill.system.targetNumber).equal(targetNumber);
+          }
+
+          return new Promise((resolve, reject) => {
+            setTimeout(function () {
+              try {
+                const skills = Object.values(character.itemTypes.skill);
+                expect(skills.length).to.equal(13);
+                expectSkill(skills[0], "Acting", 8);
+                expectSkill(skills[1], "Climbing", 8);
+                expectSkill(skills[2], "Concealment", 8);
+                expectSkill(skills[3], "Conversation", 8);
+                expectSkill(skills[4], "Deduction", 8);
+                expectSkill(skills[5], "Area Knowledge: [home region]", 8);
+                expectSkill(
+                  skills[6],
+                  "Language: [native language] (completely fluent, literate)",
+                  0
+                );
+                expectSkill(skills[7], "Paramedics", 8);
+                expectSkill(skills[8], "Persuasion", 8);
+                expectSkill(skills[9], "PS: [job or primary hobby]", 11);
+                expectSkill(skills[10], "Shadowing", 8);
+                expectSkill(skills[11], "Stealth", 8);
+                expectSkill(
+                  skills[12],
+                  "TF: Small Motorized Ground Vehicles",
+                  0
+                );
+                resolve();
+              } catch (e) {
+                reject(e);
+              }
+            }, 100);
+          });
+        });
       });
     },
     {

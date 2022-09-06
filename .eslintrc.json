@@ -19,6 +19,7 @@
   "rules": {},
   "globals": {
     "foundry": "readonly",
+    "game": "readonly",
     "CONFIG": "writable",
     "Actor": "readonly",
     "ActorSheet": "readonly",
