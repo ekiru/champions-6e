@@ -1,5 +1,5 @@
 import { Characteristic } from "../mechanics/characteristics.js";
-import { performSuccessRoll } from "../rolls.js";
+import { successRollDialog } from "../rolls.js";
 
 export default class CharacterSheet extends ActorSheet {
   /** @override */
@@ -158,7 +158,7 @@ export default class CharacterSheet extends ActorSheet {
 
   _activateRolls(html) {
     html.find("a.success-roll").click(function () {
-      performSuccessRoll(this.dataset.targetNumber);
+      successRollDialog(this.textContent, this.dataset.targetNumber);
     });
   }
 }

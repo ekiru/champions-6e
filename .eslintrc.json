@@ -21,11 +21,13 @@
   "globals": {
     "foundry": "readonly",
     "game": "readonly",
+    "renderTemplate": "readonly",
     "CONFIG": "writable",
     "Actor": "readonly",
     "ActorSheet": "readonly",
     "Actors": "readonly",
     "ChatMessage": "readonly",
+    "Dialog": "readonly",
     "Hooks": "readonly",
     "Item": "readonly",
     "ItemSheet": "readonly",
