@@ -177,8 +177,19 @@
         <tbody>
           {{#each skills}}
             <tr class="actor-item" data-item-id="{{id}}">
-              <td>{{name}}</td>
-              <td>{{targetNumber}}</td>
+              <td>
+                {{#if targetNumber.value}}
+                  <a
+                    class="success-roll"
+                    data-target-number="{{targetNumber.value}}"
+                  >
+                    {{name}}
+                  </a>
+                {{else}}
+                  {{name}}
+                {{/if}}
+              </td>
+              <td>{{targetNumber.label}}</td>
               <td class="item-controls">
                 <a class="item-control item-edit" title="Edit Skill">
                   <i class="fas fa-edit"></i>

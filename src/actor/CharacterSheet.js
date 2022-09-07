@@ -105,11 +105,13 @@ export default class CharacterSheet extends ActorSheet {
     }
 
     context.skills = this.actor.itemTypes.skill.map(function (skill) {
-      let targetNumber = skill.system.targetNumber.value;
-      if (targetNumber > 0) {
-        targetNumber = `${targetNumber}-`;
+      const targetNumber = {
+        value: skill.system.targetNumber.value,
+      };
+      if (targetNumber.value > 0) {
+        targetNumber.label = `${targetNumber.value}-`;
       } else {
-        targetNumber = "N/A";
+        targetNumber.label = "N/A";
       }
       return {
         id: skill.id,
