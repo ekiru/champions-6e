@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "lint": "eslint .",
-    "test": "jest"
+    "test": "node --experimental-vm-modules $(yarn bin jest)"
   },
   "devDependencies": {
     "eslint": "latest",
