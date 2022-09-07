@@ -1,3 +1,6 @@
+const successMessage = "<strong>Success</strong>";
+const failureMessage = "Failed";
+
 /**
  * Performs a success roll.
  *
@@ -9,8 +12,11 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   const rollClass = options.Roll ?? Roll;
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
+  const success = result.total <= targetNumber;
   return {
-    message: await result.toMessage(),
-    success: result.total <= targetNumber,
+    message: await result.toMessage({
+      content: success ? successMessage : failureMessage,
+    }),
+    success,
   };
 }

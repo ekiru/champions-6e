@@ -24,7 +24,18 @@ function fakeRoller(result) {
 export function register(system, quench) {
   quench.registerBatch(
     `${system}.rolls`,
-    function ({ describe, it, expect }) {
+    function ({ describe, it, expect, before, after, beforeEach, afterEach }) {
+      // make ChatMessage a bit happier with our fake rolls
+      before(function () {
+        CONFIG.Dice.rolls.push(fakeRoller(11));
+      });
+      after(function () {
+        const index = CONFIG.Dice.rolls.findIndex(
+          (cls) => cls.name === fakeRoller(11).name
+        );
+        CONFIG.Dice.rolls.splice(index, 1);
+      });
+
       let result;
       afterEach(async function () {
         if (result && result.message) {
@@ -61,6 +72,29 @@ export function register(system, quench) {
 
           it("the message should include the roll", function () {
             expect(result.message.isRoll).to.be.true;
+          });
+
+          it("the message should say Success", function () {
+            expect(result.message.content).to.include("Success");
+          });
+        });
+
+        describe("on a failed roll", function () {
+          beforeEach(async function () {
+            const Roll = fakeRoller(18);
+            result = await rolls.performSuccessRoll(11, { Roll });
+          });
+
+          it("should include a message", function () {
+            expect(result.message).to.be.an.instanceof(ChatMessage);
+          });
+
+          it("the message should include the roll", function () {
+            expect(result.message.isRoll).to.be.true;
+          });
+
+          it("the message should say Failed", function () {
+            expect(result.message.content).to.include("Failed");
           });
         });
       });
