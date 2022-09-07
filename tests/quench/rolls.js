@@ -28,15 +28,18 @@ export function register(system, quench) {
       describe("Success rolls", function () {
         it("should succeed if the roll is below the target number", async function () {
           const Roll = fakeRoller(10);
-          expect(await rolls.performSuccessRoll(11, { Roll })).to.be.true;
+          const result = await rolls.performSuccessRoll(11, { Roll });
+          expect(result.success).to.be.true;
         });
         it("should succeed if the roll is equal to the target number", async function () {
           const Roll = fakeRoller(11);
-          expect(await rolls.performSuccessRoll(11, { Roll })).to.be.true;
+          const result = await rolls.performSuccessRoll(11, { Roll });
+          expect(result.success).to.be.true;
         });
         it("should fail if the roll is above the target number", async function () {
           const Roll = fakeRoller(5);
-          expect(await rolls.performSuccessRoll(4, { Roll })).to.be.false;
+          const result = await rolls.performSuccessRoll(4, { Roll });
+          expect(result.success).to.be.false;
         });
       });
     },

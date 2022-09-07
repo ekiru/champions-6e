@@ -9,5 +9,7 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   const rollClass = options.Roll ?? Roll;
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
-  return result.total <= targetNumber;
+  return {
+    success: result.total <= targetNumber,
+  };
 }
