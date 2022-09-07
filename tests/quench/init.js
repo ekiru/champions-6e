@@ -1,6 +1,7 @@
 const SYSTEM = "champions-6e";
 
 import * as characters from "./characters.js";
+import * as rolls from "./rolls.js";
 import * as skills from "./skills.js";
 
 /**
@@ -24,5 +25,6 @@ export function registerTests(quench) {
   );
 
   characters.register(SYSTEM, quench);
+  rolls.register(SYSTEM, quench);
   skills.register(SYSTEM, quench);
 }

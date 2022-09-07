@@ -29,6 +29,7 @@
     "Item": "readonly",
     "ItemSheet": "readonly",
     "Items": "readonly",
+    "Roll": "readonly",
     "TextEditor": "readonly"
   },
   "plugins": ["jest", "jsdoc"]
