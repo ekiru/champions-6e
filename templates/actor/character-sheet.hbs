@@ -58,7 +58,18 @@
           <tbody>
             {{#each characteristics.main}}
               <tr>
-                <td>{{label}}</td>
+                <td>
+                  {{#if targetNumber}}
+                    <a
+                      class="success-roll"
+                      data-target-number="{{targetNumber}}"
+                    >
+                      {{label}}
+                    </a>
+                  {{else}}
+                    {{label}}
+                  {{/if}}
+                </td>
                 <td>
                   {{numberInput value name=path}}
                 </td>

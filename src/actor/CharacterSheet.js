@@ -1,3 +1,6 @@
+import { Characteristic } from "../mechanics/characteristics.js";
+import { performSuccessRoll } from "../rolls.js";
+
 export default class CharacterSheet extends ActorSheet {
   /** @override */
   static get defaultOptions() {
@@ -51,9 +54,12 @@ export default class CharacterSheet extends ActorSheet {
     };
 
     for (const name of ["str", "dex", "con", "int", "pre"]) {
+      const label = name.toUpperCase();
+      const value = this.actor.system.characteristics[name].value;
       context.characteristics.main[name] = {
-        label: name.toUpperCase(),
-        value: this.actor.system.characteristics[name].value,
+        label,
+        value,
+        targetNumber: new Characteristic(label).targetNumber(value),
         path: `system.characteristics.${name}.value`,
       };
     }
@@ -119,6 +125,8 @@ export default class CharacterSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    this._activateRolls(html);
+
     if (this.isEditable) {
       const actor = this.actor;
       html.find(".item-create").click(function () {
@@ -144,5 +152,11 @@ export default class CharacterSheet extends ActorSheet {
           });
       });
     }
+  }
+
+  _activateRolls(html) {
+    html.find("a.success-roll").click(function () {
+      performSuccessRoll(this.dataset.targetNumber);
+    });
   }
 }
