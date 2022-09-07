@@ -75,7 +75,7 @@ export function register(system, quench) {
           });
 
           it("the message should say Success", function () {
-            expect(result.message.content).to.include("Success");
+            expect(result.message.flavor).to.include("Success");
           });
         });
 
@@ -94,7 +94,7 @@ export function register(system, quench) {
           });
 
           it("the message should say Failed", function () {
-            expect(result.message.content).to.include("Failed");
+            expect(result.message.flavor).to.include("Failed");
           });
         });
       });

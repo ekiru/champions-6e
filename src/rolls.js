@@ -15,7 +15,7 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   const success = result.total <= targetNumber;
   return {
     message: await result.toMessage({
-      content: success ? successMessage : failureMessage,
+      flavor: success ? successMessage : failureMessage,
     }),
     success,
   };
