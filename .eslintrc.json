@@ -25,6 +25,7 @@
     "Actor": "readonly",
     "ActorSheet": "readonly",
     "Actors": "readonly",
+    "ChatMessage": "readonly",
     "Hooks": "readonly",
     "Item": "readonly",
     "ItemSheet": "readonly",

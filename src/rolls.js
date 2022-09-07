@@ -10,6 +10,7 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
   return {
+    message: await result.toMessage(),
     success: result.total <= targetNumber,
   };
 }
