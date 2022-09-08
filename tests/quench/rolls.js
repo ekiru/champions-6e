@@ -163,6 +163,19 @@ export function register(system, quench) {
             });
           });
         });
+        describe("With an unknown DCV", function () {
+          describe("an attacker with an OCV of 9", function () {
+            const ocv = 9;
+
+            it("can hit an equal DCV on a roll of 11", async function () {
+              const Roll = fakeRoller(11);
+              result = await rolls.performAttackRollWithUnknownDcv(ocv, {
+                Roll,
+              });
+              expect(result.canHit).to.equal(ocv);
+            });
+          });
+        });
       });
     },
     { displayName: `${system}: Test rolls` }

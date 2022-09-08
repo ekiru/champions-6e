@@ -1,4 +1,4 @@
-import { targetNumberToHit } from "./mechanics/attack.js";
+import { highestDcvHit, targetNumberToHit } from "./mechanics/attack.js";
 
 const successMessage = "<strong>Success</strong>";
 const failureMessage = "Failed";
@@ -98,5 +98,24 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
     message: await successRoll.roll.toMessage({
       flavor: messageText,
     }),
+  };
+}
+
+/**
+ * Rolls an attack roll against an unknown DCV;
+ *
+ * @param {number} ocv The OCV of the attack.
+ * @param {object} options Options: {@code Roll} allows using a custom Roll class.
+ * @returns {object} An object. {@code canHit} indicates the highest DCV that the
+ * roll will hit, or true or false to signify a 3/18 (i.e. hits/misses regardless of
+ * DCV). {@code message} is the ChatMessage displayed, if any.
+ */
+export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
+  const rollClass = options.Roll ?? Roll;
+  const roll = new rollClass("3d6");
+  const result = await roll.roll({ async: true });
+  const canHit = highestDcvHit(ocv, result.total);
+  return {
+    canHit,
   };
 }
