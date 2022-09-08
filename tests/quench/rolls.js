@@ -98,6 +98,32 @@ export function register(system, quench) {
           });
         });
       });
+
+      describe("Attack rolls", function () {
+        describe("With a known DCV", function () {
+          const dcv = 10;
+
+          describe("An attacker with an equal OCV", function () {
+            const ocv = dcv;
+
+            it("should hit on an 11", async function () {
+              const Roll = fakeRoller(11);
+              result = await rolls.performAttackRollWithKnownDcv(ocv, dcv, {
+                Roll,
+              });
+              expect(result.hits).to.be.true;
+            });
+
+            it("should miss on a 12", async function () {
+              const Roll = fakeRoller(12);
+              result = await rolls.performAttackRollWithKnownDcv(ocv, dcv, {
+                Roll,
+              });
+              expect(result.hits).to.be.false;
+            });
+          });
+        });
+      });
     },
     { displayName: `${system}: Test rolls` }
   );

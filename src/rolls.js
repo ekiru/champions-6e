@@ -1,3 +1,5 @@
+import { targetNumberToHit } from "./mechanics/attack.js";
+
 const successMessage = "<strong>Success</strong>";
 const failureMessage = "Failed";
 
@@ -57,4 +59,24 @@ export async function successRollDialog(label, targetNumber) {
     },
   });
   dialog.render(true);
+}
+
+/**
+ * Rolls an attack roll against a known DCV.
+ *
+ * @param {number} ocv The attacker's OCV.
+ * @param {number} dcv The target's DCV.
+ * @param {object} options An options hash. {@code Roll} allows using a custom Roll
+ * class.
+ * @returns {Promise<object>} An object whose {@code hits} property indicates whether
+ * the attack hits.
+ */
+export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
+  const rollClass = options.Roll ?? Roll;
+  const roll = new rollClass("3d6");
+  const tn = targetNumberToHit(ocv, dcv);
+  const result = await roll.roll();
+  return {
+    hits: result.total <= tn,
+  };
 }
