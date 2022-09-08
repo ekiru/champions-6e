@@ -40,6 +40,7 @@
   <nav class="tabs">
     <a class="item" data-tab="characteristics">Characteristics</a>
     <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="combat">Combat</a>
     <a class="item" data-tab="notes">Notes</a>
   </nav>
 
@@ -202,6 +203,12 @@
           {{/each}}
         </tbody>
       </table>
+    </div>
+    <div class="tab combat" data-tab="combat">
+      <button class="attack-roll" data-ocv="{{characteristics.cvs.ocv.value}}">
+        <i class="fas fa-swords"></i>
+        {{combat.attackRoll.label}}
+      </button>
     </div>
     <div class="tab notes flexcol" data-tab="notes">
       {{editor
