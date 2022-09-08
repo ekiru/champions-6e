@@ -8,12 +8,14 @@ const failureMessage = "Failed";
  *
  * @param {number} targetNumber The target number to try to roll under
  * @param {object} options Options: including {@code Roll} to use a custom Roll class.
+ * The {@code message} option defaults to true and posts a chat message.
  * @returns {Promise<object>} An object. The {@code success} property indicates
  * whether or not the roll succeeded. The {@code message} property includes the chat
  * message posted about it.
  */
 export async function performSuccessRoll(targetNumber, options = {}) {
   const rollClass = options.Roll ?? Roll;
+  const postMessage = options.message ?? true;
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
   let success = result.total <= targetNumber;
@@ -22,12 +24,15 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   } else if (result.total === 18) {
     success = false;
   }
-  return {
-    message: await result.toMessage({
-      flavor: success ? successMessage : failureMessage,
-    }),
+  const response = {
     success,
   };
+  if (postMessage) {
+    response.message = await result.toMessage({
+      flavor: success ? successMessage : failureMessage,
+    });
+  }
+  return response;
 }
 
 const successRollTemplate =
@@ -79,11 +84,12 @@ export async function successRollDialog(label, targetNumber) {
  * the attack hits.
  */
 export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
-  const rollClass = options.Roll ?? Roll;
-  const roll = new rollClass("3d6");
   const tn = targetNumberToHit(ocv, dcv);
-  const result = await roll.roll();
+  const successRoll = await performSuccessRoll(tn, {
+    Roll: options.Roll,
+    message: false,
+  });
   return {
-    hits: result.total <= tn,
+    hits: successRoll.success,
   };
 }
