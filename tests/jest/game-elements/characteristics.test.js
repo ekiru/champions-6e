@@ -33,6 +33,32 @@ describe("mechanics/characteristics", function () {
         expect(STR.hthDamage(11)).toBe(2);
         expect(STR.hthDamage(12)).toBe(2);
       });
+
+      it("follows the same pattern even at very high STR", function () {
+        expect(STR.hthDamage(90)).toBe(18);
+        expect(STR.hthDamage(91)).toBe(18);
+        expect(STR.hthDamage(92)).toBe(18);
+        expect(STR.hthDamage(93)).toBe(18.5);
+        expect(STR.hthDamage(94)).toBe(18.5);
+        expect(STR.hthDamage(95)).toBe(19);
+      });
+    });
+  });
+
+  describe("PRE", function () {
+    const PRE = characteristics.PRE;
+
+    it("is named PRE/Presence", function () {
+      expect(PRE.abbreviation).toBe("PRE");
+      expect(PRE.name).toBe("Presence");
+    });
+
+    it("should have the same Presence Attack dice as STR would have for HTH damamge", function () {
+      for (let i = 0; i < 100; i++) {
+        expect(PRE.presenceAttackDice(i)).toBe(
+          characteristics.STR.hthDamage(i)
+        );
+      }
     });
   });
 });
