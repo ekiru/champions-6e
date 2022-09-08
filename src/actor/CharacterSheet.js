@@ -1,6 +1,21 @@
 import { Characteristic } from "../mechanics/characteristics.js";
 import { attackRollDialog, successRollDialog } from "../rolls.js";
 
+/**
+ * Turns a number of dice into a textual dice string.
+ *
+ * @param {number} dice The number of dice.
+ * @returns {string} A string of the form "Xd6" or "X½d6".
+ */
+function formatDice(dice) {
+  const wholeDice = Math.floor(dice);
+  if (wholeDice === dice) {
+    return `${dice}d6`;
+  } else {
+    return `${wholeDice}½d6`;
+  }
+}
+
 export default class CharacterSheet extends ActorSheet {
   /** @override */
   static get defaultOptions() {
@@ -123,6 +138,20 @@ export default class CharacterSheet extends ActorSheet {
     context.combat = {
       attackRoll: {
         label: "Attack Roll",
+      },
+      basicAttacks: {
+        hthAttack: {
+          label: "Basic HTH Attack",
+          diceString: formatDice(
+            this.actor.system.characteristics.str.hthDamage
+          ),
+        },
+        presenceAttack: {
+          label: "Presence Attack",
+          diceString: formatDice(
+            this.actor.system.characteristics.pre.presenceAttackDice
+          ),
+        },
       },
     };
 
