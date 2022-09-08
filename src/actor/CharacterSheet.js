@@ -1,8 +1,5 @@
 import { Characteristic } from "../mechanics/characteristics.js";
-import {
-  performAttackRollWithUnknownDcv,
-  successRollDialog,
-} from "../rolls.js";
+import { attackRollDialog, successRollDialog } from "../rolls.js";
 
 export default class CharacterSheet extends ActorSheet {
   /** @override */
@@ -170,8 +167,9 @@ export default class CharacterSheet extends ActorSheet {
       successRollDialog(this.textContent, this.dataset.targetNumber);
     });
     html.find("button.attack-roll").click(function () {
+      const label = this.dataset.label;
       const ocv = Number(this.dataset.ocv);
-      performAttackRollWithUnknownDcv(ocv);
+      attackRollDialog(label, ocv);
     });
   }
 }

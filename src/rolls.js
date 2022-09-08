@@ -137,3 +137,44 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
     }),
   };
 }
+
+const attackRollTemplate =
+  "systems/champions-6e/templates/dialog/attack-roll.hbs";
+/**
+ * Renders a dialog to do an attack roll.
+ *
+ * @param {string} label A label for the attack.
+ * @param {number} ocv The default OCV.
+ */
+export async function attackRollDialog(label, ocv) {
+  const html = await renderTemplate(attackRollTemplate, {
+    label,
+    ocv,
+  });
+
+  const dialog = new Dialog({
+    title: `${label ? label + " " : ""}Attack Roll`,
+    content: html,
+    default: "roll",
+    buttons: {
+      cancel: {
+        icon: "<i class='fas fa-times'></i>",
+        label: "Cancel",
+      },
+      roll: {
+        icon: "<i class='fas fa-dice'></i>",
+        label: "Roll",
+        callback: (html) => {
+          const ocv = html.find("input[name='ocv']").get(0).value;
+          const dcv = html.find("input[name='dcv']").get(0).value;
+          if (dcv !== "") {
+            performAttackRollWithKnownDcv(Number(ocv), Number(dcv));
+          } else {
+            performAttackRollWithUnknownDcv(Number(ocv));
+          }
+        },
+      },
+    },
+  });
+  dialog.render(true);
+}
