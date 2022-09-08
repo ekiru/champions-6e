@@ -71,6 +71,11 @@ export function register(system, quench) {
           expect(result.success).to.be.false;
         });
 
+        it("should include the roll", async function () {
+          result = await rolls.performSuccessRoll(11);
+          expect(result.roll).to.be.an.instanceof(Roll);
+        });
+
         describe("on a successful roll", function () {
           beforeEach(async function () {
             const Roll = fakeRoller(3);
@@ -131,6 +136,30 @@ export function register(system, quench) {
                 Roll,
               });
               expect(result.hits).to.be.false;
+            });
+
+            it("should include a chat message with the roll", async function () {
+              result = await rolls.performAttackRollWithKnownDcv(ocv, dcv);
+              expect(result.message).to.be.an.instanceof(ChatMessage);
+              expect(result.message.isRoll).to.be.true;
+            });
+          });
+
+          describe("chat messages", function () {
+            it("should include 'hit' for hits", async function () {
+              const Roll = fakeRoller(3);
+              result = await rolls.performAttackRollWithKnownDcv(9, 9, {
+                Roll,
+              });
+              expect(result.message.flavor).to.include("hit");
+            });
+
+            it("should include 'missed' for misses", async function () {
+              const Roll = fakeRoller(18);
+              result = await rolls.performAttackRollWithKnownDcv(9, 9, {
+                Roll,
+              });
+              expect(result.message.flavor).to.include("missed");
             });
           });
         });

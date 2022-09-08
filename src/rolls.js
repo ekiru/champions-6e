@@ -26,6 +26,7 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   }
   const response = {
     success,
+    roll: result,
   };
   if (postMessage) {
     response.message = await result.toMessage({
@@ -73,6 +74,8 @@ export async function successRollDialog(label, targetNumber) {
   dialog.render(true);
 }
 
+const hitMessage = "Attack hit.";
+const missMessage = "Attack missed.";
 /**
  * Rolls an attack roll against a known DCV.
  *
@@ -89,7 +92,11 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
     Roll: options.Roll,
     message: false,
   });
+  const messageText = successRoll.success ? hitMessage : missMessage;
   return {
     hits: successRoll.success,
+    message: await successRoll.roll.toMessage({
+      flavor: messageText,
+    }),
   };
 }
