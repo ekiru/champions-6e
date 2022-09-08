@@ -113,6 +113,7 @@ const canHitMessageTemplate = ({ dcv }) => `Attack can hit DCV = ${dcv}`;
  * DCV). {@code message} is the ChatMessage displayed, if any.
  */
 export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
+  ocv = Number(ocv);
   const rollClass = options.Roll ?? Roll;
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });

@@ -76,6 +76,12 @@ export function register(system, quench) {
           expect(result.roll).to.be.an.instanceof(Roll);
         });
 
+        it("should handle stringified number parameters correctly", async function () {
+          const Roll = fakeRoller(4);
+          result = await rolls.performSuccessRoll("13", { Roll });
+          expect(result.success).to.be.true;
+        });
+
         describe("on a successful roll", function () {
           beforeEach(async function () {
             const Roll = fakeRoller(3);
@@ -118,6 +124,16 @@ export function register(system, quench) {
       describe("Attack rolls", function () {
         describe("With a known DCV", function () {
           const dcv = 10;
+
+          it("should handle stringified number parameters gracefully", async function () {
+            const Roll = fakeRoller(4);
+            result = await rolls.performAttackRollWithKnownDcv(
+              "8",
+              String(dcv),
+              { Roll }
+            );
+            expect(result.hits).to.be.true;
+          });
 
           describe("An attacker with an equal OCV", function () {
             const ocv = dcv;
@@ -164,6 +180,14 @@ export function register(system, quench) {
           });
         });
         describe("With an unknown DCV", function () {
+          it("should handle stringified number parameters gracefully", async function () {
+            const Roll = fakeRoller(11);
+            result = await rolls.performAttackRollWithUnknownDcv("9", {
+              Roll,
+            });
+            expect(result.canHit).to.equal(9);
+          });
+
           describe("an attacker with an OCV of 9", function () {
             const ocv = 9;
 
