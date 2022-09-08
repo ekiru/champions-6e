@@ -142,6 +142,36 @@ export function register(system, quench) {
           });
         });
       });
+
+      describe("Characteristic derived data", function () {
+        let character;
+        const createCharacter = async function (str, pre) {
+          character = await Actor.create({
+            type: "character",
+            name: "Antares",
+            "system.characteristics.str.value": str,
+            "system.characteristics.pre.value": pre,
+          });
+        };
+        afterEach(async function () {
+          await character.delete();
+        });
+
+        it("should have presence attack and HTH damage dice", async function () {
+          await createCharacter(10, 10);
+          expect(character.system.characteristics.str.hthDamage).to.exist;
+          expect(character.system.characteristics.pre.presenceAttackDice).to
+            .exist;
+        });
+
+        it("should have 4d6 HTH damage and 6d6 PRE attack with 20 STR and 30 PRE", async function () {
+          await createCharacter(20, 30);
+          expect(character.system.characteristics.str.hthDamage).to.equal(4);
+          expect(
+            character.system.characteristics.pre.presenceAttackDice
+          ).to.equal(6);
+        });
+      });
     },
     {
       displayName: `${system}: Test Character model`,

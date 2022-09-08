@@ -1,3 +1,5 @@
+import { PRE, STR } from "../mechanics/characteristics.js";
+
 const everypersonSkillData = [
   { name: "Acting" },
   { name: "Climbing" },
@@ -29,5 +31,12 @@ export default class ChampionsActor extends Actor {
     if (userId === game.user.id) {
       await this.createEmbeddedDocuments("Item", everypersonSkillData);
     }
+  }
+
+  prepareDerivedData() {
+    const str = this.system.characteristics.str;
+    const pre = this.system.characteristics.pre;
+    str.hthDamage = STR.hthDamage(str.value);
+    pre.presenceAttackDice = PRE.presenceAttackDice(pre.value);
   }
 }
