@@ -27,6 +27,14 @@ function bodyForDie(die) {
   }
 }
 
+export function countKillingDamage(dice, multiplier, halfDie) {
+  const body = countKillingBody(dice, halfDie);
+  return {
+    body,
+    stun: body * multiplier,
+  };
+}
+
 /**
  * Counts the BODY rolled on a killing attack.
  *
@@ -53,14 +61,27 @@ export function countKillingStun(body, multiplier) {
   return body * multiplier;
 }
 
+export function countNormalDamage(dice, halfDie) {
+  return {
+    body: countNormalBody(dice, halfDie),
+    stun: countNormalStun(dice, halfDie),
+  };
+}
+
 /**
  * Counts the BODY rolled on a set of dice.
  *
  * @param {Array<number>} dice The results of rolling the dice.
+ * @param {number?} halfDie The value of the half-die, if any.
  * @returns {number} The BODY for the roll.
  */
-export function countNormalBody(dice) {
-  return sumArray(dice.map(bodyForDie));
+export function countNormalBody(dice, halfDie) {
+  const body = sumArray(dice.map(bodyForDie));
+  if (halfDie && halfDie >= 4) {
+    return body + 1;
+  } else {
+    return body;
+  }
 }
 
 /**
@@ -69,6 +90,11 @@ export function countNormalBody(dice) {
  * @param {Array<number>} dice The results of rolling the dice.
  * @returns {number} The STUN for the roll.
  */
-export function countNormalStun(dice) {
-  return sumArray(dice);
+export function countNormalStun(dice, halfDie) {
+  const stun = sumArray(dice);
+  if (halfDie) {
+    return stun + Math.ceil(halfDie / 2);
+  } else {
+    return stun;
+  }
 }
