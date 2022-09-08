@@ -7,14 +7,21 @@ const failureMessage = "Failed";
  * Performs a success roll.
  *
  * @param {number} targetNumber The target number to try to roll under
- * @param {*} options Options: including {@code Roll} to use a custom Roll class.
- * @returns {Promise<boolean>} Whether or not the roll succeeded.
+ * @param {object} options Options: including {@code Roll} to use a custom Roll class.
+ * @returns {Promise<object>} An object. The {@code success} property indicates
+ * whether or not the roll succeeded. The {@code message} property includes the chat
+ * message posted about it.
  */
 export async function performSuccessRoll(targetNumber, options = {}) {
   const rollClass = options.Roll ?? Roll;
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
-  const success = result.total <= targetNumber;
+  let success = result.total <= targetNumber;
+  if (result.total === 3) {
+    success = true;
+  } else if (result.total === 18) {
+    success = false;
+  }
   return {
     message: await result.toMessage({
       flavor: success ? successMessage : failureMessage,

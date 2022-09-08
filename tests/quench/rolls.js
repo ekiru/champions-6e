@@ -60,6 +60,17 @@ export function register(system, quench) {
           expect(result.success).to.be.false;
         });
 
+        it("should always succeed on a roll of 3", async function () {
+          const Roll = fakeRoller(3);
+          result = await rolls.performSuccessRoll(0, { Roll });
+          expect(result.success).to.be.true;
+        });
+        it("should always fail on a roll of 18", async function () {
+          const Roll = fakeRoller(18);
+          result = await rolls.performSuccessRoll(99, { Roll });
+          expect(result.success).to.be.false;
+        });
+
         describe("on a successful roll", function () {
           beforeEach(async function () {
             const Roll = fakeRoller(3);
