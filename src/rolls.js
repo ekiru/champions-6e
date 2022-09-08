@@ -101,6 +101,8 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
   };
 }
 
+const canHitMessageTemplate = ({ dcv }) => `Attack can hit DCV = ${dcv}`;
+
 /**
  * Rolls an attack roll against an unknown DCV;
  *
@@ -120,7 +122,18 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
   } else if (canHit === Number.NEGATIVE_INFINITY) {
     canHit = false;
   }
+  let messageText;
+  if (canHit === true) {
+    messageText = hitMessage;
+  } else if (!canHit) {
+    messageText = missMessage;
+  } else {
+    messageText = canHitMessageTemplate({ dcv: canHit });
+  }
   return {
     canHit,
+    message: await result.toMessage({
+      flavor: messageText,
+    }),
   };
 }

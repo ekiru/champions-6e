@@ -191,6 +191,34 @@ export function register(system, quench) {
               expect(result.canHit).to.be.false;
             });
           });
+
+          describe("chat messages", function () {
+            it("should have a roll", async function () {
+              result = await rolls.performAttackRollWithUnknownDcv(9);
+              expect(result.message).to.be.an.instanceof(ChatMessage);
+              expect(result.message.isRoll).to.be.true;
+            });
+
+            it("should say what DCV it can hit", async function () {
+              const Roll = fakeRoller(10);
+              result = await rolls.performAttackRollWithUnknownDcv(9, { Roll });
+              expect(result.message.flavor).to.include("can hit DCV = 10");
+            });
+
+            it("should say it hit on a 3", async function () {
+              const Roll = fakeRoller(3);
+              result = await rolls.performAttackRollWithUnknownDcv(0, { Roll });
+              expect(result.message.flavor).to.include("hit.");
+            });
+
+            it("should say it missed on an 18", async function () {
+              const Roll = fakeRoller(18);
+              result = await rolls.performAttackRollWithUnknownDcv(99, {
+                Roll,
+              });
+              expect(result.message.flavor).to.include("missed.");
+            });
+          });
         });
       });
     },
