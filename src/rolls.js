@@ -114,7 +114,12 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
   const rollClass = options.Roll ?? Roll;
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
-  const canHit = highestDcvHit(ocv, result.total);
+  let canHit = highestDcvHit(ocv, result.total);
+  if (canHit === Number.POSITIVE_INFINITY) {
+    canHit = true;
+  } else if (canHit === Number.NEGATIVE_INFINITY) {
+    canHit = false;
+  }
   return {
     canHit,
   };

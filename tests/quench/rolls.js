@@ -174,6 +174,22 @@ export function register(system, quench) {
               });
               expect(result.canHit).to.equal(ocv);
             });
+
+            it("can hit anything on a roll of 3", async function () {
+              const Roll = fakeRoller(3);
+              result = await rolls.performAttackRollWithUnknownDcv(ocv, {
+                Roll,
+              });
+              expect(result.canHit).to.be.true;
+            });
+
+            it("can't hit anything on a roll of 18", async function () {
+              const Roll = fakeRoller(18);
+              result = await rolls.performAttackRollWithUnknownDcv(ocv, {
+                Roll,
+              });
+              expect(result.canHit).to.be.false;
+            });
           });
         });
       });
