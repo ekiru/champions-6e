@@ -6,7 +6,7 @@
  * @returns {number} The sum of all the elements of the array.
  */
 function sumArray(array) {
-  return array.reduce((sum, value) => sum + value);
+  return array.reduce((sum, value) => sum + value, 0);
 }
 
 /**
@@ -25,6 +25,32 @@ function bodyForDie(die) {
     default:
       return 1;
   }
+}
+
+/**
+ * Counts the BODY rolled on a killing attack.
+ *
+ * @param {Array<number>} dice The results of the full dice rolled.
+ * @param {number?} halfDie The results of the halfDie, if any.
+ * @returns  {number} The BODY rolled for the attack.
+ */
+export function countKillingBody(dice, halfDie) {
+  let body = sumArray(dice);
+  if (halfDie) {
+    body += Math.ceil(halfDie / 2);
+  }
+  return body;
+}
+
+/**
+ * Calculates the STUN rolled on a killing attack.
+ *
+ * @param {number} body The BODY rolled on the attack.
+ * @param {number} multiplier The result of the multiplier die.
+ * @returns  {number} The STUN inflicted by the killing attack.
+ */
+export function countKillingStun(body, multiplier) {
+  return body * multiplier;
 }
 
 /**
