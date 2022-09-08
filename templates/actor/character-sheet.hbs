@@ -79,6 +79,12 @@
               </tr>
             {{/each}}
             <tr>
+              {{#with characteristics.rec}}
+                <td>{{label}}</td>
+                <td>{{numberInput value name=path}}</td>
+              {{/with}}
+            </tr>
+            <tr>
               {{#with characteristics.speed}}
                 <td>{{label}}</td>
                 <td>

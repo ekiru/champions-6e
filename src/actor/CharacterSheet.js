@@ -54,6 +54,11 @@ export default class CharacterSheet extends ActorSheet {
 
     context.characteristics = {
       main: {},
+      rec: {
+        label: "REC",
+        value: this.actor.system.characteristics.rec.value,
+        path: "system.characteristics.rec.value",
+      },
       speed: {
         label: "SPD",
         value: this.actor.system.characteristics.spd.value,
@@ -68,7 +73,7 @@ export default class CharacterSheet extends ActorSheet {
       defenses: {},
     };
 
-    for (const name of ["str", "dex", "con", "int", "pre"]) {
+    for (const name of ["str", "dex", "con", "int", "ego", "pre"]) {
       const label = name.toUpperCase();
       const value = this.actor.system.characteristics[name].value;
       context.characteristics.main[name] = {
