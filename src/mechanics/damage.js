@@ -27,6 +27,15 @@ function bodyForDie(die) {
   }
 }
 
+/**
+ * Counts the STUN and BODY done by a killing attack.
+ *
+ * @param {Array<number>} dice The results rolled on the full dice.
+ * @param {number} multiplier The result of the multiplier die.
+ * @param {number?} halfDie The value of the half-die, if any.
+ * @returns {object} An object containing the {@code stun} and {@code body} for the
+ * roll.
+ */
 export function countKillingDamage(dice, multiplier, halfDie) {
   const body = countKillingBody(dice, halfDie);
   return {
@@ -61,6 +70,14 @@ export function countKillingStun(body, multiplier) {
   return body * multiplier;
 }
 
+/**
+ * Counts the STUN and BODY done by a normal attack.
+ *
+ * @param {Array<number>} dice The results rolled on the full dice.
+ * @param {number?} halfDie The value of the half-die, if any.
+ * @returns {object} An object containing the {@code stun} and {@code body} for the
+ * roll.
+ */
 export function countNormalDamage(dice, halfDie) {
   return {
     body: countNormalBody(dice, halfDie),
@@ -88,6 +105,7 @@ export function countNormalBody(dice, halfDie) {
  * Counts the STUN rolled on a set of dice.
  *
  * @param {Array<number>} dice The results of rolling the dice.
+ * @param {number?} halfDie The result of the half-die, if any.
  * @returns {number} The STUN for the roll.
  */
 export function countNormalStun(dice, halfDie) {
