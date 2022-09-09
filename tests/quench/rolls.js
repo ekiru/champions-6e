@@ -72,6 +72,17 @@ export function register(system, quench) {
         CONFIG.Dice.rolls.splice(index, 2);
       });
 
+      let actor;
+      before(async function () {
+        actor = await Actor.create({
+          name: "Vithraxian",
+          type: "character",
+        });
+      });
+      after(function () {
+        actor.delete();
+      });
+
       let result;
       afterEach(async function () {
         if (result && result.message) {
@@ -155,6 +166,11 @@ export function register(system, quench) {
             expect(result.message.flavor).to.include("Failed");
           });
         });
+
+        it("should allow supplying a speaker for the chat message", async function () {
+          result = await rolls.performSuccessRoll(11, { actor });
+          expect(result.message.alias).to.equal(actor.name);
+        });
       });
 
       describe("Attack rolls", function () {
@@ -212,6 +228,13 @@ export function register(system, quench) {
                 Roll,
               });
               expect(result.message.flavor).to.include("missed");
+            });
+
+            it("should include the actor, if supplied, as speaker", async function () {
+              result = await rolls.performAttackRollWithKnownDcv(9, 9, {
+                actor,
+              });
+              expect(result.message.alias).to.equal(actor.name);
             });
           });
         });

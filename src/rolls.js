@@ -1,6 +1,23 @@
 import { highestDcvHit, targetNumberToHit } from "./mechanics/attack.js";
 import { countKillingDamage, countNormalDamage } from "./mechanics/damage.js";
 
+/**
+ * Adds a message field to the response unless options.message is present and false.
+ *
+ * @private
+ * @param {string} flavor Flavor text for the chat message.
+ * @param {object} response The response to augment.
+ * @param {object} options The options passed to the performXxxRoll() method.
+ */
+async function addMessage(flavor, response, options) {
+  if (options.message ?? true) {
+    response.message = await response.roll.toMessage({
+      flavor,
+      speaker: { actor: options.actor },
+    });
+  }
+}
+
 const successMessage = "<strong>Success</strong>";
 const failureMessage = "Failed";
 
@@ -9,14 +26,14 @@ const failureMessage = "Failed";
  *
  * @param {number} targetNumber The target number to try to roll under
  * @param {object} options Options: including {@code Roll} to use a custom Roll class.
- * The {@code message} option defaults to true and posts a chat message.
+ * The {@code message} option defaults to true and posts a chat message. The {@code
+ * actor} property specifies an actor to use as the speaker.
  * @returns {Promise<object>} An object. The {@code success} property indicates
  * whether or not the roll succeeded. The {@code message} property includes the chat
  * message posted about it.
  */
 export async function performSuccessRoll(targetNumber, options = {}) {
   const rollClass = options.Roll ?? Roll;
-  const postMessage = options.message ?? true;
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
   let success = result.total <= targetNumber;
@@ -29,11 +46,8 @@ export async function performSuccessRoll(targetNumber, options = {}) {
     success,
     roll: result,
   };
-  if (postMessage) {
-    response.message = await result.toMessage({
-      flavor: success ? successMessage : failureMessage,
-    });
-  }
+  const flavor = success ? successMessage : failureMessage;
+  await addMessage(flavor, response, options);
   return response;
 }
 
@@ -94,12 +108,12 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
     message: false,
   });
   const messageText = successRoll.success ? hitMessage : missMessage;
-  return {
+  const response = {
     hits: successRoll.success,
-    message: await successRoll.roll.toMessage({
-      flavor: messageText,
-    }),
+    roll: successRoll.roll,
   };
+  await addMessage(messageText, response, options);
+  return response;
 }
 
 const canHitMessageTemplate = ({ dcv }) => `Attack can hit DCV = ${dcv}`;
