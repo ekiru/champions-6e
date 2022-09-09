@@ -227,7 +227,16 @@
           {{#each combat.basicAttacks}}
             <tr>
               <td>{{label}}</td>
-              <td>{{diceString}}</td>
+              <td>
+                <a
+                  class="damage-roll"
+                  data-damage-type="{{damageType}}"
+                  data-dice="{{dice}}"
+                  data-label="{{label}}"
+                >
+                  {{diceString}}
+                </a>
+              </td>
             </tr>
           {{/each}}
         </tbody>

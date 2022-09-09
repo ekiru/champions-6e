@@ -1,5 +1,10 @@
 import { Characteristic } from "../mechanics/characteristics.js";
-import { attackRollDialog, successRollDialog } from "../rolls.js";
+import {
+  attackRollDialog,
+  performKillingDamageRoll,
+  performNormalDamageRoll,
+  successRollDialog,
+} from "../rolls.js";
 
 /**
  * Turns a number of dice into a textual dice string.
@@ -147,12 +152,16 @@ export default class CharacterSheet extends ActorSheet {
       basicAttacks: {
         hthAttack: {
           label: "Basic HTH Attack",
+          damageType: "normal",
+          dice: this.actor.system.characteristics.str.hthDamage,
           diceString: formatDice(
             this.actor.system.characteristics.str.hthDamage
           ),
         },
         presenceAttack: {
           label: "Presence Attack",
+          damageType: "normal", // eventually "effect"
+          dice: this.actor.system.characteristics.pre.presenceAttackDice,
           diceString: formatDice(
             this.actor.system.characteristics.pre.presenceAttackDice
           ),
@@ -204,6 +213,17 @@ export default class CharacterSheet extends ActorSheet {
       const label = this.dataset.label;
       const ocv = Number(this.dataset.ocv);
       attackRollDialog(label, ocv);
+    });
+    html.find("a.damage-roll").click(function () {
+      const dice = Number(this.dataset.dice);
+      const damageType = this.dataset.damageType;
+      if (damageType === "normal") {
+        performNormalDamageRoll(dice);
+      } else if (damageType === "killing") {
+        performKillingDamageRoll(dice);
+      } else {
+        throw new Error(`Unrecognized damage type: ${damageType}`);
+      }
     });
   }
 }
