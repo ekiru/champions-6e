@@ -58,8 +58,10 @@ const successRollTemplate =
  *
  * @param {*} label A label for the skill or characteristic to roll.
  * @param {*} targetNumber The default target number.
+ * @param {object} options Options to customize the dialog or chat message.
+ * @param {Actor} options.actor The actor for whom the roll is being performed.
  */
-export async function successRollDialog(label, targetNumber) {
+export async function successRollDialog(label, targetNumber, { actor } = {}) {
   const context = {
     label,
     targetNumber,
@@ -67,7 +69,7 @@ export async function successRollDialog(label, targetNumber) {
   const title = `${label} Roll`;
   rollDialog(title, successRollTemplate, context, (html) => {
     const targetNumber = html.find("input[name='targetNumber']").get(0).value;
-    performSuccessRoll(targetNumber);
+    performSuccessRoll(targetNumber, { actor });
   });
 }
 
@@ -143,17 +145,19 @@ const attackRollTemplate =
  *
  * @param {string} label A label for the attack.
  * @param {number} ocv The default OCV.
+ *  @param {object} options Options to customize the dialog or chat message.
+ * @param {Actor} options.actor The actor for whom the roll is being performed.
  */
-export async function attackRollDialog(label, ocv) {
+export async function attackRollDialog(label, ocv, { actor } = {}) {
   const title = `${label ? label + " " : ""}Attack Roll`;
   const context = { label, ocv };
   await rollDialog(title, attackRollTemplate, context, (html) => {
     const ocv = html.find("input[name='ocv']").get(0).value;
     const dcv = html.find("input[name='dcv']").get(0).value;
     if (dcv !== "") {
-      performAttackRollWithKnownDcv(Number(ocv), Number(dcv));
+      performAttackRollWithKnownDcv(Number(ocv), Number(dcv), { actor });
     } else {
-      performAttackRollWithUnknownDcv(Number(ocv));
+      performAttackRollWithUnknownDcv(Number(ocv), { actor });
     }
   });
 }
@@ -246,17 +250,19 @@ const damageRollTemplate =
  * @param {string} label A label for the damage roll.
  * @param {number} dice The default dice of damage.
  * @param {"normal" | "killing"} type The default damage type.
+ * @param {object} options Options to customize the dialog or chat message.
+ * @param {Actor} options.actor The actor for whom the roll is being performed.
  */
-export async function damageRollDialog(label, dice, type) {
+export async function damageRollDialog(label, dice, type, { actor } = {}) {
   const title = `${label ? label + " " : ""}Damage Roll`;
   const context = { label, dice, type };
   rollDialog(title, damageRollTemplate, context, (html) => {
     const dice = Number(html.find("input[name='dice']").get(0).value);
     const type = html.find("select[name='type']").get(0).value;
     if (type === "normal") {
-      performNormalDamageRoll(dice);
+      performNormalDamageRoll(dice, { actor });
     } else if (type === "killing") {
-      performKillingDamageRoll(dice);
+      performKillingDamageRoll(dice, { actor });
     }
   });
 }

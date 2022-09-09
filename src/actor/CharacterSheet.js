@@ -208,19 +208,20 @@ export default class CharacterSheet extends ActorSheet {
   }
 
   _activateRolls(html) {
+    const actor = this.actor;
     html.find("a.success-roll").click(function () {
-      successRollDialog(this.textContent, this.dataset.targetNumber);
+      successRollDialog(this.textContent, this.dataset.targetNumber, { actor });
     });
     html.find("button.attack-roll").click(function () {
       const label = this.dataset.label;
       const ocv = Number(this.dataset.ocv);
-      attackRollDialog(label, ocv);
+      attackRollDialog(label, ocv, { actor });
     });
     html.find(".damage-roll").click(function () {
       const dice = Number(this.dataset.dice);
       const damageType = this.dataset.damageType;
       const label = this.dataset.label;
-      damageRollDialog(label, dice, damageType);
+      damageRollDialog(label, dice, damageType, { actor });
     });
   }
 }
