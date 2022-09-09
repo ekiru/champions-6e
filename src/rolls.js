@@ -181,6 +181,10 @@ export async function attackRollDialog(label, ocv) {
   dialog.render(true);
 }
 
+const formatNormalDamage = (dice, { body, stun }) => {
+  return `${dice} Normal Damage: ${body} BODY, ${stun} STUN`;
+};
+
 /**
  * Rolls a normal damage roll.
  *
@@ -193,14 +197,24 @@ export async function performNormalDamageRoll(dice, options = {}) {
   const rollClass = options.Roll ?? Roll;
   const hasHalf = !Number.isInteger(dice);
   let formula;
+  let diceString;
   if (!hasHalf) {
     formula = `${dice}d6`;
+    diceString = formula;
   } else {
     const wholeDice = Math.floor(dice);
     formula = `${wholeDice}d6 + d6`;
+    diceString = `${wholeDice}½d6`;
   }
   const roll = new rollClass(formula);
   const result = await roll.roll({ async: true });
   const rolledDice = result.dice[0].results.map((res) => res.result);
-  return countNormalDamage(rolledDice, hasHalf && result.dice[1].total);
+  const response = countNormalDamage(
+    rolledDice,
+    hasHalf && result.dice[1].total
+  );
+  response.message = await result.toMessage({
+    flavor: formatNormalDamage(diceString, response),
+  });
+  return response;
 }

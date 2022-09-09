@@ -63,13 +63,13 @@ export function register(system, quench) {
     function ({ describe, it, expect, before, after, beforeEach, afterEach }) {
       // make ChatMessage a bit happier with our fake rolls
       before(function () {
-        CONFIG.Dice.rolls.push(fakeRoller(11));
+        CONFIG.Dice.rolls.push(fakeRoller(11), fakeDice([]));
       });
       after(function () {
         const index = CONFIG.Dice.rolls.findIndex(
           (cls) => cls.name === fakeRoller(11).name
         );
-        CONFIG.Dice.rolls.splice(index, 1);
+        CONFIG.Dice.rolls.splice(index, 2);
       });
 
       let result;
@@ -294,6 +294,27 @@ export function register(system, quench) {
           result = await rolls.performNormalDamageRoll(7.5, { Roll });
           expect(result.body).to.equal(9);
           expect(result.stun).to.equal(30);
+        });
+
+        describe("chat messages", function () {
+          beforeEach(async function () {
+            result = await rolls.performNormalDamageRoll(7.5);
+          });
+
+          it("should include a chat message with the roll", function () {
+            expect(result.message).to.exist;
+            expect(result.message).to.be.an.instanceof(ChatMessage);
+            expect(result.message.isRoll).to.be.true;
+          });
+
+          it("should include the number of dice and normal damage", function () {
+            expect(result.message.flavor).to.include("7½d6 Normal Damage");
+          });
+
+          it("should include the damage", function () {
+            expect(result.message.flavor).to.include(`${result.body} BODY`);
+            expect(result.message.flavor).to.include(`${result.stun} STUN`);
+          });
         });
       });
     },
