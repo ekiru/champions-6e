@@ -258,3 +258,46 @@ export async function performNormalDamageRoll(dice, options = {}) {
   });
   return response;
 }
+
+const damageRollTemplate =
+  "systems/champions-6e/templates/dialog/damage-roll.hbs";
+/**
+ * Renders a dialog to do a damage roll.
+ *
+ * @param {string} label A label for the damage roll.
+ * @param {number} dice The default dice of damage.
+ * @param {"normal" | "killing"} type The default damage type.
+ */
+export async function damageRollDialog(label, dice, type) {
+  const html = await renderTemplate(damageRollTemplate, {
+    label,
+    dice,
+    type,
+  });
+
+  const dialog = new Dialog({
+    title: `${label ? label + " " : ""}Damage Roll`,
+    content: html,
+    default: "roll",
+    buttons: {
+      cancel: {
+        icon: "<i class='fas fa-times'></i>",
+        label: "Cancel",
+      },
+      roll: {
+        icon: "<i class='fas fa-dice'></i>",
+        label: "Roll",
+        callback: (html) => {
+          const dice = Number(html.find("input[name='dice']").get(0).value);
+          const type = html.find("select[name='type']").get(0).value;
+          if (type === "normal") {
+            performNormalDamageRoll(dice);
+          } else if (type === "killing") {
+            performKillingDamageRoll(dice);
+          }
+        },
+      },
+    },
+  });
+  dialog.render(true);
+}

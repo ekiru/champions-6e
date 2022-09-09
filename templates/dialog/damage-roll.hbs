@@ -1,0 +1,16 @@
+<section class="roll-dialog attack-roll">
+  <h1>{{label}} Damage Roll</h1>
+  <p>
+    <label>Type</label>
+    <select name="type">
+      {{#select type}}
+        <option value="normal">Normal</option>
+        <option value="killing">Killing</option>
+      {{/select}}
+    </select>
+  </p>
+  <p>
+    <label>Dice</label>
+    <input type="text" name="dice" value="{{dice}}" />
+  </p>
+</section>

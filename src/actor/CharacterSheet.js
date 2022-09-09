@@ -1,8 +1,7 @@
 import { Characteristic } from "../mechanics/characteristics.js";
 import {
   attackRollDialog,
-  performKillingDamageRoll,
-  performNormalDamageRoll,
+  damageRollDialog,
   successRollDialog,
 } from "../rolls.js";
 
@@ -217,13 +216,8 @@ export default class CharacterSheet extends ActorSheet {
     html.find("a.damage-roll").click(function () {
       const dice = Number(this.dataset.dice);
       const damageType = this.dataset.damageType;
-      if (damageType === "normal") {
-        performNormalDamageRoll(dice);
-      } else if (damageType === "killing") {
-        performKillingDamageRoll(dice);
-      } else {
-        throw new Error(`Unrecognized damage type: ${damageType}`);
-      }
+      const label = this.dataset.label;
+      damageRollDialog(label, dice, damageType);
     });
   }
 }
