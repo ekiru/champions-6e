@@ -16,6 +16,42 @@ function fakeRoller(result) {
 }
 
 /**
+ * Creates a mock subclass of the Roll class that returns specific Dice results.
+ *
+ * @param {Array<Array<number>>} dice The values that the resulting subclass should
+ * always roll.
+ * @returns {Function} A fake subclass of Roll that always returns {@code dice}.
+ */
+function fakeDice(dice) {
+  class FakeDice extends Roll {
+    async evaluate(options) {
+      if (!options.async) {
+        throw new Error("FakeDice mock class only works with async rolls");
+      }
+      const result = await super.evaluate(options);
+      if (result.dice.length !== dice.length) {
+        throw new Error(
+          `dice lengths don't match for FakeDice: expected ${dice.length} but got ${result.dice.length}`
+        );
+      }
+      dice.forEach((fakeDie, i) => {
+        const realDie = result.dice[i];
+        if (realDie.results.length !== fakeDie.length) {
+          throw new Error(
+            `DiceTerm ${i} with unexpected length in FakeDice: expected ${fakeDie.result.length} but got ${realDie.results.length}`
+          );
+        }
+        fakeDie.forEach((value, j) => {
+          realDie.results[j].result = value;
+        });
+      });
+      return result;
+    }
+  }
+  return FakeDice;
+}
+
+/**
  * Registers the tests for rolls.
  *
  * @param {*} system The name of the system, used in batch names and display names.
@@ -243,6 +279,21 @@ export function register(system, quench) {
               expect(result.message.flavor).to.include("missed.");
             });
           });
+        });
+      });
+
+      describe("Normal damage rolls", function () {
+        it("should count the damage for whole dice correctly", async function () {
+          const Roll = fakeDice([[1, 2, 3, 4, 5, 6, 6, 6]]);
+          result = await rolls.performNormalDamageRoll(8, { Roll });
+          expect(result.body).to.equal(10);
+          expect(result.stun).to.equal(33);
+        });
+        it("should count the damage for half dice correctly", async function () {
+          const Roll = fakeDice([[1, 2, 3, 4, 5, 6, 6], [6]]);
+          result = await rolls.performNormalDamageRoll(7.5, { Roll });
+          expect(result.body).to.equal(9);
+          expect(result.stun).to.equal(30);
         });
       });
     },
