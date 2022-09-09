@@ -331,6 +331,27 @@ export function register(system, quench) {
           expect(result.body).to.equal(11);
           expect(result.stun).to.equal(33);
         });
+
+        describe("chat messages", function () {
+          beforeEach(async function () {
+            result = await rolls.performKillingDamageRoll(3.5);
+          });
+
+          it("should include a chat message with the roll", function () {
+            expect(result.message).to.exist;
+            expect(result.message).to.be.an.instanceof(ChatMessage);
+            expect(result.message.isRoll).to.be.true;
+          });
+
+          it("should include the number of dice and killing damage", function () {
+            expect(result.message.flavor).to.include("3½d6 Killing Damage");
+          });
+
+          it("should include the damage", function () {
+            expect(result.message.flavor).to.include(`${result.body} BODY`);
+            expect(result.message.flavor).to.include(`${result.stun} STUN`);
+          });
+        });
       });
     },
     { displayName: `${system}: Test rolls` }

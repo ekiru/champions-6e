@@ -181,6 +181,10 @@ export async function attackRollDialog(label, ocv) {
   dialog.render(true);
 }
 
+const formatKillingDamage = (dice, { body, stun }) => {
+  return `${dice} Killing Damage: ${body} BODY, ${stun} STUN`;
+};
+
 /**
  * Rolls a killing damage roll.
  *
@@ -192,21 +196,29 @@ export async function attackRollDialog(label, ocv) {
 export async function performKillingDamageRoll(dice, options = {}) {
   const rollClass = options.Roll ?? Roll;
   const hasHalf = !Number.isInteger(dice);
+  let diceString;
   let formula;
   if (!hasHalf) {
     formula = `${dice}d6 * d3`;
+    diceString = `${dice}d6`;
   } else {
-    formula = `${Math.floor(dice)}d6 * d3 + d6`;
+    const wholeDice = Math.floor(dice);
+    formula = `${wholeDice}d6 * d3 + d6`;
+    diceString = `${wholeDice}½d6`;
   }
   const roll = new rollClass(formula);
   const result = await roll.roll({ async: true });
   const rolledDice = result.dice[0].results.map((res) => res.result);
   const multiplier = result.dice[1].total;
-  return countKillingDamage(
+  const response = countKillingDamage(
     rolledDice,
     multiplier,
     hasHalf && result.dice[2].total
   );
+  response.message = await result.toMessage({
+    flavor: formatKillingDamage(diceString, response),
+  });
+  return response;
 }
 
 const formatNormalDamage = (dice, { body, stun }) => {
