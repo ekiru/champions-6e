@@ -301,6 +301,13 @@ export function register(system, quench) {
               });
               expect(result.message.flavor).to.include("missed.");
             });
+
+            it("should include the actor, if supplied, as speaker", async function () {
+              result = await rolls.performAttackRollWithUnknownDcv(9, {
+                actor,
+              });
+              expect(result.message.alias).to.equal(actor.name);
+            });
           });
         });
       });
@@ -321,7 +328,7 @@ export function register(system, quench) {
 
         describe("chat messages", function () {
           beforeEach(async function () {
-            result = await rolls.performNormalDamageRoll(7.5);
+            result = await rolls.performNormalDamageRoll(7.5, { actor });
           });
 
           it("should include a chat message with the roll", function () {
@@ -337,6 +344,10 @@ export function register(system, quench) {
           it("should include the damage", function () {
             expect(result.message.flavor).to.include(`${result.body} BODY`);
             expect(result.message.flavor).to.include(`${result.stun} STUN`);
+          });
+
+          it("should include the actor, if supplied, as speaker", async function () {
+            expect(result.message.alias).to.equal(actor.name);
           });
         });
       });
@@ -357,7 +368,7 @@ export function register(system, quench) {
 
         describe("chat messages", function () {
           beforeEach(async function () {
-            result = await rolls.performKillingDamageRoll(3.5);
+            result = await rolls.performKillingDamageRoll(3.5, { actor });
           });
 
           it("should include a chat message with the roll", function () {
@@ -373,6 +384,10 @@ export function register(system, quench) {
           it("should include the damage", function () {
             expect(result.message.flavor).to.include(`${result.body} BODY`);
             expect(result.message.flavor).to.include(`${result.stun} STUN`);
+          });
+
+          it("should include the actor, if supplied, as speaker", async function () {
+            expect(result.message.alias).to.equal(actor.name);
           });
         });
       });

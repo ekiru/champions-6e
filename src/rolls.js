@@ -146,12 +146,12 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
   } else {
     messageText = canHitMessageTemplate({ dcv: canHit });
   }
-  return {
+  const response = {
     canHit,
-    message: await result.toMessage({
-      flavor: messageText,
-    }),
+    roll: result,
   };
+  await addMessage(messageText, response, options);
+  return response;
 }
 
 const attackRollTemplate =
@@ -229,9 +229,12 @@ export async function performKillingDamageRoll(dice, options = {}) {
     multiplier,
     hasHalf && result.dice[2].total
   );
-  response.message = await result.toMessage({
-    flavor: formatKillingDamage(diceString, response),
-  });
+  response.roll = result;
+  await addMessage(
+    formatKillingDamage(diceString, response),
+    response,
+    options
+  );
   return response;
 }
 
@@ -267,9 +270,8 @@ export async function performNormalDamageRoll(dice, options = {}) {
     rolledDice,
     hasHalf && result.dice[1].total
   );
-  response.message = await result.toMessage({
-    flavor: formatNormalDamage(diceString, response),
-  });
+  response.roll = result;
+  await addMessage(formatNormalDamage(diceString, response), response, options);
   return response;
 }
 
