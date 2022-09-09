@@ -60,33 +60,15 @@ const successRollTemplate =
  * @param {*} targetNumber The default target number.
  */
 export async function successRollDialog(label, targetNumber) {
-  const html = await renderTemplate(successRollTemplate, {
+  const context = {
     label,
     targetNumber,
+  };
+  const title = `${label} Roll`;
+  rollDialog(title, successRollTemplate, context, (html) => {
+    const targetNumber = html.find("input[name='targetNumber']").get(0).value;
+    performSuccessRoll(targetNumber);
   });
-
-  const dialog = new Dialog({
-    title: `${label} Roll`,
-    content: html,
-    default: "roll",
-    buttons: {
-      cancel: {
-        icon: "<i class='fas fa-times'></i>",
-        label: "Cancel",
-      },
-      roll: {
-        icon: "<i class='fas fa-dice'></i>",
-        label: "Roll",
-        callback: (html) => {
-          const targetNumber = html
-            .find("input[name='targetNumber']")
-            .get(0).value;
-          performSuccessRoll(targetNumber);
-        },
-      },
-    },
-  });
-  dialog.render(true);
 }
 
 const hitMessage = "Attack hit.";
@@ -279,6 +261,15 @@ export async function damageRollDialog(label, dice, type) {
   });
 }
 
+/**
+ * Renders a dialog for a roll.
+ *
+ * @private
+ * @param {string} title The title for the dialog.
+ * @param {string} template Path to the template to use for the dialog's contents.
+ * @param {object} context The context to use when rendering the template.
+ * @param {Function} onRoll The callback to call when the roll button is clicked.
+ */
 async function rollDialog(title, template, context, onRoll) {
   const html = await renderTemplate(template, context);
 
