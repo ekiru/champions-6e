@@ -211,14 +211,25 @@
       </table>
     </div>
     <div class="tab combat" data-tab="combat">
-      <button
-        class="attack-roll"
-        data-label=""
-        data-ocv="{{characteristics.cvs.ocv.value}}"
-      >
-        <i class="fas fa-swords"></i>
-        {{combat.attackRoll.label}}
-      </button>
+      <div class="attack-buttons flexrow">
+        <button
+          class="attack-roll"
+          data-label=""
+          data-ocv="{{characteristics.cvs.ocv.value}}"
+        >
+          <i class="fas fa-swords"></i>
+          {{combat.attackRoll.label}}
+        </button>
+        <button
+          class="damage-roll"
+          data-label=""
+          data-dice="2"
+          data-damage-type="normal"
+        >
+          <i class="fas fa-droplet"></i>
+          {{combat.damageRoll.label}}
+        </button>
+      </div>
       <table class="attacks">
         <thead>
           <tr><th>Attack</th> <th>Effect</th></tr>

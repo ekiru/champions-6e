@@ -148,6 +148,9 @@ export default class CharacterSheet extends ActorSheet {
       attackRoll: {
         label: "Attack Roll",
       },
+      damageRoll: {
+        label: "Damage Roll",
+      },
       basicAttacks: {
         hthAttack: {
           label: "Basic HTH Attack",
@@ -213,7 +216,7 @@ export default class CharacterSheet extends ActorSheet {
       const ocv = Number(this.dataset.ocv);
       attackRollDialog(label, ocv);
     });
-    html.find("a.damage-roll").click(function () {
+    html.find(".damage-roll").click(function () {
       const dice = Number(this.dataset.dice);
       const damageType = this.dataset.damageType;
       const label = this.dataset.label;
