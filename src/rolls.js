@@ -163,36 +163,17 @@ const attackRollTemplate =
  * @param {number} ocv The default OCV.
  */
 export async function attackRollDialog(label, ocv) {
-  const html = await renderTemplate(attackRollTemplate, {
-    label,
-    ocv,
+  const title = `${label ? label + " " : ""}Attack Roll`;
+  const context = { label, ocv };
+  await rollDialog(title, attackRollTemplate, context, (html) => {
+    const ocv = html.find("input[name='ocv']").get(0).value;
+    const dcv = html.find("input[name='dcv']").get(0).value;
+    if (dcv !== "") {
+      performAttackRollWithKnownDcv(Number(ocv), Number(dcv));
+    } else {
+      performAttackRollWithUnknownDcv(Number(ocv));
+    }
   });
-
-  const dialog = new Dialog({
-    title: `${label ? label + " " : ""}Attack Roll`,
-    content: html,
-    default: "roll",
-    buttons: {
-      cancel: {
-        icon: "<i class='fas fa-times'></i>",
-        label: "Cancel",
-      },
-      roll: {
-        icon: "<i class='fas fa-dice'></i>",
-        label: "Roll",
-        callback: (html) => {
-          const ocv = html.find("input[name='ocv']").get(0).value;
-          const dcv = html.find("input[name='dcv']").get(0).value;
-          if (dcv !== "") {
-            performAttackRollWithKnownDcv(Number(ocv), Number(dcv));
-          } else {
-            performAttackRollWithUnknownDcv(Number(ocv));
-          }
-        },
-      },
-    },
-  });
-  dialog.render(true);
 }
 
 const formatKillingDamage = (dice, { body, stun }) => {
@@ -285,14 +266,24 @@ const damageRollTemplate =
  * @param {"normal" | "killing"} type The default damage type.
  */
 export async function damageRollDialog(label, dice, type) {
-  const html = await renderTemplate(damageRollTemplate, {
-    label,
-    dice,
-    type,
+  const title = `${label ? label + " " : ""}Damage Roll`;
+  const context = { label, dice, type };
+  rollDialog(title, damageRollTemplate, context, (html) => {
+    const dice = Number(html.find("input[name='dice']").get(0).value);
+    const type = html.find("select[name='type']").get(0).value;
+    if (type === "normal") {
+      performNormalDamageRoll(dice);
+    } else if (type === "killing") {
+      performKillingDamageRoll(dice);
+    }
   });
+}
+
+async function rollDialog(title, template, context, onRoll) {
+  const html = await renderTemplate(template, context);
 
   const dialog = new Dialog({
-    title: `${label ? label + " " : ""}Damage Roll`,
+    title: title,
     content: html,
     default: "roll",
     buttons: {
@@ -303,15 +294,7 @@ export async function damageRollDialog(label, dice, type) {
       roll: {
         icon: "<i class='fas fa-dice'></i>",
         label: "Roll",
-        callback: (html) => {
-          const dice = Number(html.find("input[name='dice']").get(0).value);
-          const type = html.find("select[name='type']").get(0).value;
-          if (type === "normal") {
-            performNormalDamageRoll(dice);
-          } else if (type === "killing") {
-            performKillingDamageRoll(dice);
-          }
-        },
+        callback: onRoll,
       },
     },
   });
