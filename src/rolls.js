@@ -1,5 +1,5 @@
 import { highestDcvHit, targetNumberToHit } from "./mechanics/attack.js";
-import { countNormalDamage } from "./mechanics/damage.js";
+import { countKillingDamage, countNormalDamage } from "./mechanics/damage.js";
 
 const successMessage = "<strong>Success</strong>";
 const failureMessage = "Failed";
@@ -179,6 +179,34 @@ export async function attackRollDialog(label, ocv) {
     },
   });
   dialog.render(true);
+}
+
+/**
+ * Rolls a killing damage roll.
+ *
+ * @param {number} dice The number of dice to roll.
+ * @param {object} options Options: pass {@code Roll} to override the Roll class.
+ * @returns {object} The body and stun properties indicate the damage done. The
+ * message property holds any ChatMessage created.
+ */
+export async function performKillingDamageRoll(dice, options = {}) {
+  const rollClass = options.Roll ?? Roll;
+  const hasHalf = !Number.isInteger(dice);
+  let formula;
+  if (!hasHalf) {
+    formula = `${dice}d6 * d3`;
+  } else {
+    formula = `${Math.floor(dice)}d6 * d3 + d6`;
+  }
+  const roll = new rollClass(formula);
+  const result = await roll.roll({ async: true });
+  const rolledDice = result.dice[0].results.map((res) => res.result);
+  const multiplier = result.dice[1].total;
+  return countKillingDamage(
+    rolledDice,
+    multiplier,
+    hasHalf && result.dice[2].total
+  );
 }
 
 const formatNormalDamage = (dice, { body, stun }) => {

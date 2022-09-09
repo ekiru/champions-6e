@@ -317,6 +317,21 @@ export function register(system, quench) {
           });
         });
       });
+
+      describe("Killing damage rolls", function () {
+        it("should count the damage for whole dice correctly", async function () {
+          const Roll = fakeDice([[1, 3, 6], [3]]);
+          result = await rolls.performKillingDamageRoll(3, { Roll });
+          expect(result.body).to.equal(10);
+          expect(result.stun).to.equal(30);
+        });
+        it("should count the damage for half dice correctly", async function () {
+          const Roll = fakeDice([[1, 3, 6], [3], [1]]);
+          result = await rolls.performKillingDamageRoll(3.5, { Roll });
+          expect(result.body).to.equal(11);
+          expect(result.stun).to.equal(33);
+        });
+      });
     },
     { displayName: `${system}: Test rolls` }
   );
