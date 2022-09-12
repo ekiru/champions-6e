@@ -130,9 +130,10 @@ export function register(system, quench) {
         });
 
         describe("on a successful roll", function () {
+          const label = "STR";
           beforeEach(async function () {
             const Roll = fakeRoller(3);
-            result = await rolls.performSuccessRoll(11, { Roll });
+            result = await rolls.performSuccessRoll(11, { label, Roll });
           });
 
           it("should include a message", function () {
@@ -145,6 +146,10 @@ export function register(system, quench) {
 
           it("the message should say Success", function () {
             expect(result.message.flavor).to.include("Success");
+          });
+
+          it("should include the label", function () {
+            expect(result.message.flavor).to.include(label);
           });
         });
 
@@ -236,6 +241,14 @@ export function register(system, quench) {
               });
               expect(result.message.alias).to.equal(actor.name);
             });
+
+            it("should include the label if supplied", async function () {
+              const label = "Lovebeam";
+              result = await rolls.performAttackRollWithKnownDcv(9, 9, {
+                label,
+              });
+              expect(result.message.flavor).to.include(label);
+            });
           });
         });
         describe("With an unknown DCV", function () {
@@ -276,10 +289,18 @@ export function register(system, quench) {
           });
 
           describe("chat messages", function () {
+            const label = "Drain";
             it("should have a roll", async function () {
               result = await rolls.performAttackRollWithUnknownDcv(9);
               expect(result.message).to.be.an.instanceof(ChatMessage);
               expect(result.message.isRoll).to.be.true;
+            });
+
+            it("should include the label", async function () {
+              result = await rolls.performAttackRollWithUnknownDcv(9, {
+                label,
+              });
+              expect(result.message.flavor).to.include(label);
             });
 
             it("should say what DCV it can hit", async function () {
@@ -327,14 +348,19 @@ export function register(system, quench) {
         });
 
         describe("chat messages", function () {
+          const label = "Lightbolt";
           beforeEach(async function () {
-            result = await rolls.performNormalDamageRoll(7.5, { actor });
+            result = await rolls.performNormalDamageRoll(7.5, { actor, label });
           });
 
           it("should include a chat message with the roll", function () {
             expect(result.message).to.exist;
             expect(result.message).to.be.an.instanceof(ChatMessage);
             expect(result.message.isRoll).to.be.true;
+          });
+
+          it("should include the label", function () {
+            expect(result.message.flavor).to.include(label);
           });
 
           it("should include the number of dice and normal damage", function () {
@@ -367,14 +393,22 @@ export function register(system, quench) {
         });
 
         describe("chat messages", function () {
+          const label = "Boots with the Spur";
           beforeEach(async function () {
-            result = await rolls.performKillingDamageRoll(3.5, { actor });
+            result = await rolls.performKillingDamageRoll(3.5, {
+              actor,
+              label,
+            });
           });
 
           it("should include a chat message with the roll", function () {
             expect(result.message).to.exist;
             expect(result.message).to.be.an.instanceof(ChatMessage);
             expect(result.message.isRoll).to.be.true;
+          });
+
+          it("should include the label", function () {
+            expect(result.message.flavor).to.include(label);
           });
 
           it("should include the number of dice and killing damage", function () {

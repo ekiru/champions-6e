@@ -18,8 +18,12 @@ async function addMessage(flavor, response, options) {
   }
 }
 
-const successMessage = "<strong>Success</strong>";
-const failureMessage = "Failed";
+const successMessage = (label) => {
+  return `<strong>Success</strong> at ${label}`;
+};
+const failureMessage = (label) => {
+  return `Failed at ${label}`;
+};
 
 /**
  * Performs a success roll.
@@ -27,7 +31,7 @@ const failureMessage = "Failed";
  * @param {number} targetNumber The target number to try to roll under
  * @param {object} options Options: including {@code Roll} to use a custom Roll class.
  * The {@code message} option defaults to true and posts a chat message. The {@code
- * actor} property specifies an actor to use as the speaker.
+ * actor} property specifies an actor to use as the speaker. The {@code label} property supplies a label for the roll.
  * @returns {Promise<object>} An object. The {@code success} property indicates
  * whether or not the roll succeeded. The {@code message} property includes the chat
  * message posted about it.
@@ -46,7 +50,8 @@ export async function performSuccessRoll(targetNumber, options = {}) {
     success,
     roll: result,
   };
-  const flavor = success ? successMessage : failureMessage;
+  const label = options.label ?? "Success Roll";
+  const flavor = success ? successMessage(label) : failureMessage(label);
   await addMessage(flavor, response, options);
   return response;
 }
@@ -73,8 +78,12 @@ export async function successRollDialog(label, targetNumber, { actor } = {}) {
   });
 }
 
-const hitMessage = "Attack hit.";
-const missMessage = "Attack missed.";
+const hitMessage = (label) => {
+  return `${label} hit.`;
+};
+const missMessage = (label) => {
+  return `${label} missed.`;
+};
 /**
  * Rolls an attack roll against a known DCV.
  *
@@ -91,7 +100,10 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
     Roll: options.Roll,
     message: false,
   });
-  const messageText = successRoll.success ? hitMessage : missMessage;
+  const label = options.label ?? "Attack";
+  const messageText = successRoll.success
+    ? hitMessage(label)
+    : missMessage(label);
   const response = {
     hits: successRoll.success,
     roll: successRoll.roll,
@@ -100,7 +112,8 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
   return response;
 }
 
-const canHitMessageTemplate = ({ dcv }) => `Attack can hit DCV = ${dcv}`;
+const canHitMessageTemplate = ({ label, dcv }) =>
+  `${label} can hit DCV = ${dcv}`;
 
 /**
  * Rolls an attack roll against an unknown DCV;
@@ -128,7 +141,10 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
   } else if (!canHit) {
     messageText = missMessage;
   } else {
-    messageText = canHitMessageTemplate({ dcv: canHit });
+    messageText = canHitMessageTemplate({
+      label: options.label ?? "Attack",
+      dcv: canHit,
+    });
   }
   const response = {
     canHit,
@@ -162,8 +178,9 @@ export async function attackRollDialog(label, ocv, { actor } = {}) {
   });
 }
 
-const formatKillingDamage = (dice, { body, stun }) => {
-  return `${dice} Killing Damage: ${body} BODY, ${stun} STUN`;
+const formatKillingDamage = (label, dice, { body, stun }) => {
+  const forLabel = label ? ` for ${label}` : "";
+  return `${dice} Killing Damage${forLabel}: ${body} BODY, ${stun} STUN`;
 };
 
 /**
@@ -198,15 +215,16 @@ export async function performKillingDamageRoll(dice, options = {}) {
   );
   response.roll = result;
   await addMessage(
-    formatKillingDamage(diceString, response),
+    formatKillingDamage(options.label, diceString, response),
     response,
     options
   );
   return response;
 }
 
-const formatNormalDamage = (dice, { body, stun }) => {
-  return `${dice} Normal Damage: ${body} BODY, ${stun} STUN`;
+const formatNormalDamage = (label, dice, { body, stun }) => {
+  const forLabel = label ? ` for ${label}` : "";
+  return `${dice} Normal Damage${forLabel}: ${body} BODY, ${stun} STUN`;
 };
 
 /**
@@ -238,7 +256,11 @@ export async function performNormalDamageRoll(dice, options = {}) {
     hasHalf && result.dice[1].total
   );
   response.roll = result;
-  await addMessage(formatNormalDamage(diceString, response), response, options);
+  await addMessage(
+    formatNormalDamage(options.label, diceString, response),
+    response,
+    options
+  );
   return response;
 }
 
