@@ -19,10 +19,10 @@ async function addMessage(flavor, response, options) {
 }
 
 const successMessage = (label, tn, delta) => {
-  return `Succeeded at ${label} (TN: ${tn}-) by ${delta}`;
+  return `<span class="success">Succeeded at ${label} (TN: ${tn}-) by ${delta}<span>`;
 };
 const failureMessage = (label, tn, delta) => {
-  return `Failed at ${label} (TN: ${tn}-) by ${delta}`;
+  return `<span class="failure">Failed at ${label} (TN: ${tn}-) by ${delta}</span>`;
 };
 
 /**
@@ -88,12 +88,12 @@ export async function successRollDialog(label, targetNumber, { actor } = {}) {
 const hitMessage = (label, tn, delta) => {
   const withTn = tn ? ` (TN: ${tn}-) ` : "";
   const byDelta = delta ? ` by ${delta}` : "";
-  return `${label}${withTn} hit${byDelta}.`;
+  return `<span class="success">${label}${withTn} hit${byDelta}.</span>`;
 };
 const missMessage = (label, tn, delta) => {
   const withTn = tn ? ` (TN: ${tn}-) ` : "";
   const byDelta = delta ? ` by ${delta}` : "";
-  return `${label}${withTn} missed${byDelta}.`;
+  return `<span class="failure">${label}${withTn} missed${byDelta}.</span>`;
 };
 /**
  * Rolls an attack roll against a known DCV.

@@ -160,6 +160,10 @@ export function register(system, quench) {
           it("should include the label", function () {
             expect(result.message.flavor).to.include(label);
           });
+
+          it("should include the success class for color coding", function () {
+            expect(result.message.flavor).to.include('<span class="success"');
+          });
         });
 
         describe("on a failed roll", function () {
@@ -182,6 +186,10 @@ export function register(system, quench) {
 
           it("should include the margin of failure", function () {
             expect(result.message.flavor).to.include("by 7");
+          });
+
+          it("should include the failure class for color coding", function () {
+            expect(result.message.flavor).to.include('<span class="failure"');
           });
         });
 
@@ -247,6 +255,12 @@ export function register(system, quench) {
               it("should include margin of success", function () {
                 expect(result.message.flavor).to.include("by 8");
               });
+
+              it("should include the success class for color coding", function () {
+                expect(result.message.flavor).to.include(
+                  '<span class="success"'
+                );
+              });
             });
 
             describe("for misses", function () {
@@ -263,6 +277,12 @@ export function register(system, quench) {
 
               it("should include margin of failure", function () {
                 expect(result.message.flavor).to.include("by 7");
+              });
+
+              it("should include the failure class for color coding", function () {
+                expect(result.message.flavor).to.include(
+                  '<span class="failure"'
+                );
               });
             });
 
@@ -351,12 +371,26 @@ export function register(system, quench) {
               expect(result.message.flavor).to.include("hit.");
             });
 
+            it("should include the success class on a 3", async function () {
+              const Roll = fakeRoller(3);
+              result = await rolls.performAttackRollWithUnknownDcv(0, { Roll });
+              expect(result.message.flavor).to.include('<span class="success"');
+            });
+
             it("should say it missed on an 18", async function () {
               const Roll = fakeRoller(18);
               result = await rolls.performAttackRollWithUnknownDcv(99, {
                 Roll,
               });
               expect(result.message.flavor).to.include("missed.");
+            });
+
+            it("should include the failure class on an 18", async function () {
+              const Roll = fakeRoller(18);
+              result = await rolls.performAttackRollWithUnknownDcv(99, {
+                Roll,
+              });
+              expect(result.message.flavor).to.include('<span class="failure"');
             });
 
             it("should include the actor, if supplied, as speaker", async function () {

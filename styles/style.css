@@ -75,3 +75,12 @@ form.skill header > .name {
 form.skill .tab.notes {
   min-height: 200px;
 }
+
+/* Chat messages */
+.chat-message .flavor-text .success {
+  color: green;
+}
+
+.chat-message .flavor-text .failure {
+  color: red;
+}
