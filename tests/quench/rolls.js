@@ -227,20 +227,38 @@ export function register(system, quench) {
           });
 
           describe("chat messages", function () {
-            it("should include 'hit' for hits", async function () {
-              const Roll = fakeRoller(3);
-              result = await rolls.performAttackRollWithKnownDcv(9, 9, {
-                Roll,
+            describe("for hits", function () {
+              beforeEach(async function () {
+                const Roll = fakeRoller(3);
+                result = await rolls.performAttackRollWithKnownDcv(9, 9, {
+                  Roll,
+                });
               });
-              expect(result.message.flavor).to.include("hit");
+
+              it("should include 'hit'", function () {
+                expect(result.message.flavor).to.include("hit");
+              });
+
+              it("should include margin of success", function () {
+                expect(result.message.flavor).to.include("by 8");
+              });
             });
 
-            it("should include 'missed' for misses", async function () {
-              const Roll = fakeRoller(18);
-              result = await rolls.performAttackRollWithKnownDcv(9, 9, {
-                Roll,
+            describe("for misses", function () {
+              beforeEach(async function () {
+                const Roll = fakeRoller(18);
+                result = await rolls.performAttackRollWithKnownDcv(9, 9, {
+                  Roll,
+                });
               });
-              expect(result.message.flavor).to.include("missed");
+
+              it("should include 'missed'", function () {
+                expect(result.message.flavor).to.include("missed");
+              });
+
+              it("should include margin of failure", function () {
+                expect(result.message.flavor).to.include("by 7");
+              });
             });
 
             it("should include the actor, if supplied, as speaker", async function () {

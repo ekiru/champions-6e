@@ -51,6 +51,7 @@ export async function performSuccessRoll(targetNumber, options = {}) {
     delta = Math.max(result.total - targetNumber, 0);
   }
   const response = {
+    margin: delta,
     success,
     roll: result,
   };
@@ -84,11 +85,13 @@ export async function successRollDialog(label, targetNumber, { actor } = {}) {
   });
 }
 
-const hitMessage = (label) => {
-  return `${label} hit.`;
+const hitMessage = (label, delta) => {
+  const byDelta = delta ? ` by ${delta}` : "";
+  return `${label} hit${byDelta}.`;
 };
-const missMessage = (label) => {
-  return `${label} missed.`;
+const missMessage = (label, delta) => {
+  const byDelta = delta ? ` by ${delta}` : "";
+  return `${label} missed${byDelta}.`;
 };
 /**
  * Rolls an attack roll against a known DCV.
@@ -107,9 +110,10 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
     message: false,
   });
   const label = options.label ?? "Attack";
+  const delta = successRoll.margin;
   const messageText = successRoll.success
-    ? hitMessage(label)
-    : missMessage(label);
+    ? hitMessage(label, delta)
+    : missMessage(label, delta);
   const response = {
     hits: successRoll.success,
     roll: successRoll.roll,
@@ -142,10 +146,11 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
     canHit = false;
   }
   let messageText;
+  const label = options.label ?? "Attack";
   if (canHit === true) {
-    messageText = hitMessage;
+    messageText = hitMessage(label);
   } else if (!canHit) {
-    messageText = missMessage;
+    messageText = missMessage(label);
   } else {
     messageText = canHitMessageTemplate({
       label: options.label ?? "Attack",
