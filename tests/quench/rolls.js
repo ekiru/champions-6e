@@ -148,6 +148,10 @@ export function register(system, quench) {
             expect(result.message.flavor).to.include("Success");
           });
 
+          it("should include the margin of success", function () {
+            expect(result.message.flavor).to.include("by 8");
+          });
+
           it("should include the label", function () {
             expect(result.message.flavor).to.include(label);
           });
@@ -169,6 +173,10 @@ export function register(system, quench) {
 
           it("the message should say Failed", function () {
             expect(result.message.flavor).to.include("Failed");
+          });
+
+          it("should include the margin of failure", function () {
+            expect(result.message.flavor).to.include("by 7");
           });
         });
 

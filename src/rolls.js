@@ -18,11 +18,11 @@ async function addMessage(flavor, response, options) {
   }
 }
 
-const successMessage = (label) => {
-  return `<strong>Success</strong> at ${label}`;
+const successMessage = (label, delta) => {
+  return `<strong>Success</strong> at ${label} by ${delta}`;
 };
-const failureMessage = (label) => {
-  return `Failed at ${label}`;
+const failureMessage = (label, delta) => {
+  return `Failed at ${label} by ${delta}`;
 };
 
 /**
@@ -41,17 +41,23 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   const roll = new rollClass("3d6");
   const result = await roll.roll({ async: true });
   let success = result.total <= targetNumber;
+  // delta = margin, rolls that only succeeded/failed due to 3/18 count as 0.
+  let delta = Math.abs(result.total - targetNumber);
   if (result.total === 3) {
     success = true;
+    delta = Math.max(targetNumber - result.total, 0);
   } else if (result.total === 18) {
     success = false;
+    delta = Math.max(result.total - targetNumber, 0);
   }
   const response = {
     success,
     roll: result,
   };
   const label = options.label ?? "Success Roll";
-  const flavor = success ? successMessage(label) : failureMessage(label);
+  const flavor = success
+    ? successMessage(label, delta)
+    : failureMessage(label, delta);
   await addMessage(flavor, response, options);
   return response;
 }
