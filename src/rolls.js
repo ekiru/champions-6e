@@ -74,7 +74,7 @@ export async function successRollDialog(label, targetNumber, { actor } = {}) {
   const title = `${label} Roll`;
   rollDialog(title, successRollTemplate, context, (html) => {
     const targetNumber = html.find("input[name='targetNumber']").get(0).value;
-    performSuccessRoll(targetNumber, { actor });
+    performSuccessRoll(targetNumber, { actor, label });
   });
 }
 
@@ -171,9 +171,9 @@ export async function attackRollDialog(label, ocv, { actor } = {}) {
     const ocv = html.find("input[name='ocv']").get(0).value;
     const dcv = html.find("input[name='dcv']").get(0).value;
     if (dcv !== "") {
-      performAttackRollWithKnownDcv(Number(ocv), Number(dcv), { actor });
+      performAttackRollWithKnownDcv(Number(ocv), Number(dcv), { actor, label });
     } else {
-      performAttackRollWithUnknownDcv(Number(ocv), { actor });
+      performAttackRollWithUnknownDcv(Number(ocv), { actor, label });
     }
   });
 }
@@ -282,9 +282,9 @@ export async function damageRollDialog(label, dice, type, { actor } = {}) {
     const dice = Number(html.find("input[name='dice']").get(0).value);
     const type = html.find("select[name='type']").get(0).value;
     if (type === "normal") {
-      performNormalDamageRoll(dice, { actor });
+      performNormalDamageRoll(dice, { actor, label });
     } else if (type === "killing") {
-      performKillingDamageRoll(dice, { actor });
+      performKillingDamageRoll(dice, { actor, label });
     }
   });
 }

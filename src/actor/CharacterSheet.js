@@ -210,7 +210,9 @@ export default class CharacterSheet extends ActorSheet {
   _activateRolls(html) {
     const actor = this.actor;
     html.find("a.success-roll").click(function () {
-      successRollDialog(this.textContent, this.dataset.targetNumber, { actor });
+      successRollDialog(this.textContent + " Roll", this.dataset.targetNumber, {
+        actor,
+      });
     });
     html.find("button.attack-roll").click(function () {
       const label = this.dataset.label;
