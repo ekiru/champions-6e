@@ -19,7 +19,7 @@ async function addMessage(flavor, response, options) {
 }
 
 const successMessage = (label, tn, delta) => {
-  return `<strong>Success</strong> at ${label} (TN: ${tn}-) by ${delta}`;
+  return `Succeeded at ${label} (TN: ${tn}-) by ${delta}`;
 };
 const failureMessage = (label, tn, delta) => {
   return `Failed at ${label} (TN: ${tn}-) by ${delta}`;

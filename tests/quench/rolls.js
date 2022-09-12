@@ -149,8 +149,8 @@ export function register(system, quench) {
             expect(result.message.isRoll).to.be.true;
           });
 
-          it("the message should say Success", function () {
-            expect(result.message.flavor).to.include("Success");
+          it("the message should say succeeded", function () {
+            expect(result.message.flavor).to.include("Succeeded");
           });
 
           it("should include the margin of success", function () {
