@@ -18,11 +18,11 @@ async function addMessage(flavor, response, options) {
   }
 }
 
-const successMessage = (label, delta) => {
-  return `<strong>Success</strong> at ${label} by ${delta}`;
+const successMessage = (label, tn, delta) => {
+  return `<strong>Success</strong> at ${label} (TN: ${tn}-) by ${delta}`;
 };
-const failureMessage = (label, delta) => {
-  return `Failed at ${label} by ${delta}`;
+const failureMessage = (label, tn, delta) => {
+  return `Failed at ${label} (TN: ${tn}-) by ${delta}`;
 };
 
 /**
@@ -57,8 +57,8 @@ export async function performSuccessRoll(targetNumber, options = {}) {
   };
   const label = options.label ?? "Success Roll";
   const flavor = success
-    ? successMessage(label, delta)
-    : failureMessage(label, delta);
+    ? successMessage(label, targetNumber, delta)
+    : failureMessage(label, targetNumber, delta);
   await addMessage(flavor, response, options);
   return response;
 }
@@ -85,13 +85,15 @@ export async function successRollDialog(label, targetNumber, { actor } = {}) {
   });
 }
 
-const hitMessage = (label, delta) => {
+const hitMessage = (label, tn, delta) => {
+  const withTn = tn ? ` (TN: ${tn}-) ` : "";
   const byDelta = delta ? ` by ${delta}` : "";
-  return `${label} hit${byDelta}.`;
+  return `${label}${withTn} hit${byDelta}.`;
 };
-const missMessage = (label, delta) => {
+const missMessage = (label, tn, delta) => {
+  const withTn = tn ? ` (TN: ${tn}-) ` : "";
   const byDelta = delta ? ` by ${delta}` : "";
-  return `${label} missed${byDelta}.`;
+  return `${label}${withTn} missed${byDelta}.`;
 };
 /**
  * Rolls an attack roll against a known DCV.
@@ -112,8 +114,8 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
   const label = options.label ?? "Attack";
   const delta = successRoll.margin;
   const messageText = successRoll.success
-    ? hitMessage(label, delta)
-    : missMessage(label, delta);
+    ? hitMessage(label, tn, delta)
+    : missMessage(label, tn, delta);
   const response = {
     hits: successRoll.success,
     roll: successRoll.roll,

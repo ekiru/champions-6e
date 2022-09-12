@@ -129,6 +129,11 @@ export function register(system, quench) {
           expect(result.success).to.be.true;
         });
 
+        it("should include the TN in the message", async function () {
+          result = await rolls.performSuccessRoll(14);
+          expect(result.message.flavor).to.include("(TN: 14-)");
+        });
+
         describe("on a successful roll", function () {
           const label = "STR";
           beforeEach(async function () {
@@ -259,6 +264,11 @@ export function register(system, quench) {
               it("should include margin of failure", function () {
                 expect(result.message.flavor).to.include("by 7");
               });
+            });
+
+            it("should include the TN", async function () {
+              result = await rolls.performAttackRollWithKnownDcv(9, 12);
+              expect(result.message.flavor).to.include("(TN: 8-)");
             });
 
             it("should include the actor, if supplied, as speaker", async function () {
