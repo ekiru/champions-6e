@@ -56,7 +56,21 @@
     }
   },
   "Item": {
-    "types": ["skill"],
+    "types": ["attack", "skill"],
+    "attack": {
+      "cv": {
+        "defensive": "dcv",
+        "offensive": "ocv"
+      },
+      "damage": {
+        "dice": 2,
+        "type": "normal"
+      },
+      "defense": {
+        "value": ""
+      },
+      "description": "<p></p>"
+    },
     "skill": {
       "description": "<p></p>",
       "targetNumber": {
