@@ -1,16 +1,25 @@
 /* eslint-env jest */
 import FieldBuilder from "../../../src/sheets/FieldBuilder.js";
 
+const htmlEnricher = {
+  enrichHTML: async function (value) {
+    return `html: ${value}`;
+  },
+};
+
 describe("Field builders", function () {
   describe("plain data fields", function () {
     let fields;
     beforeAll(function () {
-      fields = new FieldBuilder({
-        abc: {
-          def: 3,
+      fields = new FieldBuilder(
+        {
+          abc: {
+            def: 3,
+          },
+          ghi: "estradiol",
         },
-        ghi: "estradiol",
-      });
+        { htmlEnricher: null }
+      );
     });
 
     describe("with nested paths", function () {
@@ -35,6 +44,23 @@ describe("Field builders", function () {
 
     it("should allow text fields", function () {
       expect(fields.text("", "ghi").value).toBe("estradiol");
+    });
+  });
+
+  describe("html fields", function () {
+    let fields;
+    beforeAll(function () {
+      fields = new FieldBuilder(
+        {
+          html: "<p>💟</p>",
+        },
+        { htmlEnricher }
+      );
+    });
+
+    it("should enrich the HTML", async function () {
+      const field = await fields.html("Some html", "html");
+      expect(field.value).toBe("html: <p>💟</p>");
     });
   });
 });
