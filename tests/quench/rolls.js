@@ -365,6 +365,15 @@ export function register(system, quench) {
               expect(result.message.flavor).to.include("can hit DCV = 10");
             });
 
+            it("should say it can hit the correct characteristic", async function () {
+              const Roll = fakeRoller(10);
+              result = await rolls.performAttackRollWithUnknownDcv(9, {
+                Roll,
+                dcvLabel: "DMCV",
+              });
+              expect(result.message.flavor).to.include("can hit DMCV = 10");
+            });
+
             it("should say it hit on a 3", async function () {
               const Roll = fakeRoller(3);
               result = await rolls.performAttackRollWithUnknownDcv(0, { Roll });

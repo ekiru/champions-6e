@@ -124,14 +124,15 @@ export async function performAttackRollWithKnownDcv(ocv, dcv, options = {}) {
   return response;
 }
 
-const canHitMessageTemplate = ({ label, dcv }) =>
-  `${label} can hit DCV = ${dcv}`;
+const canHitMessageTemplate = ({ label, dcv, dcvLabel }) =>
+  `${label} can hit ${dcvLabel} = ${dcv}`;
 
 /**
  * Rolls an attack roll against an unknown DCV;
  *
  * @param {number} ocv The OCV of the attack.
  * @param {object} options Options: {@code Roll} allows using a custom Roll class.
+ * {@code dcvLabel} is the name of the targeted DCV, defaulting to DCV.
  * @returns {object} An object. {@code canHit} indicates the highest DCV that the
  * roll will hit, or true or false to signify a 3/18 (i.e. hits/misses regardless of
  * DCV). {@code message} is the ChatMessage displayed, if any.
@@ -149,6 +150,7 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
   }
   let messageText;
   const label = options.label ?? "Attack";
+  const dcvLabel = options.dcvLabel ?? "DCV";
   if (canHit === true) {
     messageText = hitMessage(label);
   } else if (!canHit) {
@@ -157,6 +159,7 @@ export async function performAttackRollWithUnknownDcv(ocv, options = {}) {
     messageText = canHitMessageTemplate({
       label: options.label ?? "Attack",
       dcv: canHit,
+      dcvLabel,
     });
   }
   const response = {
@@ -176,17 +179,26 @@ const attackRollTemplate =
  * @param {number} ocv The default OCV.
  *  @param {object} options Options to customize the dialog or chat message.
  * @param {Actor} options.actor The actor for whom the roll is being performed.
+ * @param {string} options.dcvLabel A label for which of DCV/DMCV is being targeted.
  */
-export async function attackRollDialog(label, ocv, { actor } = {}) {
+export async function attackRollDialog(
+  label,
+  ocv,
+  { actor, dcvLabel = "DCV" } = {}
+) {
   const title = `${label ? label + " " : ""}Attack Roll`;
-  const context = { label, ocv };
+  const context = { label, ocv, dcvLabel };
   await rollDialog(title, attackRollTemplate, context, (html) => {
     const ocv = html.find("input[name='ocv']").get(0).value;
     const dcv = html.find("input[name='dcv']").get(0).value;
     if (dcv !== "") {
-      performAttackRollWithKnownDcv(Number(ocv), Number(dcv), { actor, label });
+      performAttackRollWithKnownDcv(Number(ocv), Number(dcv), {
+        actor,
+        label,
+        dcvLabel,
+      });
     } else {
-      performAttackRollWithUnknownDcv(Number(ocv), { actor, label });
+      performAttackRollWithUnknownDcv(Number(ocv), { actor, label, dcvLabel });
     }
   });
 }

@@ -246,7 +246,11 @@ export default class CharacterSheet extends ActorSheet {
     html.find(".attack-roll").click(function () {
       const label = this.dataset.label;
       const ocv = Number(this.dataset.ocv);
-      attackRollDialog(label, ocv, { actor });
+      const options = { actor };
+      if ("dcvLabel" in this.dataset) {
+        options.dcvLabel = this.dataset.dcvLabel;
+      }
+      attackRollDialog(label, ocv, options);
     });
     html.find(".damage-roll").click(function () {
       const dice = Number(this.dataset.dice);
