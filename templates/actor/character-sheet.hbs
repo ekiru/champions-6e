@@ -283,6 +283,10 @@
                   <i class="fas fa-dice"></i>
                   {{diceString}}
                 </a>
+                {{#if defense}}
+                  vs.
+                  <span class="defense">{{defense}}</span>
+                {{/if}}
               </td>
               {{#unless basic}}
                 <td class="item-controls">

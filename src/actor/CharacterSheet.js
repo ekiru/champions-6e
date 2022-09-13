@@ -163,6 +163,7 @@ export default class CharacterSheet extends ActorSheet {
           dcv: {
             label: "DCV",
           },
+          defense: "Physical",
           dice: this.actor.system.characteristics.str.hthDamage,
           diceString: formatDice(
             this.actor.system.characteristics.str.hthDamage
@@ -172,6 +173,7 @@ export default class CharacterSheet extends ActorSheet {
           basic: true,
           label: "Presence Attack",
           damageType: "normal", // eventually "effect"
+          defense: "PRE",
           dice: this.actor.system.characteristics.pre.presenceAttackDice,
           diceString: formatDice(
             this.actor.system.characteristics.pre.presenceAttackDice
@@ -195,6 +197,7 @@ export default class CharacterSheet extends ActorSheet {
           label: dcv.toUpperCase(),
         },
         damageType: attack.system.damage.type,
+        defense: attack.system.defense.value,
         dice,
         diceString: formatDice(dice),
       });
