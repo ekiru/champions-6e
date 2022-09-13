@@ -151,8 +151,9 @@ export default class CharacterSheet extends ActorSheet {
       damageRoll: {
         label: "Damage Roll",
       },
-      basicAttacks: {
-        hthAttack: {
+      attacks: [
+        {
+          basic: true,
           label: "Basic HTH Attack",
           damageType: "normal",
           dice: this.actor.system.characteristics.str.hthDamage,
@@ -160,7 +161,8 @@ export default class CharacterSheet extends ActorSheet {
             this.actor.system.characteristics.str.hthDamage
           ),
         },
-        presenceAttack: {
+        {
+          basic: true,
           label: "Presence Attack",
           damageType: "normal", // eventually "effect"
           dice: this.actor.system.characteristics.pre.presenceAttackDice,
@@ -168,8 +170,19 @@ export default class CharacterSheet extends ActorSheet {
             this.actor.system.characteristics.pre.presenceAttackDice
           ),
         },
-      },
+      ],
     };
+
+    this.actor.itemTypes.attack.forEach((attack) => {
+      const dice = attack.system.damage.dice;
+      context.combat.attacks.push({
+        id: attack.id,
+        label: attack.name,
+        damageType: attack.system.damage.type,
+        dice,
+        diceString: formatDice(dice),
+      });
+    });
 
     return context;
   }

@@ -203,7 +203,7 @@
                 <a class="item-control item-edit" title="Edit Skill">
                   <i class="fas fa-edit"></i>
                 </a>
-                <a class="item-control item-delete" title="Edit Skill">
+                <a class="item-control item-delete" title="Delete Skill">
                   <i class="fas fa-trash"></i>
                 </a>
               </td>
@@ -234,11 +234,20 @@
       </div>
       <table class="attacks">
         <thead>
-          <tr><th>Attack</th> <th>Effect</th></tr>
+          <tr>
+            <th>Attack</th>
+            <th>Effect</th>
+            <th>
+              <a class="item-create" data-type="attack">
+                <i class="fas fa-plus"></i>
+                Add Attack
+              </a>
+            </th>
+          </tr>
         </thead>
         <tbody>
-          {{#each combat.basicAttacks}}
-            <tr>
+          {{#each combat.attacks}}
+            <tr class="actor-item" data-item-id="{{id}}">
               <td>{{label}}</td>
               <td>
                 <a
@@ -251,6 +260,18 @@
                   {{diceString}}
                 </a>
               </td>
+              {{#unless basic}}
+                <td class="item-controls">
+                  <a class="item-control item-edit" title="Edit Attack">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a class="item-control item-delete" title="Delete Attack">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </td>
+              {{else}}
+                <td></td>
+              {{/unless}}
             </tr>
           {{/each}}
         </tbody>
