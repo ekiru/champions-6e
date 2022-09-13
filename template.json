@@ -73,6 +73,12 @@
     },
     "skill": {
       "description": "<p></p>",
+      "type": "misc",
+      "bonus": {
+        "value": 0
+      },
+      "characteristic": "dex",
+      "level": "full",
       "targetNumber": {
         "value": 11
       }
