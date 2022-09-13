@@ -6,6 +6,14 @@ export default class FeedBuilder {
   }
 
   number(label, path) {
+    return this.#field(label, path);
+  }
+
+  text(label, path) {
+    return this.#field(label, path);
+  }
+
+  #field(label, path) {
     return { label, path, value: this.#get(path) };
   }
 
