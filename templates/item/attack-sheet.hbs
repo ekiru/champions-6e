@@ -50,7 +50,9 @@
       <p>
         {{#with attributes.defense}}
           <label>{{label}}</label>
-          <input type="text" name="{{path}}" value="{{value}}" />
+          <select name="{{path}}">
+            {{selectOptions options selected=value}}
+          </select>
         {{/with}}
       </p>
     </div>

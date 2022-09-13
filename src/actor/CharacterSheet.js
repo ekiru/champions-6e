@@ -1,4 +1,5 @@
 import { Characteristic } from "../mechanics/characteristics.js";
+import { DEFENSE_TYPES } from "../mechanics/damage.js";
 import {
   attackRollDialog,
   damageRollDialog,
@@ -197,7 +198,9 @@ export default class CharacterSheet extends ActorSheet {
           label: dcv.toUpperCase(),
         },
         damageType: attack.system.damage.type,
-        defense: attack.system.defense.value,
+        defense:
+          attack.system.defense.value &&
+          DEFENSE_TYPES[attack.system.defense.value],
         dice,
         diceString: formatDice(dice),
       });

@@ -1,3 +1,9 @@
+export const DEFENSE_TYPES = Object.freeze({
+  pd: "Physical",
+  ed: "Energy",
+  "": "None",
+});
+
 /**
  * Sums an array of numbers.
  *

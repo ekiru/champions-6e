@@ -1,3 +1,4 @@
+import { DEFENSE_TYPES } from "../mechanics/damage.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
 
 export default class AttackSheet extends ItemSheet {
@@ -40,7 +41,11 @@ export default class AttackSheet extends ItemSheet {
           effect: "Effect-Only",
         }),
       },
-      defense: fields.text("Targeted Defense", "system.defense.value"),
+      defense: fields.selection(
+        "Targeted Defense",
+        "system.defense.value",
+        DEFENSE_TYPES
+      ),
     };
 
     context.bio = {
