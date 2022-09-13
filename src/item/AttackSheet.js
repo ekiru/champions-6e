@@ -29,7 +29,7 @@ export default class AttackSheet extends ItemSheet {
         }),
         defensive: fields.selection("vs.", "system.cv.defensive", {
           dcv: "DCV",
-          dmvc: "DMCV",
+          dmcv: "DMCV",
         }),
       },
       damage: {

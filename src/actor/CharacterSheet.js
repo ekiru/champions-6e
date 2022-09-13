@@ -156,6 +156,13 @@ export default class CharacterSheet extends ActorSheet {
           basic: true,
           label: "Basic HTH Attack",
           damageType: "normal",
+          ocv: {
+            label: "OCV",
+            value: context.characteristics.cvs.ocv.value,
+          },
+          dcv: {
+            label: "DCV",
+          },
           dice: this.actor.system.characteristics.str.hthDamage,
           diceString: formatDice(
             this.actor.system.characteristics.str.hthDamage
@@ -175,9 +182,18 @@ export default class CharacterSheet extends ActorSheet {
 
     this.actor.itemTypes.attack.forEach((attack) => {
       const dice = attack.system.damage.dice;
+      const ocv = attack.system.cv.offensive;
+      const dcv = attack.system.cv.defensive;
       context.combat.attacks.push({
         id: attack.id,
         label: attack.name,
+        ocv: {
+          label: ocv.toUpperCase(),
+          value: context.characteristics.cvs[ocv].value,
+        },
+        dcv: {
+          label: dcv.toUpperCase(),
+        },
         damageType: attack.system.damage.type,
         dice,
         diceString: formatDice(dice),
@@ -227,7 +243,7 @@ export default class CharacterSheet extends ActorSheet {
         actor,
       });
     });
-    html.find("button.attack-roll").click(function () {
+    html.find(".attack-roll").click(function () {
       const label = this.dataset.label;
       const ocv = Number(this.dataset.ocv);
       attackRollDialog(label, ocv, { actor });

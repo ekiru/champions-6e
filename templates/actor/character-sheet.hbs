@@ -236,6 +236,7 @@
         <thead>
           <tr>
             <th>Attack</th>
+            <th>Roll</th>
             <th>Effect</th>
             <th>
               <a class="item-create" data-type="attack">
@@ -248,7 +249,29 @@
         <tbody>
           {{#each combat.attacks}}
             <tr class="actor-item" data-item-id="{{id}}">
-              <td>{{label}}</td>
+              <td>
+                {{#if ocv}}
+                  <a
+                    class="attack-roll"
+                    data-label="{{label}}"
+                    data-ocv="{{ocv.value}}"
+                  >
+                    <i class="fas fa-dice"></i>
+                    {{label}}
+                  </a>
+                {{else}}
+                  {{label}}
+                {{/if}}
+              </td>
+              <td>
+                {{#if ocv}}
+                  {{ocv.label}}
+                  vs.
+                  {{dcv.label}}
+                {{else}}
+                  N/A
+                {{/if}}
+              </td>
               <td>
                 <a
                   class="damage-roll"
