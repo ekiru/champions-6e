@@ -17,6 +17,17 @@ export default class FeedBuilder {
     return this.#field(label, path);
   }
 
+  selection(label, path, options) {
+    const field = this.#field(label, path);
+    field.options = options;
+    if (field.value in options) {
+      field.valueLabel = options[field.value];
+    } else {
+      throw new Error(`current value "${field.value}" is not a valid option`);
+    }
+    return field;
+  }
+
   text(label, path) {
     return this.#field(label, path);
   }
