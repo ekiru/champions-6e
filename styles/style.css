@@ -57,22 +57,22 @@ div.tab.characteristics > table {
   grid-column-end: span 1;
 }
 
-/* Skill sheets */
-form.skill header {
+/* Item sheets */
+form.item header {
   display: flex;
   flex-direction: row;
   column-gap: 1em;
 }
 
-form.skill header > img {
+form.item header > img {
   flex: 0;
 }
-form.skill header > .name {
+form.item header > .name {
   flex: 1;
   font-size: large;
 }
 
-form.skill .tab.notes {
+form.item .tab.notes {
   min-height: 200px;
 }
 

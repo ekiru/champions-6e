@@ -1,6 +1,7 @@
 import ChampionsActor from "./actor/ChampionsActor.js";
 import ChampionsItem from "./item/ChampionsItem.js";
 import CharacterSheet from "./actor/CharacterSheet.js";
+import AttackSheet from "./item/AttackSheet.js";
 import SkillSheet from "./item/SkillSheet.js";
 import EuclideanRuler from "./documents/EuclideanRuler.js";
 
@@ -22,6 +23,11 @@ Hooks.once("init", function () {
     makeDefault: true,
   });
   Items.unregisterSheet("core", ItemSheet);
+  Items.registerSheet("champions-6e", AttackSheet, {
+    label: "Champions Attack",
+    types: ["attack"],
+    makeDefault: true,
+  });
   Items.registerSheet("champions-6e", SkillSheet, {
     label: "Champions Skill",
     types: ["skill"],

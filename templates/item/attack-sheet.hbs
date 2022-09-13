@@ -1,0 +1,66 @@
+<form class="{{cssClass}} item {{item.type}}" autocomplete="off">
+  <header>
+    <img
+      src="{{item.img}}"
+      data-edit="img"
+      title="{{item.name}}"
+      height="64"
+      width="64"
+    />
+    <div class="name">
+      <input type="text" id="name" name="name" value="{{item.name}}" />
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a class="item" data-tab="attributes">Attributes</a>
+    <a class="item" data-tab="description">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab attributes" data-tab="attributes">
+      <p>
+        {{#with attributes.cv.offensive}}
+          <label>{{label}}</label>
+          <select name="{{path}}">
+            {{selectOptions options selected=value}}
+          </select>
+        {{/with}}
+        {{#with attributes.cv.defensive}}
+          <label>{{label}}</label>
+          <select name="{{path}}">
+            {{selectOptions options selected=value}}
+          </select>
+        {{/with}}
+      </p>
+      <p>
+        {{#with attributes.damage.dice}}
+          <label>{{label}}</label>
+          {{numberInput value name=path}}
+        {{/with}}
+      </p>
+      <p>
+        {{#with attributes.damage.type}}
+          <label>{{label}}</label>
+          <select name="{{path}}">
+            {{selectOptions options selected=value}}
+          </select>
+        {{/with}}
+      </p>
+      <p>
+        {{#with attributes.defense}}
+          <label>{{label}}</label>
+          <input type="text" name="{{path}}" value="{{value}}" />
+        {{/with}}
+      </p>
+    </div>
+    <div class="tab notes flexcol" data-tab="description">
+      {{editor
+        bio.description.value
+        target=bio.description.path
+        button=true
+        editable=editable
+      }}
+    </div>
+  </section>
+</form>

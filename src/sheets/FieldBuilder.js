@@ -2,7 +2,7 @@ export default class FeedBuilder {
   #htmlEnricher;
   #object;
 
-  constructor(object, { htmlEnricher = TextEditor }) {
+  constructor(object, { htmlEnricher = TextEditor } = {}) {
     this.#htmlEnricher = htmlEnricher;
     this.#object = object;
   }
