@@ -57,8 +57,17 @@ export default class ChampionsItem extends Item {
           changes.system.level = "full";
         }
       }
+    } else if (newType === "background" && type == "characteristic") {
+      // char -> bg: convert to a characteristic-based KS.
+      changes.system = changes.system ?? {};
+      if (changes.system.backgroundType === undefined) {
+        changes.system.backgroundType = "knowledge";
+      }
+      if (changes.system.level === undefined) {
+        changes.system.level = "characteristic";
+      }
     } else if (newType === "characteristic" && type === "misc") {
-      // misc → char: restore defaults unless overriden.
+      // misc → char: restore defaults unless overridden.
       changes.system = changes.system ?? {};
       if (changes.system.bonus?.value === undefined) {
         changes.system.bonus = changes.system.bonus ?? {};

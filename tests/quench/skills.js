@@ -277,6 +277,24 @@ export function register(system, quench) {
           expect(skill.system.type).to.equal("misc");
           expect(skill.system.targetNumber.value).to.equal(5);
         });
+
+        describe("when changing to a background skill", function () {
+          it("should become a characteristic-based background skill", async function () {
+            await charSkill("pre", +2);
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.level).to.equal("characteristic");
+          });
+
+          it("should default to being a KS", async function () {
+            await charSkill("pre", +2, { backgroundType: "professional" });
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.backgroundType).to.equal("knowledge");
+          });
+        });
       });
 
       describe("Background skills", function () {
