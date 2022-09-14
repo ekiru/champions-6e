@@ -115,6 +115,14 @@ export function register(system, quench) {
             expect(skill.system.level).to.equal("full");
           });
 
+          it("should be a familiarity if its TN was 8", async function () {
+            await miscSkill(8);
+            await skill.update({ "system.type": "characteristic" });
+
+            expect(skill.system.type).to.equal("characteristic");
+            expect(skill.system.level).to.equal("familiarity");
+          });
+
           it("should have the default bonus of 0", async function () {
             await miscSkill(15, { bonus: { value: 3 } });
             await skill.update({ "system.type": "characteristic" });

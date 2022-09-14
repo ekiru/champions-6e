@@ -40,8 +40,18 @@ export default class ChampionsItem extends Item {
       if (changes.system.characteristic === undefined) {
         changes.system.characteristic = "dex";
       }
+      // if tn is 8 or 10, set level to keep that, otherwise full.
       if (changes.system.level === undefined) {
-        changes.system.level = "full";
+        switch (this.system.targetNumber.value) {
+          case 8:
+            changes.system.level = "familiarity";
+            break;
+          case 10:
+            changes.system.level = "proficiency";
+            break;
+          default:
+            changes.system.level = "full";
+        }
       }
     }
   }
