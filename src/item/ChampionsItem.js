@@ -64,6 +64,9 @@ export default class ChampionsItem extends Item {
   }
 
   #backgroundTargetNumber() {
+    if (this.system.level === "familiarity") {
+      return 8;
+    }
     return 11 + this.system.bonus.value;
   }
 

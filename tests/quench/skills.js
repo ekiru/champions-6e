@@ -253,9 +253,10 @@ export function register(system, quench) {
          *
          * @param {"knowledge" | "professional" | "science"} backgroundType The type
          * of background skill.
-         * @param {*} bonus The bonus for the background skill.
+         * @param {number} bonus The bonus for the background skill.
+         * @param {*} rest Additional system properties for the skill.
          */
-        async function bgSkill(backgroundType, bonus) {
+        async function bgSkill(backgroundType, bonus, rest) {
           skill = await Item.create({
             type: "skill",
             name: "Romance",
@@ -263,6 +264,7 @@ export function register(system, quench) {
               type: "background",
               backgroundType,
               bonus: { value: bonus },
+              ...rest,
             },
           });
         }
@@ -276,6 +278,11 @@ export function register(system, quench) {
           it("should add the bonus to their TN", async function () {
             await bgSkill("knowledge", +3);
             expect(skill.targetNumber).to.equal(14);
+          });
+
+          it("should always have a TN of 8 for familiarity", async function () {
+            await bgSkill("knowledge", +3, { level: "familiarity" });
+            expect(skill.targetNumber).to.equal(8);
           });
         });
       });
