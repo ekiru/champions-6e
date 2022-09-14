@@ -5,6 +5,7 @@ import {
   damageRollDialog,
   successRollDialog,
 } from "../rolls.js";
+import { compareBy } from "../util/sort.js";
 
 /**
  * Turns a number of dice into a textual dice string.
@@ -151,6 +152,9 @@ export default class CharacterSheet extends ActorSheet {
         targetNumber,
       };
       context.skills[skill.system.type].push(skillData);
+    }
+    for (const skillList of Object.values(context.skills)) {
+      skillList.sort(compareBy((skill) => skill.name));
     }
 
     context.combat = {
