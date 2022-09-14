@@ -153,6 +153,32 @@ export function register(system, quench) {
             expect(skill.system.bonus.value).to.equal(0);
           });
         });
+
+        describe("when changed to a background skill", function () {
+          it("should default characteristics to DEX", async function () {
+            await miscSkill(14, { characteristic: "pre" });
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.characteristic).to.equal("dex");
+          });
+
+          it("should default level to full for most TNs", async function () {
+            await miscSkill(12, { level: "familiarity" });
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.level).to.equal("full");
+          });
+
+          it("should default bonus to 0", async function () {
+            await miscSkill(13, { bonus: { value: +4 } });
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.bonus.value).to.equal(+0);
+          });
+        });
       });
 
       describe("Characteristic-based skills", function () {
@@ -245,6 +271,7 @@ export function register(system, quench) {
           await skill.delete();
           if (actor) {
             await actor.delete();
+            actor = null;
           }
         });
 
@@ -346,6 +373,16 @@ export function register(system, quench) {
               { "characteristics.pre.value": 25 }
             );
             expect(skill.targetNumber).to.equal(16);
+          });
+        });
+
+        describe("when changed to a misc skill", function () {
+          it("should preserve the target number", async function () {
+            await bgSkill("science", +2);
+            await skill.update({ "system.type": "misc" });
+
+            expect(skill.system.type).to.equal("misc");
+            expect(skill.targetNumber).to.equal(13);
           });
         });
       });

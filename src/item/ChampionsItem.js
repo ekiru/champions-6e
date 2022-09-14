@@ -29,16 +29,32 @@ export default class ChampionsItem extends Item {
   async _preUpdate(changes) {
     const type = this.system.type;
     const newType = changes.system?.type ?? type;
-    if (newType === "misc" && type === "characteristic") {
-      // char → misc: preserve target number unless overriden.
+    if (
+      newType === "misc" &&
+      (type === "characteristic" || type === "background")
+    ) {
+      // bg/char → misc: preserve target number unless overriden.
       if (changes.system.targetNumber === undefined) {
         changes.system.targetNumber = {};
       }
       if (changes.system.targetNumber.value === undefined) {
         changes.system.targetNumber.value = this.targetNumber;
       }
+    } else if (newType === "background" && type === "misc") {
+      // misc → bg: restore defaults unless overridden.
+      changes.system = changes.system ?? {};
+      if (changes.system.bonus?.value === undefined) {
+        changes.system.bonus = changes.system.bonus ?? {};
+        changes.system.bonus.value = 0;
+      }
+      if (changes.system.characteristic === undefined) {
+        changes.system.characteristic = "dex";
+      }
+      if (changes.system.level === undefined) {
+        changes.system.level = "full";
+      }
     } else if (newType === "characteristic" && type === "misc") {
-      // misc → char: restore defaults unless overriden
+      // misc → char: restore defaults unless overriden.
       changes.system = changes.system ?? {};
       if (changes.system.bonus?.value === undefined) {
         changes.system.bonus = changes.system.bonus ?? {};
