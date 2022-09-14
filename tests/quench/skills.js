@@ -255,18 +255,30 @@ export function register(system, quench) {
          * of background skill.
          * @param {number} bonus The bonus for the background skill.
          * @param {*} rest Additional system properties for the skill.
+         * @param {*} actorData Any system data for the actor. The actor is only created if
+         * this parameter is supplied.
          */
-        async function bgSkill(backgroundType, bonus, rest) {
-          skill = await Item.create({
-            type: "skill",
-            name: "Romance",
-            system: {
-              type: "background",
-              backgroundType,
-              bonus: { value: bonus },
-              ...rest,
+        async function bgSkill(backgroundType, bonus, rest, actorData) {
+          if (actorData) {
+            actor = await Actor.create({
+              type: "character",
+              name: "Carane",
+              system: actorData,
+            });
+          }
+          skill = await Item.create(
+            {
+              type: "skill",
+              name: "Romance",
+              system: {
+                type: "background",
+                backgroundType,
+                bonus: { value: bonus },
+                ...rest,
+              },
             },
-          });
+            { parent: actor }
+          );
         }
 
         describe("that are not based on a characteristic", function () {
@@ -283,6 +295,57 @@ export function register(system, quench) {
           it("should always have a TN of 8 for familiarity", async function () {
             await bgSkill("knowledge", +3, { level: "familiarity" });
             expect(skill.targetNumber).to.equal(8);
+          });
+        });
+
+        describe("that are based on a characteristic", function () {
+          /**
+           * Creates a background skill that is based on a characteristic.
+           *
+           * @param {"knowledge" | "professional" | "science"} backgroundType The type
+           * of background skill.
+           * @param {string} characteristic The characteristic to base the skill on.
+           * @param {number} bonus The bonus for the background skill.
+           * @param {*} rest Additional system properties for the skill.
+           * @param {*} actorData Any system data for the actor. The actor is only
+           * created if this parameter is supplied.
+           */
+          async function charSkill(
+            backgroundType,
+            characteristic,
+            bonus,
+            rest,
+            actorData = {}
+          ) {
+            await bgSkill(
+              backgroundType,
+              bonus,
+              { characteristic, level: "characteristic", ...rest },
+              actorData
+            );
+          }
+
+          it("should have a base target number determined by the characteristic", async function () {
+            await charSkill(
+              "professional",
+              "pre",
+              +0,
+              {},
+              { "characteristics.pre.value": 25 }
+            );
+
+            expect(skill.targetNumber).to.equal(14);
+          });
+
+          it("should include the bonus in its target number", async function () {
+            await charSkill(
+              "professional",
+              "pre",
+              +2,
+              {},
+              { "characteristics.pre.value": 25 }
+            );
+            expect(skill.targetNumber).to.equal(16);
           });
         });
       });
