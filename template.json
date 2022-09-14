@@ -74,6 +74,7 @@
     "skill": {
       "description": "<p></p>",
       "type": "misc",
+      "backgroundType": "knowledge",
       "bonus": {
         "value": 0
       },

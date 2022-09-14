@@ -61,6 +61,28 @@ export function register(system, quench) {
         });
       });
 
+      describe("A new background skill", function () {
+        let skill;
+        beforeEach(async function () {
+          skill = await Item.create({
+            type: "skill",
+            name: "Game Master",
+            "system.type": "background",
+          });
+        });
+        afterEach(async function () {
+          await skill.delete();
+        });
+
+        it("should default to a level of full", function () {
+          expect(skill.system.level).to.equal("full");
+        });
+
+        it("should default to a background type of KS", function () {
+          expect(skill.system.backgroundType).to.equal("knowledge");
+        });
+      });
+
       describe("Miscellaneous skills", function () {
         let skill;
         afterEach(async function () {
