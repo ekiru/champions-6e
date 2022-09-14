@@ -425,6 +425,28 @@ export function register(system, quench) {
             );
             expect(skill.targetNumber).to.equal(16);
           });
+
+          describe("when changed to a char-based skill", function () {
+            beforeEach(async function () {
+              await charSkill("professional", "int", +2);
+              await skill.update({ "system.type": "characteristic" });
+            });
+
+            it("should have the full level", async function () {
+              expect(skill.system.type).to.equal("characteristic");
+              expect(skill.system.level).to.equal("full");
+            });
+
+            it("should retain its characteristic", async function () {
+              expect(skill.system.type).to.equal("characteristic");
+              expect(skill.system.characteristic).to.equal("int");
+            });
+
+            it("should retain its bonus", async function () {
+              expect(skill.system.type).to.equal("characteristic");
+              expect(skill.system.bonus.value).to.equal(+2);
+            });
+          });
         });
 
         describe("when changed to a misc skill", function () {

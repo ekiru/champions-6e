@@ -106,6 +106,15 @@ export default class ChampionsItem extends Item {
             changes.system.level = "full";
         }
       }
+    } else if (
+      newType === "characteristic" &&
+      type === "background" &&
+      this.system.level === "characteristic"
+    ) {
+      // bg(char-base) → char-based: basically retain everything, except level → full
+      if (changes.system.level === undefined) {
+        changes.system.level = "full";
+      }
     }
   }
 
