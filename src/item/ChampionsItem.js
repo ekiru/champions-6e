@@ -19,6 +19,19 @@ export default class ChampionsItem extends Item {
     }
   }
 
+  async _preUpdate(changes) {
+    const type = this.system.type;
+    const newType = changes.system?.type ?? type;
+    if (newType === "misc" && type === "characteristic") {
+      if (changes.system.targetNumber === undefined) {
+        changes.system.targetNumber = {};
+      }
+      if (changes.system.targetNumber.value === undefined) {
+        changes.system.targetNumber.value = this.targetNumber;
+      }
+    }
+  }
+
   #characteristicBasedTargetNumber() {
     switch (this.system.level) {
       case "familiarity":
