@@ -64,7 +64,24 @@ export default class ChampionsItem extends Item {
         changes.system.backgroundType = "knowledge";
       }
       if (changes.system.level === undefined) {
-        changes.system.level = "characteristic";
+        switch (this.system.level) {
+          case "familiarity":
+            // retain familiarity
+            break;
+          case "proficiency":
+            changes.system.level = "full";
+            if (changes.system.bonus?.value === undefined) {
+              changes.system.bonus = changes.system.bonus ?? {};
+              changes.system.bonus.value = 0;
+            }
+            break;
+          case "full":
+            changes.system.level = "characteristic";
+            break;
+          default:
+            // invalid level?
+            assert.notYetImplemented();
+        }
       }
     } else if (newType === "characteristic" && type === "misc") {
       // misc → char: restore defaults unless overridden.

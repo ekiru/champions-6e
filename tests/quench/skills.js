@@ -294,6 +294,24 @@ export function register(system, quench) {
             expect(skill.system.type).to.equal("background");
             expect(skill.system.backgroundType).to.equal("knowledge");
           });
+
+          it("should stay a familiarity if it was one", async function () {
+            await charSkill("pre", +0, { level: "familiarity" });
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.level).to.equal("familiarity");
+          });
+
+          it("proficiencies should become full (11-) rolls with no bonus and the same characteristic", async function () {
+            await charSkill("pre", +2, { level: "proficiency" });
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.level).to.equal("full");
+            expect(skill.system.bonus.value).to.equal(0);
+            expect(skill.system.characteristic).to.equal("pre");
+          });
         });
       });
 
