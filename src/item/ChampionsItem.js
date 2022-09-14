@@ -2,6 +2,11 @@ import { Characteristic } from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
 
 export default class ChampionsItem extends Item {
+  /**
+   * Calculates the target number for the skill.
+   *
+   * @returns {number} The target number.
+   */
   get targetNumber() {
     assert.precondition(
       this.type === "skill",
@@ -13,6 +18,8 @@ export default class ChampionsItem extends Item {
         return this.system.targetNumber.value;
       case "characteristic":
         return this.#characteristicBasedTargetNumber();
+      case "background":
+        return this.#backgroundTargetNumber();
       default:
         assert.notYetImplemented();
         return 0;
@@ -54,6 +61,10 @@ export default class ChampionsItem extends Item {
         }
       }
     }
+  }
+
+  #backgroundTargetNumber() {
+    return 11 + this.system.bonus.value;
   }
 
   #characteristicBasedTargetNumber() {

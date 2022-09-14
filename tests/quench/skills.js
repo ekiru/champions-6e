@@ -237,6 +237,48 @@ export function register(system, quench) {
           expect(skill.system.targetNumber.value).to.equal(5);
         });
       });
+
+      describe("Background skills", function () {
+        let actor;
+        let skill;
+        afterEach(async function () {
+          await skill.delete();
+          if (actor) {
+            await actor.delete();
+          }
+        });
+
+        /**
+         * Creates a background skill.
+         *
+         * @param {"knowledge" | "professional" | "science"} backgroundType The type
+         * of background skill.
+         * @param {*} bonus The bonus for the background skill.
+         */
+        async function bgSkill(backgroundType, bonus) {
+          skill = await Item.create({
+            type: "skill",
+            name: "Romance",
+            system: {
+              type: "background",
+              backgroundType,
+              bonus: { value: bonus },
+            },
+          });
+        }
+
+        describe("that are not based on a characteristic", function () {
+          it("should have a base TN of 11-", async function () {
+            await bgSkill("knowledge", +0);
+            expect(skill.targetNumber).to.equal(11);
+          });
+
+          it("should add the bonus to their TN", async function () {
+            await bgSkill("knowledge", +3);
+            expect(skill.targetNumber).to.equal(14);
+          });
+        });
+      });
     },
     { displayName: `${system}: Test Skill model` }
   );
