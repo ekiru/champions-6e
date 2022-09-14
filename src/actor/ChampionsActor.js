@@ -1,27 +1,41 @@
 import { PRE, STR } from "../mechanics/characteristics.js";
 
 const everypersonSkillData = [
-  { name: "Acting" },
-  { name: "Climbing" },
-  { name: "Concealment" },
-  { name: "Conversation" },
-  { name: "Deduction" },
-  { name: "Area Knowledge: [home region]" },
+  { name: "Acting", characteristic: "pre" },
+  { name: "Climbing", characteristic: "dex" },
+  { name: "Concealment", characteristic: "int" },
+  { name: "Conversation", characteristic: "pre" },
+  { name: "Deduction", characteristic: "int" },
+  { name: "Area Knowledge: [home region]", type: "knowledge" },
   { name: "Language: [native language] (completely fluent, literate)", tn: 0 },
-  { name: "Paramedics" },
-  { name: "Persuasion" },
-  { name: "PS: [job or primary hobby]", tn: 11 },
-  { name: "Shadowing" },
-  { name: "Stealth" },
+  { name: "Paramedics", characteristic: "int" },
+  { name: "Persuasion", characteristic: "pre" },
+  { name: "[job or primary hobby]", type: "professional", tn: 11 },
+  { name: "Shadowing", characteristic: "int" },
+  { name: "Stealth", characteristic: "dex" },
   { name: "TF: Small Motorized Ground Vehicles", tn: 0 },
-].map(function ({ name, tn }) {
+].map(function ({ name, tn, characteristic, type }) {
   if (tn === undefined) {
     tn = 8;
   }
+  const system = {
+    level: tn === 8 ? "familiarity" : "full",
+  };
+  if (characteristic !== undefined) {
+    system.type = "characteristic";
+    system.characteristic = characteristic;
+  } else if (type !== undefined) {
+    system.type = "background";
+    system.backgroundType = type;
+  } else {
+    system.type = "misc";
+    system.targetNumber = { value: tn };
+  }
+
   return {
     type: "skill",
     name,
-    system: { targetNumber: { value: tn } },
+    system,
   };
 });
 

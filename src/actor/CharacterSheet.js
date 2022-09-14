@@ -131,6 +131,7 @@ export default class CharacterSheet extends ActorSheet {
     }
 
     context.skills = {
+      background: [],
       characteristic: [],
       misc: [],
     };

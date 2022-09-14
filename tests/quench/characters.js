@@ -96,7 +96,7 @@ export function register(system, quench) {
 
         it("should have Everyperson skills", function () {
           /**
-           * Asserts that the skill has the specified name and target number.
+           * Asserts that the miscellaneous skill has the specified name and target number.
            *
            * @param {Item} skill A skill.
            * @param {string} name The expected name of the skill.
@@ -105,7 +105,51 @@ export function register(system, quench) {
           function expectSkill(skill, name, targetNumber) {
             expect(skill).to.exist;
             expect(skill.name).to.equal(name);
+            expect(skill.system.type).to.equal("misc");
             expect(skill.system.targetNumber.value).equal(targetNumber);
+          }
+
+          /**
+           * Asserts that the characteristic-based familiarity has the specified name
+           *  and characteristic.
+           *
+           * @param {Item} skill A skill.
+           * @param {string} name The expected name of the skill.
+           * @param {string} characteristic The expected characteristic of the skill.
+           */
+          function expectCharBasedFamiliarity(skill, name, characteristic) {
+            expect(skill).to.exist;
+            expect(skill.name).to.equal(name);
+            expect(skill.system.type).to.equal("characteristic");
+            expect(skill.system.characteristic).to.equal(characteristic);
+            expect(skill.system.level).to.equal("familiarity");
+          }
+
+          /**
+           * Asserts that the background skill has the specified name, type, and
+           * target number.
+           *
+           * @param {Item} skill A skill.
+           * @param {string} name The expected name of the skill.
+           * @param {string} backgroundType The expected type of the background skill.
+           * @param {number} targetNumber The expect target number of the skill.
+           */
+          function expectBackgroundSkill(
+            skill,
+            name,
+            backgroundType,
+            targetNumber
+          ) {
+            expect(skill).to.exist;
+            expect(skill.name).to.equal(name);
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.backgroundType).to.equal(backgroundType);
+            if (targetNumber === 8) {
+              expect(skill.system.level).to.equal("familiarity");
+            } else {
+              expect(skill.system.level).to.equal("full");
+              expect(skill.system.bonus.value).to.equal(0);
+            }
           }
 
           return new Promise((resolve, reject) => {
@@ -113,22 +157,32 @@ export function register(system, quench) {
               try {
                 const skills = Object.values(character.itemTypes.skill);
                 expect(skills.length).to.equal(13);
-                expectSkill(skills[0], "Acting", 8);
-                expectSkill(skills[1], "Climbing", 8);
-                expectSkill(skills[2], "Concealment", 8);
-                expectSkill(skills[3], "Conversation", 8);
-                expectSkill(skills[4], "Deduction", 8);
-                expectSkill(skills[5], "Area Knowledge: [home region]", 8);
+                expectCharBasedFamiliarity(skills[0], "Acting", "pre");
+                expectCharBasedFamiliarity(skills[1], "Climbing", "dex");
+                expectCharBasedFamiliarity(skills[2], "Concealment", "int");
+                expectCharBasedFamiliarity(skills[3], "Conversation", "pre");
+                expectCharBasedFamiliarity(skills[4], "Deduction", "int");
+                expectBackgroundSkill(
+                  skills[5],
+                  "Area Knowledge: [home region]",
+                  "knowledge",
+                  8
+                );
                 expectSkill(
                   skills[6],
                   "Language: [native language] (completely fluent, literate)",
                   0
                 );
-                expectSkill(skills[7], "Paramedics", 8);
-                expectSkill(skills[8], "Persuasion", 8);
-                expectSkill(skills[9], "PS: [job or primary hobby]", 11);
-                expectSkill(skills[10], "Shadowing", 8);
-                expectSkill(skills[11], "Stealth", 8);
+                expectCharBasedFamiliarity(skills[7], "Paramedics", "int");
+                expectCharBasedFamiliarity(skills[8], "Persuasion", "pre");
+                expectBackgroundSkill(
+                  skills[9],
+                  "[job or primary hobby]",
+                  "professional",
+                  11
+                );
+                expectCharBasedFamiliarity(skills[10], "Shadowing", "int");
+                expectCharBasedFamiliarity(skills[11], "Stealth", "dex");
                 expectSkill(
                   skills[12],
                   "TF: Small Motorized Ground Vehicles",
