@@ -1,4 +1,4 @@
-export default class FeedBuilder {
+export default class FieldBuilder {
   #htmlEnricher;
   #object;
 
