@@ -169,7 +169,51 @@
       </div>
     </div>
     <div class="tab skills" data-tab="skills">
-      <table class="skills">
+      <table class="skills characteristic-based">
+        <caption>Characteristic-based Skills</caption>
+        <thead>
+          <tr>
+            <th>Skill</th>
+            <th>Char</th>
+            <th>Bonus</th>
+            <th>Roll</th>
+            <th>
+              <a class="item-create" data-type="skill">
+                <i class="fas fa-plus"></i>
+                Add Skill
+              </a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each skills.characteristic}}
+            <tr class="actor-item" data-item-id="{{id}}">
+              <td>
+                <a
+                  class="success-roll"
+                  data-target-number="{{targetNumber.value}}"
+                >
+                  <i class="fas fa-dice"></i>
+                  {{name}}
+                </a>
+              </td>
+              <td>{{characteristic}}</td>
+              <td>{{numberFormat bonus sign=true}}</td>
+              <td>{{targetNumber.label}}</td>
+              <td class="item-controls">
+                <a class="item-control item-edit" title="Edit Skill">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="item-control item-delete" title="Delete Skill">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <table class="skills misc">
+        <caption>Miscellaneous Skills</caption>
         <thead>
           <tr>
             <th>Skill</th>
@@ -183,7 +227,7 @@
           </tr>
         </thead>
         <tbody>
-          {{#each skills}}
+          {{#each skills.misc}}
             <tr class="actor-item" data-item-id="{{id}}">
               <td>
                 {{#if targetNumber.value}}

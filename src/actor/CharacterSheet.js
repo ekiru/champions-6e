@@ -129,21 +129,29 @@ export default class CharacterSheet extends ActorSheet {
       };
     }
 
-    context.skills = this.actor.itemTypes.skill.map(function (skill) {
+    context.skills = {
+      characteristic: [],
+      misc: [],
+    };
+    for (const skill of this.actor.itemTypes.skill) {
       const targetNumber = {
-        value: skill.system.targetNumber.value,
+        value: skill.targetNumber,
       };
       if (targetNumber.value > 0) {
         targetNumber.label = `${targetNumber.value}-`;
       } else {
         targetNumber.label = "N/A";
       }
-      return {
+      const skillData = {
         id: skill.id,
         name: skill.name,
+        bonus: skill.system.bonus.value,
+        characteristic: skill.system.characteristic.toUpperCase(),
+        level: skill.system.level,
         targetNumber,
       };
-    });
+      context.skills[skill.system.type].push(skillData);
+    }
 
     context.combat = {
       attackRoll: {
