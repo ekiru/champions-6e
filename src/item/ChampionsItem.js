@@ -115,6 +115,15 @@ export default class ChampionsItem extends Item {
       if (changes.system.level === undefined) {
         changes.system.level = "full";
       }
+    } else if (
+      newType === "characteristic" &&
+      type === "background" &&
+      this.system.level === "full"
+    ) {
+      // bg(non-char) → char: turn into a proficiency, retain other data
+      if (changes.system.level === undefined) {
+        changes.system.level = "proficiency";
+      }
     }
   }
 

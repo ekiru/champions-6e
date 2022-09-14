@@ -374,6 +374,16 @@ export function register(system, quench) {
             await bgSkill("knowledge", +3, { level: "familiarity" });
             expect(skill.targetNumber).to.equal(8);
           });
+
+          describe("when changing into a characteristic-based skill", function () {
+            it("should turn full skills into proficiencies", async function () {
+              await bgSkill("professional", +2);
+              await skill.update({ "system.type": "characteristic" });
+
+              expect(skill.system.type).to.equal("characteristic");
+              expect(skill.system.level).to.equal("proficiency");
+            });
+          });
         });
 
         describe("that are based on a characteristic", function () {
