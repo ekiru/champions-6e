@@ -120,7 +120,7 @@ export function register(system, quench) {
           expect(skill.targetNumber).to.equal(7);
         });
 
-        describe("when changed to char-based", function () {
+        describe("when changed to a char-based skill", function () {
           it("should have the default characteristic of DEX", async function () {
             await miscSkill(14, { characteristic: "str" });
             await skill.update({ "system.type": "characteristic" });
@@ -143,6 +143,14 @@ export function register(system, quench) {
 
             expect(skill.system.type).to.equal("characteristic");
             expect(skill.system.level).to.equal("familiarity");
+          });
+
+          it("should be a proficiency if its TN was 10", async function () {
+            await miscSkill(10);
+            await skill.update({ "system.type": "characteristic" });
+
+            expect(skill.system.type).to.equal("characteristic");
+            expect(skill.system.level).to.equal("proficiency");
           });
 
           it("should have the default bonus of 0", async function () {
