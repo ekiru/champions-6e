@@ -143,6 +143,26 @@ export function register(system, quench) {
           await charSkill("pre", +1, {}, { "pre.value": 30 });
           expect(skill.targetNumber).to.equal(16);
         });
+
+        it("should have TN 8 regardless of bonus or characteristic for Familiarity", async function () {
+          await charSkill(
+            "int",
+            +5,
+            { level: "familiarity" },
+            { "int.value": 30 }
+          );
+          expect(skill.targetNumber).to.equal(8);
+        });
+
+        it("should have TN 10 regardless of bonus or characteristic for Proficiency", async function () {
+          await charSkill(
+            "int",
+            +5,
+            { level: "proficiency" },
+            { "int.value": 30 }
+          );
+          expect(skill.targetNumber).to.equal(10);
+        });
       });
     },
     { displayName: `${system}: Test Skill model` }
