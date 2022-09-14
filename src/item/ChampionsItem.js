@@ -51,7 +51,11 @@ export default class ChampionsItem extends Item {
         changes.system.characteristic = "dex";
       }
       if (changes.system.level === undefined) {
-        changes.system.level = "full";
+        if (this.targetNumber === 8) {
+          changes.system.level = "familiarity";
+        } else {
+          changes.system.level = "full";
+        }
       }
     } else if (newType === "characteristic" && type === "misc") {
       // misc → char: restore defaults unless overriden.

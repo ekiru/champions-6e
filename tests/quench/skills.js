@@ -171,6 +171,13 @@ export function register(system, quench) {
             expect(skill.system.level).to.equal("full");
           });
 
+          it("should default level to familiarity for TN = 8-", async function () {
+            await miscSkill(8);
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.level).to.equal("familiarity");
+          });
+
           it("should default bonus to 0", async function () {
             await miscSkill(13, { bonus: { value: +4 } });
             await skill.update({ "system.type": "background" });
