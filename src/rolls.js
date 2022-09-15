@@ -14,6 +14,7 @@ async function addMessage(flavor, response, options) {
     response.message = await response.roll.toMessage({
       flavor,
       speaker: { actor: options.actor },
+      flags: options.messageFlags,
     });
   }
 }
@@ -203,11 +204,6 @@ export async function attackRollDialog(
   });
 }
 
-const formatKillingDamage = (label, dice, { body, stun }) => {
-  const forLabel = label ? ` for ${label}` : "";
-  return `${dice} Killing Damage${forLabel}: ${body} BODY, ${stun} STUN`;
-};
-
 /**
  * Rolls a killing damage roll.
  *
@@ -240,16 +236,39 @@ export async function performKillingDamageRoll(dice, options = {}) {
   );
   response.roll = result;
   await addMessage(
-    formatKillingDamage(options.label, diceString, response),
+    formatDamage("Killing", options.label, diceString, response),
     response,
-    options
+    foundry.utils.mergeObject(options, {
+      messageFlags: {
+        body: response.body,
+        modifiers: +1, // Killing Damage does 1d6 less knockback
+        label: options.label,
+      },
+    })
   );
   return response;
 }
 
-const formatNormalDamage = (label, dice, { body, stun }) => {
+const knockbackButtonHtml =
+  '<button class="knockback-roll"><i class="fas fa-dice"></i> Roll Knockback</button>';
+Hooks.on("renderChatMessage", function (message, html) {
+  const { body, label, modifiers } = message.flags;
+  const actor = message.speaker.actor
+    ? game.actors.get(message.speaker.actor)
+    : undefined;
+  html.find(".knockback-roll").click(() => {
+    knockbackRollDialog(label, body, modifiers, { actor });
+  });
+});
+
+const formatDamage = (type, label, dice, { body, stun }) => {
   const forLabel = label ? ` for ${label}` : "";
-  return `${dice} Normal Damage${forLabel}: ${body} BODY, ${stun} STUN`;
+  const message = `${dice} ${type} Damage${forLabel}: ${body} BODY, ${stun} STUN`;
+  if (body > 0) {
+    return `<p>${message}</p><p>${knockbackButtonHtml}</p>`;
+  } else {
+    return message;
+  }
 };
 
 /**
@@ -282,9 +301,11 @@ export async function performNormalDamageRoll(dice, options = {}) {
   );
   response.roll = result;
   await addMessage(
-    formatNormalDamage(options.label, diceString, response),
+    formatDamage("Normal", options.label, diceString, response, options),
     response,
-    options
+    foundry.utils.mergeObject(options, {
+      messageFlags: { body: response.body, modifiers: 0, label: options.label },
+    })
   );
   return response;
 }
