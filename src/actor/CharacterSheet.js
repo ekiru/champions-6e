@@ -194,9 +194,6 @@ export default class CharacterSheet extends ActorSheet {
       damageRoll: {
         label: "Damage Roll",
       },
-      knockbackRoll: {
-        label: "Knockback Roll",
-      },
       attacks: [
         {
           basic: true,
