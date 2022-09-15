@@ -35,6 +35,46 @@
           {{/with}}
         </p>
       {{/if}}
+      {{#if (eq attributes.type.value "background")}}
+        <p>
+          {{#with attributes.backgroundType}}
+            <label>{{label}}</label>
+            <select name="{{path}}">
+              {{selectOptions options selected=value}}
+            </select>
+          {{/with}}
+        </p>
+        <p>
+          {{#with attributes.level}}
+            <label>{{label}}</label>
+            <select name="{{path}}">
+              {{selectOptions options selected=value}}
+            </select>
+          {{/with}}
+        </p>
+        {{#if (eq attributes.level.value "characteristic")}}
+          <p>
+            {{#with attributes.characteristic}}
+              <label>{{label}}</label>
+              <select name="{{path}}">
+                {{selectOptions options selected=value}}
+              </select>
+            {{/with}}
+          </p>
+        {{/if}}
+        <p>
+          {{#with attributes.bonus}}
+            <label>{{label}}</label>
+            {{numberInput value name=path}}
+          {{/with}}
+        </p>
+        <p>
+          {{#with attributes.targetNumber}}
+            <label>{{label}}:</label>
+            {{value}}
+          {{/with}}
+        </p>
+      {{/if}}
       {{#if (eq attributes.type.value "characteristic")}}
         <p>
           {{#with attributes.characteristic}}
