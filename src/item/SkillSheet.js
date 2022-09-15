@@ -80,20 +80,14 @@ export default class SkillSheet extends ItemSheet {
         readonly: true,
       };
     } else if (context.attributes.type.value === "misc") {
-      context.attributes.targetNumber = {
-        label: "Target Number (0 for N/A)",
-        value: this.item.system.targetNumber.value,
-        path: "system.targetNumber.value",
-      };
+      context.attributes.targetNumber = fields.number(
+        "Target Number (0 for N/A)",
+        "system.targetNumber.value"
+      );
     }
 
     context.bio = {
-      description: {
-        value: await TextEditor.enrichHTML(this.item.system.description, {
-          async: true,
-        }),
-        path: "system.description",
-      },
+      description: await fields.html("Description", "system.description"),
     };
 
     return context;

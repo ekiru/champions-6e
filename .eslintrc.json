@@ -21,6 +21,7 @@
   "globals": {
     "foundry": "readonly",
     "game": "readonly",
+    "loadTemplates": "readonly",
     "renderTemplate": "readonly",
     "CONFIG": "writable",
     "Actor": "readonly",
@@ -28,6 +29,7 @@
     "Actors": "readonly",
     "ChatMessage": "readonly",
     "Dialog": "readonly",
+    "Handlebars": "readonly",
     "Hooks": "readonly",
     "Item": "readonly",
     "ItemSheet": "readonly",

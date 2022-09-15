@@ -20,53 +20,27 @@
   <section class="sheet-body">
     <div class="tab attributes" data-tab="attributes">
       <p>
-        {{#with attributes.type}}
-          <label>{{label}}</label>
-          <select name="{{path}}">
-            {{selectOptions options selected=value}}
-          </select>
-        {{/with}}
+        {{field attributes.type}}
       </p>
       {{#if (eq attributes.type.value "misc")}}
         <p>
-          {{#with attributes.targetNumber}}
-            <label>{{label}}</label>
-            {{numberInput value name=path}}
-          {{/with}}
+          {{field attributes.targetNumber}}
         </p>
       {{/if}}
       {{#if (eq attributes.type.value "background")}}
         <p>
-          {{#with attributes.backgroundType}}
-            <label>{{label}}</label>
-            <select name="{{path}}">
-              {{selectOptions options selected=value}}
-            </select>
-          {{/with}}
+          {{field attributes.backgroundType}}
         </p>
         <p>
-          {{#with attributes.level}}
-            <label>{{label}}</label>
-            <select name="{{path}}">
-              {{selectOptions options selected=value}}
-            </select>
-          {{/with}}
+          {{field attributes.level}}
         </p>
         {{#if (eq attributes.level.value "characteristic")}}
           <p>
-            {{#with attributes.characteristic}}
-              <label>{{label}}</label>
-              <select name="{{path}}">
-                {{selectOptions options selected=value}}
-              </select>
-            {{/with}}
+            {{field attributes.characteristic}}
           </p>
         {{/if}}
         <p>
-          {{#with attributes.bonus}}
-            <label>{{label}}</label>
-            {{numberInput value name=path}}
-          {{/with}}
+          {{field attributes.bonus}}
         </p>
         <p>
           {{#with attributes.targetNumber}}
@@ -77,26 +51,13 @@
       {{/if}}
       {{#if (eq attributes.type.value "characteristic")}}
         <p>
-          {{#with attributes.characteristic}}
-            <label>{{label}}</label>
-            <select name="{{path}}">
-              {{selectOptions options selected=value}}
-            </select>
-          {{/with}}
+          {{field attributes.characteristic}}
         </p>
         <p>
-          {{#with attributes.level}}
-            <label>{{label}}</label>
-            <select name="{{path}}">
-              {{selectOptions options selected=value}}
-            </select>
-          {{/with}}
+          {{field attributes.level}}
         </p>
         <p>
-          {{#with attributes.bonus}}
-            <label>{{label}}</label>
-            {{numberInput value name=path}}
-          {{/with}}
+          {{field attributes.bonus}}
         </p>
         <p>
           {{#with attributes.targetNumber}}
@@ -107,12 +68,7 @@
       {{/if}}
     </div>
     <div class="tab notes flexcol" data-tab="description">
-      {{editor
-        bio.description.value
-        target=bio.description.path
-        button=true
-        editable=editable
-      }}
+      {{field bio.description editable=true}}
     </div>
   </section>
 </form>
