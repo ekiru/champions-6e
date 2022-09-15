@@ -7,6 +7,12 @@ import {
 } from "../rolls.js";
 import { compareBy } from "../util/sort.js";
 
+const BACKGROUND_SKILL_TYPES = {
+  knowledge: "KS",
+  professional: "PS",
+  science: "SS",
+};
+
 /**
  * Turns a number of dice into a textual dice string.
  *
@@ -148,10 +154,32 @@ export default class CharacterSheet extends ActorSheet {
         id: skill.id,
         name: skill.name,
         bonus: skill.system.bonus.value,
-        characteristic: skill.system.characteristic.toUpperCase(),
-        level: skill.system.level,
         targetNumber,
       };
+      if (skill.system.type === "background") {
+        const bgType = BACKGROUND_SKILL_TYPES[skill.system.backgroundType];
+        skillData.name = `${bgType}: ${skillData.name}`;
+        skillData.characteristic = "—";
+        switch (skill.system.level) {
+          case "characteristic":
+            skillData.characteristic =
+              skill.system.characteristic.toUpperCase();
+            break;
+          case "familiarity":
+            skillData.level = "Familiarity";
+            break;
+        }
+      } else if (skill.system.type === "characteristic") {
+        skillData.characteristic = skill.system.characteristic.toUpperCase();
+        switch (skill.system.level) {
+          case "familiarity":
+            skillData.level = "Familiarity";
+            break;
+          case "proficiency":
+            skillData.level = "Proficiency";
+            break;
+        }
+      }
       context.skills[skill.system.type].push(skillData);
     }
     for (const skillList of Object.values(context.skills)) {
