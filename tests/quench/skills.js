@@ -213,7 +213,7 @@ export function register(system, quench) {
          * @param {*} rest Any additional system data to include in the skill.
          * @param {*} characteristics Characteristics for the actor.
          */
-        async function charSkill(char, bonus, rest, characteristics) {
+        async function charSkill(char, bonus, rest, characteristics = {}) {
           actor = await Actor.create({
             name: "Sveta",
             type: "character",
