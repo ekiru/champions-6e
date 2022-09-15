@@ -347,6 +347,32 @@ export async function performKnockbackRoll(
   return response;
 }
 
+const knockbackRollTemplate =
+  "systems/champions-6e/templates/dialog/knockback-roll.hbs";
+/**
+ * Renders a dialog to do a knockback roll.
+ *
+ * @param {string} label A label for the damage roll.
+ * @param {number} body The default amount of BODY done by the damage roll..
+ * @param {number} modifiers The default number of dice of modifiers.
+ * @param {object} options Options to customize the dialog or chat message.
+ * @param {Actor} options.actor The actor for whom the roll is being performed.
+ */
+export async function knockbackRollDialog(
+  label,
+  body,
+  modifiers,
+  { actor } = {}
+) {
+  const title = `${label ? label + " " : ""}Knockback Roll`;
+  const context = { label, body, modifiers };
+  rollDialog(title, knockbackRollTemplate, context, (html) => {
+    const body = Number(html.find("input[name='body']").get(0).value);
+    const modifiers = Number(html.find("input[name='modifiers']").get(0).value);
+    performKnockbackRoll({ body }, modifiers, { actor });
+  });
+}
+
 /**
  * Renders a dialog for a roll.
  *

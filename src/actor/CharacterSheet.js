@@ -3,6 +3,7 @@ import { DEFENSE_TYPES } from "../mechanics/damage.js";
 import {
   attackRollDialog,
   damageRollDialog,
+  knockbackRollDialog,
   successRollDialog,
 } from "../rolls.js";
 import { compareBy } from "../util/sort.js";
@@ -193,6 +194,9 @@ export default class CharacterSheet extends ActorSheet {
       damageRoll: {
         label: "Damage Roll",
       },
+      knockbackRoll: {
+        label: "Knockback Roll",
+      },
       attacks: [
         {
           basic: true,
@@ -305,6 +309,12 @@ export default class CharacterSheet extends ActorSheet {
       const damageType = this.dataset.damageType;
       const label = this.dataset.label;
       damageRollDialog(label, dice, damageType, { actor });
+    });
+    html.find(".knockback-roll").click(function () {
+      const body = Number(this.dataset.body);
+      const label = this.dataset.label;
+      const modifiers = Number(this.dataset.modifiers);
+      knockbackRollDialog(label, body, modifiers, { actor });
     });
   }
 }
