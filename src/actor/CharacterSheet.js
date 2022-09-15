@@ -258,14 +258,15 @@ export default class CharacterSheet extends ActorSheet {
 
     if (this.isEditable) {
       const actor = this.actor;
-      html.find(".item-create").click(function () {
+      html.find(".item-create").click(async function () {
         const { type } = this.dataset;
-        actor.createEmbeddedDocuments("Item", [
+        const [item] = await actor.createEmbeddedDocuments("Item", [
           {
             type,
             name: `New ${type}`,
           },
         ]);
+        item.sheet.render(true);
       });
       html.find("[data-item-id]").each(function () {
         const { itemId } = this.dataset;
