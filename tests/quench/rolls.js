@@ -504,6 +504,94 @@ export function register(system, quench) {
           });
         });
       });
+
+      describe("Knockback rolls", function () {
+        describe("for an attack that did 0 BODY", function () {
+          beforeEach(async function () {
+            result = await rolls.performKnockbackRoll({ body: 0 }, 0);
+          });
+
+          it("should do no knockback", function () {
+            expect(result.knockback).to.be.null;
+          });
+
+          it('should say "No knockback" in its chat message', function () {
+            expect(result.message).to.exist;
+            expect(result.message.flavor).to.include("No knockback");
+          });
+        });
+
+        describe("for an attack that did BODY", function () {
+          const damage = { body: 5 };
+
+          describe("if the BODY minus the roll equals 0", function () {
+            const Roll = fakeRoller(0);
+            beforeEach(async function () {
+              result = await rolls.performKnockbackRoll(damage, 0, { Roll });
+            });
+
+            it("should do 0 knockback", function () {
+              expect(result.knockback).to.equal(0);
+            });
+
+            it('should say "Knocked down" in its chat message', function () {
+              expect(result.message.flavor).to.include("Knocked down");
+            });
+          });
+
+          describe("if the BODY minus the roll is negative", function () {
+            const Roll = fakeRoller(-1);
+            beforeEach(async function () {
+              result = await rolls.performKnockbackRoll(damage, 0, { Roll });
+            });
+
+            it("should do no knockback", function () {
+              expect(result.knockback).to.equal(null);
+            });
+
+            it('should say "No knockback" in its chat message', function () {
+              expect(result.message.flavor).to.include("No knockback");
+            });
+          });
+
+          describe("if the BODY minus the roll is positive", function () {
+            const Roll = fakeRoller(3);
+            beforeEach(async function () {
+              result = await rolls.performKnockbackRoll(damage, 0, { Roll });
+            });
+
+            it("should do 2 metres of knockback per excess", function () {
+              expect(result.knockback).to.equal(6);
+            });
+
+            it("should say the amount of knockback in its chat message", function () {
+              expect(result.message.flavor).to.include("6 metres");
+            });
+          });
+        });
+
+        describe("modifiers", function () {
+          it("should inflict twice the BODY in knockback if the modifiers bring it to 0 dice", async function () {
+            result = await rolls.performKnockbackRoll({ body: 2 }, -2);
+            expect(result.knockback).to.equal(4);
+          });
+
+          it("should inflict twice the BODY in knockback if the modifers bring it below zero dice", async function () {
+            result = await rolls.performKnockbackRoll({ body: 2 }, -80);
+            expect(result.knockback).to.equal(4);
+          });
+
+          it("should roll 2d6 if the modifier is 0", async function () {
+            result = await rolls.performKnockbackRoll({ body: 2 }, 0);
+            expect(result.roll.formula).to.include("2d6");
+          });
+
+          it("should roll 1d6 if the modifer is -1", async function () {
+            result = await rolls.performKnockbackRoll({ body: 2 }, -1);
+            expect(result.roll.formula).to.include("1d6");
+          });
+        });
+      });
     },
     { displayName: `${system}: Test rolls` }
   );

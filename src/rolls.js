@@ -315,6 +315,39 @@ export async function damageRollDialog(label, dice, type, { actor } = {}) {
 }
 
 /**
+ *  Rolls to determine how much Knockback an attack inflicts.
+ *
+ * @param {*} damage The result of the damage roll.
+ * @param {number} damage.body The BODY inflicted by the attack, before defenses.
+ * @param {number?} modifier The number of dice to add or remove from the roll.
+ * @param {*} options Options to modify the behavior of the function.
+ * @returns {*} An object containing the amount of knockback done in the knockback property (0 means knockdown, null means no knockback at all), the roll, and any chat message posted.
+ */
+export async function performKnockbackRoll(
+  { body },
+  modifier = 0,
+  options = {}
+) {
+  const rollClass = options.Roll ?? Roll;
+  const dice = modifier > -2 ? 2 + modifier : 0;
+  const roll =
+    body === 0 ? new rollClass("-1") : new rollClass(`${body} - ${dice}d6`);
+  const result = await roll.roll({ async: true });
+  const knockback = result.total < 0 ? null : result.total * 2;
+  const response = { knockback, roll: result };
+  let message;
+  if (knockback === null) {
+    message = "No knockback";
+  } else if (knockback === 0) {
+    message = "Knocked down";
+  } else {
+    message = `Knocked back by ${knockback} metres`;
+  }
+  await addMessage(message, response, options);
+  return response;
+}
+
+/**
  * Renders a dialog for a roll.
  *
  * @private
