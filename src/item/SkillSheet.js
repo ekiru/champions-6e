@@ -57,11 +57,11 @@ export default class SkillSheet extends ItemSheet {
         full: "Full",
         characteristic: "Characteristic-based",
       });
-      context.attributes.targetNumber = {
-        label: "Target Number",
-        value: this.item.targetNumber,
-        readonly: true,
-      };
+      context.attributes.targetNumber = fields.number(
+        "Target Number",
+        "targetNumber",
+        { readonly: true }
+      );
     } else if (context.attributes.type.value === "characteristic") {
       context.attributes.bonus = fields.number("Bonus", "system.bonus.value");
       context.attributes.characteristic = fields.selection(
@@ -74,11 +74,11 @@ export default class SkillSheet extends ItemSheet {
         proficiency: "Proficiency (10-)",
         full: "Full",
       });
-      context.attributes.targetNumber = {
-        label: "Target Number",
-        value: this.item.targetNumber,
-        readonly: true,
-      };
+      context.attributes.targetNumber = fields.number(
+        "Target Number",
+        "targetNumber",
+        { readonly: true }
+      );
     } else if (context.attributes.type.value === "misc") {
       context.attributes.targetNumber = fields.number(
         "Target Number (0 for N/A)",

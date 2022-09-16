@@ -45,6 +45,10 @@ describe("Field builders", function () {
     it("should allow text fields", function () {
       expect(fields.text("", "ghi").value).toBe("estradiol");
     });
+
+    it("should pass options through to the result", function () {
+      expect(fields.text("", "ghi", { readonly: true }).readonly).toBe(true);
+    });
   });
 
   describe("html fields", function () {

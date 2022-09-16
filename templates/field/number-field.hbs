@@ -1,2 +1,6 @@
 <label>{{label}}</label>
-{{numberInput value name=path}}
+{{#unless readonly}}
+  {{numberInput value name=path}}
+{{else}}
+  <span>{{value}}</span>
+{{/unless}}

@@ -43,10 +43,7 @@
           {{field attributes.bonus}}
         </p>
         <p>
-          {{#with attributes.targetNumber}}
-            <label>{{label}}:</label>
-            {{value}}
-          {{/with}}
+          {{field attributes.targetNumber}}
         </p>
       {{/if}}
       {{#if (eq attributes.type.value "characteristic")}}
@@ -60,10 +57,7 @@
           {{field attributes.bonus}}
         </p>
         <p>
-          {{#with attributes.targetNumber}}
-            <label>{{label}}:</label>
-            {{value}}
-          {{/with}}
+          {{field attributes.targetNumber}}
         </p>
       {{/if}}
     </div>

@@ -34,18 +34,18 @@ export default class FieldBuilder {
     this.#object = object;
   }
 
-  async html(label, path) {
-    return this.#asyncField("editor", label, path, (html) =>
+  async html(label, path, data = {}) {
+    return this.#asyncField("editor", label, path, data, (html) =>
       this.#htmlEnricher.enrichHTML(html, { async: true })
     );
   }
 
-  number(label, path) {
-    return this.#field("number", label, path);
+  number(label, path, data = {}) {
+    return this.#field("number", label, path, data);
   }
 
-  selection(label, path, options) {
-    const field = this.#field("selection", label, path);
+  selection(label, path, options, data = {}) {
+    const field = this.#field("selection", label, path, data);
     field.options = options;
     if (field.value in options) {
       field.valueLabel = options[field.value];
@@ -55,21 +55,21 @@ export default class FieldBuilder {
     return field;
   }
 
-  text(label, path) {
-    return this.#field("text", label, path);
+  text(label, path, data = {}) {
+    return this.#field("text", label, path, data);
   }
 
-  async #asyncField(type, label, path, mapper) {
-    const field = this.#field(type, label, path);
+  async #asyncField(type, label, path, data, mapper) {
+    const field = this.#field(type, label, path, data);
     if (mapper) {
       field.value = await mapper(field.value);
     }
     return field;
   }
 
-  #field(type, label, path) {
+  #field(type, label, path, data = {}) {
     const template = `${TEMPLATE_BASE}/${type}-field.hbs`;
-    return { label, path, template, value: this.#get(path) };
+    return { label, path, template, value: this.#get(path), ...data };
   }
 
   #get(path) {
