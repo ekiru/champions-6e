@@ -28,3 +28,13 @@ Feature: Modifier Boxes
     And my character has the Stealth skill at the full level with 0 bonus
     When I set the DEX modifier to -5
     Then the Stealth skill roll should have a target number of 11
+
+  Scenario: Calculating HTH damage
+    Given my character's base STR is 40
+    When I set my character's STR modifier to -20
+    Then my HTH damage dice should be 4
+
+  Scenario: Calculating Presence Attack dice
+    Given my character's base PRE is 15
+    When I set my character's PRE modifier to 10
+    Then my Presence Attack dice should be 5
