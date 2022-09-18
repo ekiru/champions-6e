@@ -19,5 +19,8 @@
     "onStartup": ["all-tests"]
   },
   "jest.jestCommandLine": "yarn test",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js"
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "[cucumber]": {
+    "editor.defaultFormatter": "CucumberOpen.cucumber-official"
+  }
 }
