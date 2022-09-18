@@ -12,4 +12,4 @@ Feature: Heroic Action Points
   Scenario: Spending HAP
     Given I have my character sheet open
     When I enter 5 into the HAP box
-    Then my HAP should equal 5
+    Then my HAP should be 5

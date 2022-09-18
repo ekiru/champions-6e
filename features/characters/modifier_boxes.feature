@@ -20,13 +20,13 @@ Feature: Modifier Boxes
 
   Scenario: Calculating characteristic rolls
     Given my character's base STR is 10
-    When I set the STR modifier to 5
+    When I set my character's STR modifier to 5
     Then the STR characteristic roll should have a target number of 12
 
   Scenario: Calculating skill rolls
     Given my character's base DEX is 15
     And my character has the Stealth skill at the full level with 0 bonus
-    When I set the DEX modifier to -5
+    When I set my character's DEX modifier to -5
     Then the Stealth skill roll should have a target number of 11
 
   Scenario: Calculating HTH damage
