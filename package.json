@@ -7,9 +7,11 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "lint": "eslint .",
-    "test": "node --experimental-vm-modules $(yarn bin jest)"
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "cucumber": "cucumber"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^8.5.3",
     "eslint": "latest",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.0.1",
