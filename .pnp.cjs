@@ -39,6 +39,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-jest", "virtual:9a5d483a802d7919eb382188f30dbc1396233333d191861f0345d750462cfe02095afc06bb0879b62d5ea5a92060023f67bfc61e07b556f68c0c56ac91782507#npm:27.0.1"],\
             ["eslint-plugin-jsdoc", "virtual:9a5d483a802d7919eb382188f30dbc1396233333d191861f0345d750462cfe02095afc06bb0879b62d5ea5a92060023f67bfc61e07b556f68c0c56ac91782507#npm:39.3.6"],\
             ["jest", "virtual:9a5d483a802d7919eb382188f30dbc1396233333d191861f0345d750462cfe02095afc06bb0879b62d5ea5a92060023f67bfc61e07b556f68c0c56ac91782507#npm:29.0.1"],\
+            ["playwright", "npm:1.25.2"],\
             ["prettier", "npm:2.7.1"]\
           ],\
           "linkType": "SOFT"\
@@ -2351,6 +2352,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-jest", "virtual:9a5d483a802d7919eb382188f30dbc1396233333d191861f0345d750462cfe02095afc06bb0879b62d5ea5a92060023f67bfc61e07b556f68c0c56ac91782507#npm:27.0.1"],\
             ["eslint-plugin-jsdoc", "virtual:9a5d483a802d7919eb382188f30dbc1396233333d191861f0345d750462cfe02095afc06bb0879b62d5ea5a92060023f67bfc61e07b556f68c0c56ac91782507#npm:39.3.6"],\
             ["jest", "virtual:9a5d483a802d7919eb382188f30dbc1396233333d191861f0345d750462cfe02095afc06bb0879b62d5ea5a92060023f67bfc61e07b556f68c0c56ac91782507#npm:29.0.1"],\
+            ["playwright", "npm:1.25.2"],\
             ["prettier", "npm:2.7.1"]\
           ],\
           "linkType": "SOFT"\
@@ -5174,6 +5176,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["pkg-dir", "npm:4.2.0"],\
             ["find-up", "npm:4.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["playwright", [\
+        ["npm:1.25.2", {\
+          "packageLocation": "./.yarn/unplugged/playwright-npm-1.25.2-58022dbe12/node_modules/playwright/",\
+          "packageDependencies": [\
+            ["playwright", "npm:1.25.2"],\
+            ["playwright-core", "npm:1.25.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["playwright-core", [\
+        ["npm:1.25.2", {\
+          "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.25.2-734de773d7/node_modules/playwright-core/",\
+          "packageDependencies": [\
+            ["playwright-core", "npm:1.25.2"]\
           ],\
           "linkType": "HARD"\
         }]\
