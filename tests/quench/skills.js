@@ -191,6 +191,14 @@ export function register(system, quench) {
         });
 
         describe("when changed to a background skill", function () {
+          it("should default background type to KS", async function () {
+            await miscSkill(11, { backgroundType: "professional" });
+            await skill.update({ "system.type": "background" });
+
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.backgroundType).to.equal("knowledge");
+          });
+
           it("should default characteristics to DEX", async function () {
             await miscSkill(14, { characteristic: "pre" });
             await skill.update({ "system.type": "background" });
@@ -509,11 +517,13 @@ export function register(system, quench) {
          * @param {string} cls The class of skill level (CSL/Skill Level/PSL/etc.)
          * @param {string} type The type of skill level within its class (e.g. single attack)
          * @param {number} amount The number of skill levels
+         * @param {*} data Additional system data to include
          */
         async function skillLevel(
           cls = "combat",
           type = "singleAttack",
-          amount = 1
+          amount = 1,
+          data = {}
         ) {
           skill = await Item.create({
             name: "Fighting",
@@ -525,6 +535,7 @@ export function register(system, quench) {
                 type,
                 amount,
               },
+              ...data,
             },
           });
         }
@@ -541,6 +552,18 @@ export function register(system, quench) {
           expect(error.message).to.equal(
             "Skill levels do not have a target number"
           );
+        });
+
+        it("should allow editing while retaining the same class", async function () {
+          await skillLevel();
+          let error = null;
+          try {
+            await skill.update({ "system.skillLevel.amount": 3 });
+          } catch (e) {
+            error = e;
+          }
+          expect(error).to.be.null;
+          expect(skill.system.skillLevel.amount).to.equal(3);
         });
 
         describe("when changing classes", function () {
@@ -565,6 +588,64 @@ export function register(system, quench) {
           it("type should default to 1 attack for OCV PSLs", async function () {
             await skillLevel("combat", "smallGroup");
             await skill.update({ "system.skillLevel.class": "ocvPenalty" });
+            expect(skill.system.skillLevel.type).to.equal("singleAttack");
+          });
+        });
+
+        describe("when changing to a different type of skill", function () {
+          beforeEach(async function () {
+            await skillLevel("combat", "singleAttack", 0, {
+              backgroundType: "science",
+              "bonus.value": +5,
+              characteristic: "int",
+              level: "familiarity",
+              "targetNumber.value": 40,
+            });
+          });
+
+          it("should restore defaults for misc skills", async function () {
+            await skill.update({ "system.type": "misc" });
+            expect(skill.system.type).to.equal("misc");
+            expect(skill.system.targetNumber.value).to.equal(11);
+          });
+
+          it("should restore defaults for background skills", async function () {
+            await skill.update({ "system.type": "background" });
+            expect(skill.system.type).to.equal("background");
+            expect(skill.system.backgroundType).to.equal("knowledge");
+            expect(skill.system.bonus.value).to.equal(+0);
+            expect(skill.system.characteristic).to.equal("dex");
+            expect(skill.system.level).to.equal("full");
+          });
+
+          it("should restore defaults for characteristic-based skills", async function () {
+            await skill.update({ "system.type": "characteristic" });
+            expect(skill.system.type).to.equal("characteristic");
+            expect(skill.system.bonus.value).to.equal(+0);
+            expect(skill.system.characteristic).to.equal("dex");
+            expect(skill.system.level).to.equal("full");
+          });
+        });
+
+        describe("when changing from a different kind of skill", function () {
+          it("should have default values when changing from a misc skill", async function () {
+            skill = await Item.create({
+              name: "Cramming",
+              type: "skill",
+              system: {
+                type: "misc",
+                skillLevel: {
+                  amount: 11,
+                  class: "skill",
+                  type: "allSkills",
+                },
+              },
+            });
+            await skill.update({ "system.type": "skillLevel" });
+
+            expect(skill.system.type).to.equal("skillLevel");
+            expect(skill.system.skillLevel.amount).to.equal(1);
+            expect(skill.system.skillLevel.class).to.equal("combat");
             expect(skill.system.skillLevel.type).to.equal("singleAttack");
           });
         });

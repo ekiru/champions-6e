@@ -34,7 +34,7 @@ export default class ChampionsItem extends Item {
   async _preUpdate(changes) {
     const type = this.system.type;
     const newType = changes.system?.type ?? type;
-    const newSLClass = changes.system?.skillLevel?.class;
+    let newSLClass = changes.system?.skillLevel?.class;
     if (
       newType === "misc" &&
       (type === "characteristic" || type === "background")
@@ -46,9 +46,19 @@ export default class ChampionsItem extends Item {
       if (changes.system.targetNumber.value === undefined) {
         changes.system.targetNumber.value = this.targetNumber;
       }
+    } else if (newType === "misc" && type === "skillLevel") {
+      if (changes.system.targetNumber === undefined) {
+        changes.system.targetNumber = {};
+      }
+      if (changes.system.targetNumber.value === undefined) {
+        changes.system.targetNumber.value = 11;
+      }
     } else if (newType === "background" && type === "misc") {
       // misc → bg: restore defaults unless overridden.
       changes.system = changes.system ?? {};
+      if (changes.system.backgroundType === undefined) {
+        changes.system.backgroundType = "knowledge";
+      }
       if (changes.system.bonus?.value === undefined) {
         changes.system.bonus = changes.system.bonus ?? {};
         changes.system.bonus.value = 0;
@@ -88,6 +98,22 @@ export default class ChampionsItem extends Item {
             // invalid level?
             assert.notYetImplemented();
         }
+      }
+    } else if (newType === "background" && type === "skillLevel") {
+      // SL → bg: restore defaults
+      changes.system = changes.system ?? {};
+      if (changes.system.backgroundType === undefined) {
+        changes.system.backgroundType = "knowledge";
+      }
+      if (changes.system.bonus?.value === undefined) {
+        changes.system.bonus = changes.system.bonus ?? {};
+        changes.system.bonus.value = 0;
+      }
+      if (changes.system.characteristic === undefined) {
+        changes.system.characteristic = "dex";
+      }
+      if (changes.system.level === undefined) {
+        changes.system.level = "full";
       }
     } else if (newType === "characteristic" && type === "misc") {
       // misc → char: restore defaults unless overridden.
@@ -130,22 +156,44 @@ export default class ChampionsItem extends Item {
       if (changes.system.level === undefined) {
         changes.system.level = "proficiency";
       }
+    } else if (newType === "characteristic" && type === "skillLevel") {
+      if (changes.system.bonus?.value === undefined) {
+        changes.system.bonus = changes.system.bonus ?? {};
+        changes.system.bonus.value = 0;
+      }
+      if (changes.system.characteristic === undefined) {
+        changes.system.characteristic = "dex";
+      }
+      if (changes.system.level === undefined) {
+        changes.system.level = "full";
+      }
     } else if (newType === "skillLevel") {
-      switch (newSLClass) {
-        case "combat":
-          changes.system.skillLevel.type = "singleAttack";
-          break;
-        case "dcvPenalty":
-          changes.system.skillLevel.type = "singleCondition";
-          break;
-        case "ocvPenalty":
-          changes.system.skillLevel.type = "singleAttack";
-          break;
-        case "skill":
-          changes.system.skillLevel.type = "singleSkill";
-          break;
-        default:
-          assert.notYetImplemented();
+      if (type !== "skillLevel") {
+        changes.system.skillLevel = changes.system.skillLevel ?? {};
+        if (changes.system.skillLevel.amount === undefined) {
+          changes.system.skillLevel.amount = 1;
+        }
+        if (newSLClass === undefined) {
+          newSLClass = changes.system.skillLevel.class = "combat";
+        }
+      }
+      if (newSLClass !== undefined) {
+        switch (newSLClass) {
+          case "combat":
+            changes.system.skillLevel.type = "singleAttack";
+            break;
+          case "dcvPenalty":
+            changes.system.skillLevel.type = "singleCondition";
+            break;
+          case "ocvPenalty":
+            changes.system.skillLevel.type = "singleAttack";
+            break;
+          case "skill":
+            changes.system.skillLevel.type = "singleSkill";
+            break;
+          default:
+            assert.notYetImplemented();
+        }
       }
     }
   }
