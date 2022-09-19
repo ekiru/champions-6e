@@ -542,6 +542,32 @@ export function register(system, quench) {
             "Skill levels do not have a target number"
           );
         });
+
+        describe("when changing classes", function () {
+          it("type should default to 1 attack for CSLs", async function () {
+            await skillLevel("skill", "singleSkill");
+            await skill.update({ "system.skillLevel.class": "combat" });
+            expect(skill.system.skillLevel.type).to.equal("singleAttack");
+          });
+
+          it("type should default to 1 skill or characteristic for SLs", async function () {
+            await skillLevel();
+            await skill.update({ "system.skillLevel.class": "skill" });
+            expect(skill.system.skillLevel.type).to.equal("singleSkill");
+          });
+
+          it("type should default to 1 condition for DCV PSLs", async function () {
+            await skillLevel();
+            await skill.update({ "system.skillLevel.class": "dcvPenalty" });
+            expect(skill.system.skillLevel.type).to.equal("singleCondition");
+          });
+
+          it("type should default to 1 attack for OCV PSLs", async function () {
+            await skillLevel("combat", "smallGroup");
+            await skill.update({ "system.skillLevel.class": "ocvPenalty" });
+            expect(skill.system.skillLevel.type).to.equal("singleAttack");
+          });
+        });
       });
     },
     { displayName: `${system}: Test Skill model` }

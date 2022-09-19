@@ -34,6 +34,7 @@ export default class ChampionsItem extends Item {
   async _preUpdate(changes) {
     const type = this.system.type;
     const newType = changes.system?.type ?? type;
+    const newSLClass = changes.system?.skillLevel?.class;
     if (
       newType === "misc" &&
       (type === "characteristic" || type === "background")
@@ -128,6 +129,23 @@ export default class ChampionsItem extends Item {
       // bg(non-char) → char: turn into a proficiency, retain other data
       if (changes.system.level === undefined) {
         changes.system.level = "proficiency";
+      }
+    } else if (newType === "skillLevel") {
+      switch (newSLClass) {
+        case "combat":
+          changes.system.skillLevel.type = "singleAttack";
+          break;
+        case "dcvPenalty":
+          changes.system.skillLevel.type = "singleCondition";
+          break;
+        case "ocvPenalty":
+          changes.system.skillLevel.type = "singleAttack";
+          break;
+        case "skill":
+          changes.system.skillLevel.type = "singleSkill";
+          break;
+        default:
+          assert.notYetImplemented();
       }
     }
   }
