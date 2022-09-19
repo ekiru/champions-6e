@@ -1,3 +1,5 @@
+import { AssertionError } from "../../src/util/assert.js";
+
 /**
  * Registers the tests for Itmes with type=skill.
  *
@@ -80,6 +82,32 @@ export function register(system, quench) {
 
         it("should default to a background type of KS", function () {
           expect(skill.system.backgroundType).to.equal("knowledge");
+        });
+      });
+
+      describe("A new skill level", function () {
+        let skill;
+        beforeEach(async function () {
+          skill = await Item.create({
+            type: "skill",
+            name: "Laserbeam",
+            "system.type": "skillLevel",
+          });
+        });
+        afterEach(async function () {
+          await skill.delete();
+        });
+
+        it("should default to a CSL", function () {
+          expect(skill.system.skillLevel.class).to.equal("combat");
+        });
+
+        it("should default to a single attack CSL", function () {
+          expect(skill.system.skillLevel.type).to.equal("singleAttack");
+        });
+
+        it("should default to +1", function () {
+          expect(skill.system.skillLevel.amount).to.equal(1);
         });
       });
 
@@ -467,6 +495,52 @@ export function register(system, quench) {
             expect(skill.system.type).to.equal("misc");
             expect(skill.targetNumber).to.equal(13);
           });
+        });
+      });
+
+      describe("Skill levels", function () {
+        let skill;
+        afterEach(async function () {
+          await skill.delete();
+        });
+        /**
+         * Create a Skill Level.
+         *
+         * @param {string} cls The class of skill level (CSL/Skill Level/PSL/etc.)
+         * @param {string} type The type of skill level within its class (e.g. single attack)
+         * @param {number} amount The number of skill levels
+         */
+        async function skillLevel(
+          cls = "combat",
+          type = "singleAttack",
+          amount = 1
+        ) {
+          skill = await Item.create({
+            name: "Fighting",
+            type: "skill",
+            system: {
+              type: "skillLevel",
+              skillLevel: {
+                class: cls,
+                type,
+                amount,
+              },
+            },
+          });
+        }
+
+        it("have no target number", async function () {
+          let error = null;
+          try {
+            await skillLevel();
+            skill.targetNumber;
+          } catch (e) {
+            error = e;
+          }
+          expect(error).to.be.an.instanceof(AssertionError);
+          expect(error.message).to.equal(
+            "Skill levels do not have a target number"
+          );
         });
       });
     },

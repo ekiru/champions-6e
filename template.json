@@ -82,6 +82,11 @@
       "level": "full",
       "targetNumber": {
         "value": 11
+      },
+      "skillLevel": {
+        "amount": 1,
+        "class": "combat",
+        "type": "singleAttack"
       }
     }
   }

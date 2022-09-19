@@ -20,6 +20,11 @@ export default class ChampionsItem extends Item {
         return this.#characteristicBasedTargetNumber();
       case "background":
         return this.#backgroundTargetNumber();
+      case "skillLevel":
+        return assert.precondition(
+          false,
+          "Skill levels do not have a target number"
+        );
       default:
         assert.notYetImplemented();
         return 0;
