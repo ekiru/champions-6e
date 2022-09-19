@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
-    "cucumber": "cucumber"
+    "cucumber": "cucumber-js"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^8.5.3",
