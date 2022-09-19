@@ -310,6 +310,37 @@
           {{/each}}
         </tbody>
       </table>
+      <table class="skills skill-levels">
+        <caption>Skill Levels</caption>
+        <thead>
+          <tr>
+            <th>Amount</th>
+            <th>Skill Level</th>
+            <th>
+              <a class="item-create" data-type="skill">
+                <i class="fas fa-plus"></i>
+                Add Skill
+              </a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each skills.skillLevel}}
+            <tr class="actor-item" data-item-id="{{id}}">
+              <td>{{amount}}</td>
+              <td>{{name}}</td>
+              <td class="item-controls">
+                <a class="item-control item-edit" title="Edit Skill">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="item-control item-delete" title="Delete Skill">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
     </div>
     <div class="tab combat" data-tab="combat">
       <div class="attack-buttons flexrow">

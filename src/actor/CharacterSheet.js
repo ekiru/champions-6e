@@ -14,6 +14,36 @@ const BACKGROUND_SKILL_TYPES = {
   science: "SS",
 };
 
+const SKILL_LEVEL_CLASS_LABELS = {
+  skill: "Skill Level",
+  combat: "CSL",
+  ocvPenalty: "PSL",
+  dcvPenalty: "PSL",
+};
+
+const SKILL_LEVEL_TYPE_LABELS = {
+  // skill levels
+  singleSkill: false,
+  threeSkills: false,
+  broadGroup: "Broad Group",
+  allDex: false,
+  allNoncombat: false,
+  overall: false,
+
+  // combat skill levels
+  singleAttack: false, // also for PSL (OCV)
+  smallGroup: "Small Group",
+  largeGroup: "Large Group",
+  allHthRange: false,
+  allCombat: false,
+
+  // penalty skill levels
+  tightGroup: "Tight Group",
+  allAttacks: false,
+  singleCondition: false,
+  groupOfConditions: "Group",
+};
+
 /**
  * Turns a number of dice into a textual dice string.
  *
@@ -141,22 +171,27 @@ export default class CharacterSheet extends ActorSheet {
       background: [],
       characteristic: [],
       misc: [],
+      skillLevel: [],
     };
     for (const skill of this.actor.itemTypes.skill) {
-      const targetNumber = {
-        value: skill.targetNumber,
-      };
-      if (targetNumber.value > 0) {
-        targetNumber.label = `${targetNumber.value}-`;
-      } else {
-        targetNumber.label = "N/A";
-      }
       const skillData = {
         id: skill.id,
         name: skill.name,
         bonus: skill.system.bonus.value,
-        targetNumber,
       };
+
+      if (skill.system.type !== "skillLevel") {
+        const targetNumber = {
+          value: skill.targetNumber,
+        };
+        if (targetNumber.value > 0) {
+          targetNumber.label = `${targetNumber.value}-`;
+        } else {
+          targetNumber.label = "N/A";
+        }
+        skillData.targetNumber = targetNumber;
+      }
+
       if (skill.system.type === "background") {
         const bgType = BACKGROUND_SKILL_TYPES[skill.system.backgroundType];
         skillData.name = `${bgType}: ${skillData.name}`;
@@ -180,7 +215,14 @@ export default class CharacterSheet extends ActorSheet {
             skillData.level = "Proficiency";
             break;
         }
+      } else if (skill.system.type === "skillLevel") {
+        const cls = SKILL_LEVEL_CLASS_LABELS[skill.system.skillLevel.class];
+        const type = SKILL_LEVEL_TYPE_LABELS[skill.system.skillLevel.type];
+        const typeLabel = type ? ` (${type})` : "";
+        skillData.name = `${cls}: ${skillData.name}${typeLabel}`;
+        skillData.amount = skill.system.skillLevel.amount;
       }
+
       context.skills[skill.system.type].push(skillData);
     }
     for (const skillList of Object.values(context.skills)) {
