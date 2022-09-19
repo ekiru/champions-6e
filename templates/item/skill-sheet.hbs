@@ -60,6 +60,17 @@
           {{field attributes.targetNumber}}
         </p>
       {{/if}}
+      {{#if (eq attributes.type.value "skillLevel")}}
+        <p>
+          {{field attributes.skillLevel.class}}
+        </p>
+        <p>
+          {{field attributes.skillLevel.type}}
+        </p>
+        <p>
+          {{field attributes.skillLevel.amount}}
+        </p>
+      {{/if}}
     </div>
     <div class="tab notes flexcol" data-tab="description">
       {{field bio.description editable=true}}
