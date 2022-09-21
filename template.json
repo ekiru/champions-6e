@@ -8,26 +8,26 @@
         "pronouns": "they/them"
       },
       "characteristics": {
-        "str": { "value": 10 },
-        "dex": { "value": 10 },
-        "con": { "value": 10 },
-        "int": { "value": 10 },
-        "ego": { "value": 10 },
-        "pre": { "value": 10 },
+        "str": { "value": 10, "modifier": 0 },
+        "dex": { "value": 10, "modifier": 0 },
+        "con": { "value": 10, "modifier": 0 },
+        "int": { "value": 10, "modifier": 0 },
+        "ego": { "value": 10, "modifier": 0 },
+        "pre": { "value": 10, "modifier": 0 },
 
-        "ocv": { "value": 3 },
-        "dcv": { "value": 3 },
-        "omcv": { "value": 3 },
-        "dmcv": { "value": 3 },
+        "ocv": { "value": 3, "modifier": 0 },
+        "dcv": { "value": 3, "modifier": 0 },
+        "omcv": { "value": 3, "modifier": 0 },
+        "dmcv": { "value": 3, "modifier": 0 },
 
-        "spd": { "value": 2 },
+        "spd": { "value": 2, "modifier": 0 },
 
-        "pd": { "value": 2 },
-        "ed": { "value": 2 },
-        "rpd": { "value": 0 },
-        "red": { "value": 0 },
+        "pd": { "value": 2, "modifier": 0 },
+        "ed": { "value": 2, "modifier": 0 },
+        "rpd": { "value": 0, "modifier": 0 },
+        "red": { "value": 0, "modifier": 0 },
 
-        "rec": { "value": 4 },
+        "rec": { "value": 4, "modifier": 0 },
         "end": {
           "value": 20,
           "max": 20
@@ -44,13 +44,16 @@
       "phases": "6, 12",
       "movements": {
         "run": {
-          "value": 12
+          "value": 12,
+          "modifier": 0
         },
         "leap": {
-          "value": 4
+          "value": 4,
+          "modifier": 0
         },
         "swim": {
-          "value": 4
+          "value": 4,
+          "modifier": 0
         }
       }
     }

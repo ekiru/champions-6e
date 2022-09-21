@@ -1,4 +1,5 @@
 import { PRE, STR } from "../mechanics/characteristics.js";
+import * as assert from "../util/assert.js";
 
 const everypersonSkillData = [
   { name: "Acting", characteristic: "pre" },
@@ -39,6 +40,13 @@ const everypersonSkillData = [
   };
 });
 
+const MODIFIABLE_TRAITS = [].concat(
+  "str dex con int ego pre rec spd ocv dcv omcv dmcv pd ed rpd red"
+    .split(" ")
+    .map((char) => "system.characteristics." + char),
+  "run leap swim".split(" ").map((mode) => "system.movements." + mode)
+);
+
 export default class ChampionsActor extends Actor {
   async _onCreate(data, options, userId) {
     await super._onCreate(data, options, userId);
@@ -48,9 +56,24 @@ export default class ChampionsActor extends Actor {
   }
 
   prepareDerivedData() {
+    this._applyModifiers();
+
     const str = this.system.characteristics.str;
     const pre = this.system.characteristics.pre;
     str.hthDamage = STR.hthDamage(str.value);
     pre.presenceAttackDice = PRE.presenceAttackDice(pre.value);
+  }
+
+  _applyModifiers() {
+    console.log("#applyModifiers");
+    for (const path of MODIFIABLE_TRAITS) {
+      const trait = foundry.utils.getProperty(this, path);
+      assert.that(
+        trait !== undefined,
+        `Modifiable trait ${path} for character ${this.id} doesn't exist`
+      );
+
+      trait.total = Math.max(0, trait.value + trait.modifier);
+    }
   }
 }

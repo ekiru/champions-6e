@@ -231,4 +231,73 @@ export function register(system, quench) {
       displayName: `${system}: Test Character model`,
     }
   );
+
+  quench.registerBatch(
+    `${system}.cucumber.characters.modifier_boxes`,
+    function ({ describe, it, expect, afterEach }) {
+      describe("Modifier boxes", function () {
+        let character;
+        afterEach(async function () {
+          await character.delete();
+        });
+
+        /**
+         * Create a character.
+         *
+         * @param {*} system Any system data for the character.
+         * @returns {Promise<void>}
+         */
+        async function createCharacter(system = {}) {
+          character = await Actor.create({
+            name: "Mary",
+            type: "character",
+            system,
+          });
+        }
+
+        describe("calculating the total", function () {
+          /**
+           * Expects that a trait with a particular base and modifier has the specified total value.
+           *
+           * @param {string} trait The path to the trait
+           * @param {number} base The trait's base value
+           * @param {number} modifier The trait's modifier value
+           * @param {number} expectedTotal The trait's expected total
+           */
+          async function expectToTotal(trait, base, modifier, expectedTotal) {
+            await createCharacter({
+              [trait]: {
+                value: base,
+                modifier: modifier,
+              },
+            });
+
+            let location = character.system;
+            for (const key of trait.split(".")) {
+              expect(location).to.have.a.property(key);
+              location = location[key];
+            }
+            expect(location.total).to.equal(expectedTotal);
+          }
+
+          it("should equal the base if there's no modifier", async function () {
+            await expectToTotal("characteristics.ocv", 20, 0, 20);
+          });
+
+          it("should add positive modifiers", async function () {
+            await expectToTotal("characteristics.str", 20, +10, 30);
+          });
+
+          it("should subtract negative modifiers", async function () {
+            await expectToTotal("movements.run", 20, -5, 15);
+          });
+
+          it("cannot be negative", async function () {
+            await expectToTotal("characteristics.str", 10, -15, 0);
+          });
+        });
+      });
+    },
+    { displayName: `${system}: Test modifier boxes` }
+  );
 }
