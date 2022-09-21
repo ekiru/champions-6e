@@ -4,7 +4,7 @@ import { Characteristic } from "../../../src/mechanics/characteristics.js";
 describe("Characteristic roll target numbers", function () {
   let char;
   beforeEach(function () {
-    char = new Characteristic("STR");
+    char = new Characteristic("STR", "Strength");
   });
 
   it("should have a minimum of 9", function () {

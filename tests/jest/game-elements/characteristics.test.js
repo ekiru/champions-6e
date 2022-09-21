@@ -2,6 +2,59 @@
 import * as characteristics from "../../../src/mechanics/characteristics.js";
 
 describe("mechanics/characteristics", function () {
+  describe("constants", function () {
+    const allCharacteristics = [
+      "STR",
+      "DEX",
+      "CON",
+      "INT",
+      "EGO",
+      "PRE",
+      "REC",
+      "BODY",
+      "STUN",
+      "END",
+      "SPD",
+      "OCV",
+      "DCV",
+      "OMCV",
+      "DMCV",
+      "PD",
+      "ED",
+      "rPD",
+      "rED",
+    ];
+    it("all exist", function () {
+      for (const char of allCharacteristics) {
+        expect(characteristics).toHaveProperty(char);
+        expect(characteristics[char]).toBeInstanceOf(
+          characteristics.Characteristic
+        );
+      }
+    });
+
+    const rollableCharacteristics = ["STR", "DEX", "CON", "INT", "EGO", "PRE"];
+    it("appropriate characteristics are rollable", function () {
+      for (const char of rollableCharacteristics) {
+        expect(characteristics[char].isRollable).toBe(true);
+      }
+    });
+  });
+
+  describe("byName", function () {
+    it("should fetch characteristics by abbreviation", function () {
+      expect(characteristics.byName("STR")).toBe(characteristics.STR);
+    });
+
+    it("should fetch characteristics by name", function () {
+      expect(characteristics.byName("Strength")).toBe(characteristics.STR);
+    });
+
+    it("should ignore case", function () {
+      expect(characteristics.byName("sTrEnGtH")).toBe(characteristics.STR);
+    });
+  });
+
   describe("STR", function () {
     const STR = characteristics.STR;
 
