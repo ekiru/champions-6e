@@ -100,11 +100,17 @@ export default class CharacterSheet extends ActorSheet {
         label: "REC",
         value: this.actor.system.characteristics.rec.value,
         path: "system.characteristics.rec.value",
+        modifier: this.actor.system.characteristics.rec.modifier,
+        modifierPath: "system.characteristics.rec.modifier",
+        total: this.actor.system.characteristics.rec.total,
       },
       speed: {
         label: "SPD",
         value: this.actor.system.characteristics.spd.value,
         path: "system.characteristics.spd.value",
+        modifier: this.actor.system.characteristics.spd.modifier,
+        modifierPath: "system.characteristics.spd.modifier",
+        total: this.actor.system.characteristics.spd.total,
       },
       phases: {
         label: "Phases",
@@ -118,11 +124,15 @@ export default class CharacterSheet extends ActorSheet {
     for (const name of ["str", "dex", "con", "int", "ego", "pre"]) {
       const label = name.toUpperCase();
       const char = this.actor.system.characteristics[name];
+      const basePath = `system.characteristics.${name}`;
       context.characteristics.main[name] = {
         label,
         value: char.value,
         targetNumber: char.targetNumber,
-        path: `system.characteristics.${name}.value`,
+        path: `${basePath}.value`,
+        modifier: char.modifier,
+        modifierPath: `${basePath}.modifier`,
+        total: char.total,
       };
     }
 
@@ -131,6 +141,9 @@ export default class CharacterSheet extends ActorSheet {
         label: name.toUpperCase(),
         value: this.actor.system.characteristics[name].value,
         path: `system.characteristics.${name}.value`,
+        modifier: this.actor.system.characteristics[name].modifier,
+        modifierPath: `system.characteristics.${name}.modifier`,
+        total: this.actor.system.characteristics[name].total,
       };
     }
 
@@ -143,6 +156,9 @@ export default class CharacterSheet extends ActorSheet {
         label,
         value: this.actor.system.characteristics[name].value,
         path: `system.characteristics.${name}.value`,
+        modifier: this.actor.system.characteristics[name].modifier,
+        modifierPath: `system.characteristics.${name}.modifier`,
+        total: this.actor.system.characteristics[name].total,
       };
     }
 
@@ -163,6 +179,9 @@ export default class CharacterSheet extends ActorSheet {
         label: name.charAt(0).toUpperCase() + name.substring(1),
         value: this.actor.system.movements[name].value,
         path: `system.movements.${name}.value`,
+        modifier: this.actor.system.movements[name].modifier,
+        modifierPath: `system.movements.${name}.modifier`,
+        total: this.actor.system.movements[name].total,
       };
     }
 

@@ -16,6 +16,17 @@ function _expectCharacteristic(expect, fn) {
 }
 
 /**
+ * Waits a short time before resolving.
+ *
+ * @returns {Promise<void>} A promise that returns after a moment.
+ */
+function waitOneMoment() {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 50);
+  });
+}
+
+/**
  * Registers the tests for Actors with type=character.
  *
  * @param {*} system The name of the system, used in batch names and display names.
@@ -370,5 +381,52 @@ export function register(system, quench) {
       });
     },
     { displayName: `${system}: Test modifier boxes` }
+  );
+
+  quench.registerBatch(
+    `${system}.cucumber.characters.modifier_boxes.ui`,
+    function ({ describe, it, expect, before, after }) {
+      describe("the character sheet", function () {
+        let character;
+        before(async function () {
+          character = await Actor.create({
+            name: "Power Girl",
+            type: "character",
+            system: {
+              characteristics: {
+                str: { value: 30, modifier: +10 },
+              },
+            },
+          });
+          character.sheet.render(true);
+        });
+        after(async function () {
+          await character.delete();
+        });
+
+        let row;
+        before(async function () {
+          await waitOneMoment();
+          const sheet = $(`div#CharacterSheet-Actor-${character.id}`);
+          expect(sheet.length).to.equal(1);
+          sheet.find('nav.tabs > a[data-tab="characteristics"]').click();
+          row = sheet.find(
+            'table.main-characteristics > tbody > tr:contains("STR")'
+          );
+          expect(row.length).to.equal(1);
+        });
+
+        it("should allow viewing the modifier", async function () {
+          const modifier = row.children().get(2).firstChild;
+          expect(Number(modifier.value)).to.equal(10);
+        });
+
+        it("should show the total", async function () {
+          const total = row.children().get(3);
+          expect(Number(total.textContent)).to.equal(40);
+        });
+      });
+    },
+    { displayName: `${system}: UI for modifier boxes` }
   );
 }

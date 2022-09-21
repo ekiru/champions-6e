@@ -51,7 +51,9 @@
           <thead>
             <tr>
               <th>Char</th>
-              <th>Val</th>
+              <th>Base</th>
+              <th>Mod</th>
+              <th>Total</th>
               <th>Roll</th>
               <th></th>
             </tr>
@@ -75,6 +77,8 @@
                 <td>
                   {{numberInput value name=path}}
                 </td>
+                <td>{{numberInput modifier name=modifierPath}}</td>
+                <td>{{total}}</td>
                 <td></td>
                 <td></td>
               </tr>
@@ -83,6 +87,8 @@
               {{#with characteristics.rec}}
                 <td>{{label}}</td>
                 <td>{{numberInput value name=path}}</td>
+                <td>{{numberInput modifier name=modifierPath}}</td>
+                <td>{{total}}</td>
               {{/with}}
             </tr>
             <tr>
@@ -91,6 +97,8 @@
                 <td>
                   {{numberInput value name=path}}
                 </td>
+                <td>{{numberInput modifier name=modifierPath}}</td>
+                <td>{{total}}</td>
               {{/with}}
               {{#with characteristics.phases}}
                 <td>{{label}}</td>
@@ -104,7 +112,7 @@
 
         <table class="cvs">
           <thead>
-            <tr><th>Char</th> <th>Val</th></tr>
+            <tr><th>Char</th> <th>Base</th> <th>Mod</th> <th>Total</th></tr>
           </thead>
           <tbody>
             {{#each characteristics.cvs}}
@@ -113,6 +121,8 @@
                 <td>
                   {{numberInput value name=path}}
                 </td>
+                <td>{{numberInput modifier name=modifierPath}}</td>
+                <td>{{total}}</td>
               </tr>
             {{/each}}
           </tbody>
@@ -120,7 +130,7 @@
 
         <table class="defenses">
           <thead>
-            <tr><th>Char</th> <th>Val</th></tr>
+            <tr><th>Char</th> <th>Base</th> <th>Mod</th> <th>Total></th></tr>
           </thead>
           <tbody>
             {{#each characteristics.defenses}}
@@ -129,6 +139,8 @@
                 <td>
                   {{numberInput value name=path}}
                 </td>
+                <td>{{numberInput modifier name=modifierPath}}</td>
+                <td>{{total}}</td>
               </tr>
             {{/each}}
           </tbody>
@@ -155,13 +167,18 @@
 
         <table>
           <thead>
-            <tr><th>Movement</th> <th>Val (m)</th></tr>
+            <tr><th>Movement</th>
+              <th>Base (m)</th>
+              <th>Mod (m)</th>
+              <th>Total (m)</th></tr>
           </thead>
           <tbody>
             {{#each movements}}
               <tr>
                 <td>{{label}}</td>
                 <td>{{numberInput value name=path}}</td>
+                <td>{{numberInput modifier name=modifierPath}}</td>
+                <td>{{total}}</td>
               </tr>
             {{/each}}
           </tbody>
