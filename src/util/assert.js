@@ -22,3 +22,15 @@ export function precondition(condition, message = undefined) {
     throw new AssertionError(message);
   }
 }
+
+/**
+ * Asserts that a condition is true.
+ *
+ * @param {boolean} condition The condition to be asserted
+ * @param {string} message A message to be include in the error if the condition is false
+ */
+export function that(condition, message) {
+  if (!condition) {
+    throw new AssertionError(message);
+  }
+}
