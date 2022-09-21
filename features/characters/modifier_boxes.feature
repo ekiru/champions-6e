@@ -15,8 +15,8 @@ Feature: Modifier Boxes
       | Running |   20 |       -5 |    15 |
 
     Examples: totals cannot be negative
-      | base | modifier | total |
-      |   10 |      -15 |     0 |
+      | trait | base | modifier | total |
+      | STR   |   10 |      -15 |     0 |
 
   Scenario: Calculating characteristic rolls
     Given my character's base STR is 10
