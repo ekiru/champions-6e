@@ -1,4 +1,8 @@
-import { PRE, STR } from "../mechanics/characteristics.js";
+import {
+  PRE,
+  STR,
+  byName as characteristicByName,
+} from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
 
 const everypersonSkillData = [
@@ -57,6 +61,7 @@ export default class ChampionsActor extends Actor {
 
   prepareDerivedData() {
     this._applyModifiers();
+    this._calculateTargetNumbers();
 
     const str = this.system.characteristics.str;
     const pre = this.system.characteristics.pre;
@@ -65,7 +70,6 @@ export default class ChampionsActor extends Actor {
   }
 
   _applyModifiers() {
-    console.log("#applyModifiers");
     for (const path of MODIFIABLE_TRAITS) {
       const trait = foundry.utils.getProperty(this, path);
       assert.that(
@@ -74,6 +78,15 @@ export default class ChampionsActor extends Actor {
       );
 
       trait.total = Math.max(0, trait.value + trait.modifier);
+    }
+  }
+
+  _calculateTargetNumbers() {
+    for (const [name, data] of Object.entries(this.system.characteristics)) {
+      const char = characteristicByName(name);
+      if (char.isRollable) {
+        data.targetNumber = char.targetNumber(data.value);
+      }
     }
   }
 }

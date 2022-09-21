@@ -1,4 +1,3 @@
-import { Characteristic } from "../mechanics/characteristics.js";
 import { DEFENSE_TYPES } from "../mechanics/damage.js";
 import {
   attackRollDialog,
@@ -118,11 +117,11 @@ export default class CharacterSheet extends ActorSheet {
 
     for (const name of ["str", "dex", "con", "int", "ego", "pre"]) {
       const label = name.toUpperCase();
-      const value = this.actor.system.characteristics[name].value;
+      const char = this.actor.system.characteristics[name];
       context.characteristics.main[name] = {
         label,
-        value,
-        targetNumber: new Characteristic(label).targetNumber(value),
+        value: char.value,
+        targetNumber: char.targetNumber,
         path: `system.characteristics.${name}.value`,
       };
     }
