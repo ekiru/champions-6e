@@ -1,4 +1,4 @@
-import { Characteristic } from "../mechanics/characteristics.js";
+import * as characteristics from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
 
 export default class ChampionsItem extends Item {
@@ -226,6 +226,9 @@ export default class ChampionsItem extends Item {
     );
     const char =
       this.actor.system.characteristics[this.system.characteristic].value;
-    return new Characteristic().targetNumber(char) + this.system.bonus.value;
+    return (
+      characteristics.byName(this.system.characteristic).targetNumber(char) +
+      this.system.bonus.value
+    );
   }
 }
