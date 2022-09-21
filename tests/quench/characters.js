@@ -310,6 +310,37 @@ export function register(system, quench) {
             );
           });
         });
+
+        describe("Calculating skill rolls", function () {
+          let skill;
+          afterEach(async function () {
+            await skill.delete();
+          });
+
+          it("should be based on the total", async function () {
+            await createCharacter({
+              "characteristics.dex": {
+                value: 15,
+                modifier: -5,
+              },
+            });
+            skill = await Item.create(
+              {
+                name: "Stealth",
+                type: "skill",
+                system: {
+                  type: "characteristic",
+                  characteristic: "dex",
+                  level: "full",
+                  "bonus.value": 0,
+                },
+              },
+              { parent: character }
+            );
+
+            expect(skill.targetNumber).to.equal(11);
+          });
+        });
       });
     },
     { displayName: `${system}: Test modifier boxes` }

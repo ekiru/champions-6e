@@ -1,4 +1,3 @@
-import * as characteristics from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
 
 export default class ChampionsItem extends Item {
@@ -224,11 +223,7 @@ export default class ChampionsItem extends Item {
       this.system.characteristic in this.actor.system.characteristics,
       "Characteristic-based skills must have a valid characteristic to have a target number"
     );
-    const char =
-      this.actor.system.characteristics[this.system.characteristic].value;
-    return (
-      characteristics.byName(this.system.characteristic).targetNumber(char) +
-      this.system.bonus.value
-    );
+    const char = this.actor.system.characteristics[this.system.characteristic];
+    return char.targetNumber + this.system.bonus.value;
   }
 }
