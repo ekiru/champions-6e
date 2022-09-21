@@ -85,7 +85,7 @@ export default class ChampionsActor extends Actor {
     for (const [name, data] of Object.entries(this.system.characteristics)) {
       const char = characteristicByName(name);
       if (char.isRollable) {
-        data.targetNumber = char.targetNumber(data.value);
+        data.targetNumber = char.targetNumber(data.total);
       }
     }
   }

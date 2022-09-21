@@ -296,6 +296,20 @@ export function register(system, quench) {
             await expectToTotal("characteristics.str", 10, -15, 0);
           });
         });
+
+        describe("Calculating characteristic rolls", function () {
+          it("should be based on the total", async function () {
+            await createCharacter({
+              "characteristics.str": {
+                value: 10,
+                modifier: 5,
+              },
+            });
+            expect(character.system.characteristics.str.targetNumber).to.equal(
+              12
+            );
+          });
+        });
       });
     },
     { displayName: `${system}: Test modifier boxes` }
