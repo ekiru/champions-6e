@@ -341,6 +341,32 @@ export function register(system, quench) {
             expect(skill.targetNumber).to.equal(11);
           });
         });
+
+        describe("Calculating HTH damage", function () {
+          it("should be based on the total STR", async function () {
+            await createCharacter({
+              "characteristics.str": {
+                value: 40,
+                modifier: -20,
+              },
+            });
+            expect(character.system.characteristics.str.hthDamage).to.equal(4);
+          });
+        });
+
+        describe("Calculating PRE Attack dice", function () {
+          it("should be based on the total PRE", async function () {
+            await createCharacter({
+              "characteristics.pre": {
+                value: 15,
+                modifier: 10,
+              },
+            });
+            expect(
+              character.system.characteristics.pre.presenceAttackDice
+            ).to.equal(5);
+          });
+        });
       });
     },
     { displayName: `${system}: Test modifier boxes` }

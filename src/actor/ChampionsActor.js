@@ -65,8 +65,8 @@ export default class ChampionsActor extends Actor {
 
     const str = this.system.characteristics.str;
     const pre = this.system.characteristics.pre;
-    str.hthDamage = STR.hthDamage(str.value);
-    pre.presenceAttackDice = PRE.presenceAttackDice(pre.value);
+    str.hthDamage = STR.hthDamage(str.total);
+    pre.presenceAttackDice = PRE.presenceAttackDice(pre.total);
   }
 
   _applyModifiers() {
