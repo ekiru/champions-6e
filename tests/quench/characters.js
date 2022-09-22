@@ -472,7 +472,6 @@ export function register(system, quench) {
       describe("Rolling HAP at the start of a session", function () {
         it("my HAP should equal the results of the roll", async function () {
           sheet.find(".hap-roll").first().click();
-          console.log(sheet.find(".hap-roll"));
           await waitOneMoment();
           await waitOneMoment();
 

@@ -10,6 +10,5 @@ export async function openCharacterSheet(character) {
   character.sheet.render(true);
   await waitOneMoment();
   const result = $(`div#CharacterSheet-Actor-${character.id}`);
-  console.log(result);
   return result;
 }
