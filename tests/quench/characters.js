@@ -432,7 +432,6 @@ export function register(system, quench) {
         let row;
         before(async function () {
           const sheet = await openCharacterSheet(character);
-          console.log(sheet);
           expect(sheet.length).to.equal(1);
           sheet.find('nav.tabs > a[data-tab="characteristics"]').click();
           row = sheet.find(
@@ -497,5 +496,36 @@ export function register(system, quench) {
       });
     },
     { displayName: `${system}: Heroic Action Points` }
+  );
+
+  quench.registerBatch(
+    `${system}.cucumber.characters.derived_attributes`,
+    function ({ describe, it, expect, beforeEach, afterEach }) {
+      describe("Showing characteristic TNs", function () {
+        let character;
+        let sheet;
+        beforeEach("I have my character sheet open", async function () {
+          character = await Actor.create({
+            name: "Parian",
+            type: "character",
+            "system.characteristics.ego.value": 7,
+          });
+          sheet = await openCharacterSheet(character);
+        });
+        afterEach(async function () {
+          await character.delete();
+        });
+
+        it("I should see that my EGO roll has a target number of 10", async function () {
+          const row = sheet.find(
+            'table.main-characteristics > tbody > tr:contains("EGO")'
+          );
+          expect(row.length).to.equal(1);
+
+          expect(row.children().get(4).textContent).to.equal("10-");
+        });
+      });
+    },
+    { displayName: `${system}: Derived Attributes` }
   );
 }

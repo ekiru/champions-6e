@@ -136,6 +136,7 @@ export default class CharacterSheet extends ActorSheet {
         label,
         value: char.value,
         targetNumber: char.targetNumber,
+        targetNumberLabel: `${char.targetNumber}-`,
         path: `${basePath}.value`,
         modifier: char.modifier,
         modifierPath: `${basePath}.modifier`,
