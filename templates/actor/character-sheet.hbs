@@ -25,6 +25,10 @@
         value="{{bio.alterEgos.value}}"
       />
     </div>
+    <div class="hap">
+      <label><a class="hap-roll"><i class="fas fa-dice"></i> {{hap.label}}</label>
+      {{numberInput hap.value name=hap.path}}
+    </div>
     <div class="resources">
       {{#each resources}}
         <div class="resource">

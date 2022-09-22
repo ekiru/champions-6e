@@ -395,6 +395,25 @@ export async function knockbackRollDialog(
 }
 
 /**
+ * Rolls for Heroic Action Points.
+ *
+ * @param {*} options Options to customize the generated chat message.
+ * @param {Actor} options.actor The character whose HAP are being rolled.
+ * @returns {object} An object with results. The HAP rolled are under the hap
+ * property, the roll is under the roll property, and the chat message under the
+ * message property.
+ */
+export async function performHapRoll(options = {}) {
+  const result = await new Roll("2d6").roll({ async: true });
+  const response = {
+    hap: result.total,
+    roll: result,
+  };
+  await addMessage("Heroic Action Points", response, options);
+  return response;
+}
+
+/**
  * Renders a dialog for a roll.
  *
  * @private

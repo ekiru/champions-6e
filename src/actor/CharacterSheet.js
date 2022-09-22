@@ -3,6 +3,7 @@ import {
   attackRollDialog,
   damageRollDialog,
   knockbackRollDialog,
+  performHapRoll,
   successRollDialog,
 } from "../rolls.js";
 import { compareBy } from "../util/sort.js";
@@ -92,6 +93,12 @@ export default class CharacterSheet extends ActorSheet {
         }),
         path: "system.bio.notes",
       },
+    };
+
+    context.hap = {
+      label: "HAP",
+      value: this.actor.system.hap.value,
+      path: "system.hap.value",
     };
 
     context.characteristics = {
@@ -347,6 +354,10 @@ export default class CharacterSheet extends ActorSheet {
 
   _activateRolls(html) {
     const actor = this.actor;
+    html.find(".hap-roll").click(async function () {
+      const { hap } = await performHapRoll({ actor });
+      await actor.update({ "system.hap.value": hap });
+    });
     html.find("a.success-roll").click(function () {
       successRollDialog(this.textContent + " Roll", this.dataset.targetNumber, {
         actor,

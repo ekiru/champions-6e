@@ -463,4 +463,50 @@ export function register(system, quench) {
     },
     { displayName: `${system}: UI for modifier boxes` }
   );
+
+  quench.registerBatch(
+    `${system}.cucumber.hap`,
+    function ({ describe, it, expect, before, after }) {
+      let character;
+      let sheet;
+      before(async function () {
+        character = await Actor.create({
+          name: "Starfire",
+          type: "character",
+        });
+        character.sheet.render(true);
+        await waitOneMoment();
+        sheet = $(`div#CharacterSheet-Actor-${character.id}`);
+      });
+      after(async function () {
+        await character.delete();
+      });
+      describe("Rolling HAP at the start of a session", function () {
+        it("my HAP should equal the results of the roll", async function () {
+          sheet.find(".hap-roll").first().click();
+          console.log(sheet.find(".hap-roll"));
+          await waitOneMoment();
+          await waitOneMoment();
+
+          const rollMessage = game.messages.contents[game.messages.size - 1];
+          expect(rollMessage.flavor).to.include("Heroic Action Points");
+          expect(sheet.find(".hap input").val()).to.equal(
+            rollMessage.rolls[0].result
+          );
+        });
+
+        describe("Spending HAP", function () {
+          it("my HAP should be what I set it to", async function () {
+            character.update({ "system.hap.value": 0 });
+            const input = sheet.find(".hap input");
+            input.val("5");
+            input.trigger("change");
+            await waitOneMoment();
+            expect(character.system.hap.value).to.equal(5);
+          });
+        });
+      });
+    },
+    { displayName: `${system}: Heroic Action Points` }
+  );
 }
