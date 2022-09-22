@@ -273,7 +273,7 @@ export function register(system, quench) {
         }
 
         it("should base the targetNumber on the bonus and the actor's characteristic", async function () {
-          await charSkill("pre", +1, {}, { "pre.value": 30 });
+          await charSkill("pre", +1, {}, { pre: { value: 30 } });
           expect(skill.targetNumber).to.equal(16);
         });
 
@@ -282,7 +282,7 @@ export function register(system, quench) {
             "int",
             +5,
             { level: "familiarity" },
-            { "int.value": 30 }
+            { int: { value: 30 } }
           );
           expect(skill.targetNumber).to.equal(8);
         });
@@ -292,20 +292,20 @@ export function register(system, quench) {
             "int",
             +5,
             { level: "proficiency" },
-            { "int.value": 30 }
+            { int: { value: 30 } }
           );
           expect(skill.targetNumber).to.equal(10);
         });
 
         it("should preserve the TN when changing to a misc skill", async function () {
-          await charSkill("dex", +2, {}, { "dex.value": 20 });
+          await charSkill("dex", +2, {}, { dex: { value: 20 } });
           await skill.update({ "system.type": "misc" });
           expect(skill.system.type).to.equal("misc");
           expect(skill.system.targetNumber.value).to.equal(15);
         });
 
         it("should allow overriding the TN when changing to a misc skill", async function () {
-          await charSkill("dex", +2, {}, { "dex.value": 20 });
+          await charSkill("dex", +2, {}, { dex: { value: 20 } });
           await skill.update({
             "system.type": "misc",
             "system.targetNumber.value": 5,
