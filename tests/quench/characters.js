@@ -465,7 +465,7 @@ export function register(system, quench) {
   );
 
   quench.registerBatch(
-    `${system}.cucumber.hap`,
+    `${system}.cucumber.characters.hap`,
     function ({ describe, it, expect, before, after }) {
       let character;
       let sheet;
