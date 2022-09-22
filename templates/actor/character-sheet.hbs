@@ -64,7 +64,6 @@
               <th>Mod</th>
               <th>Total</th>
               <th>Roll</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -89,7 +88,6 @@
                 <td>{{numberInput modifier name=modifierPath}}</td>
                 <td>{{total}}</td>
                 <td>{{targetNumberLabel}}</td>
-                <td></td>
               </tr>
             {{/each}}
             <tr>
@@ -110,10 +108,7 @@
                 <td>{{total}}</td>
               {{/with}}
               {{#with characteristics.phases}}
-                <td>{{label}}</td>
-                <td>
-                  <input type="text" name="{{path}}" value="{{value}}" />
-                </td>
+                <td>{{label}} {{value}}</td>
               {{/with}}
             </tr>
           </tbody>

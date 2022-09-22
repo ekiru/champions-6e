@@ -524,6 +524,50 @@ export function register(system, quench) {
           expect(row.children().get(4).textContent).to.equal("10-");
         });
       });
+
+      describe("Phases", function () {
+        let character;
+        afterEach(async function () {
+          await character.delete();
+        });
+
+        describe("when my Speed is 2", function () {
+          it("I should have Phases on segments 6 and 12", async function () {
+            character = await Actor.create({
+              name: "Norm",
+              type: "character",
+              "system.characteristics.spd": { value: 2 },
+            });
+
+            expect(character.system.phases).to.deep.equal([6, 12]);
+          });
+        });
+        describe("when my Speed is 5", function () {
+          it("I should have Phases on segments 3, 5, 8, 10, and 12", async function () {
+            character = await Actor.create({
+              name: "Millie",
+              type: "character",
+              "system.characteristics.spd": { value: 4, modifier: +1 },
+            });
+
+            expect(character.system.phases).to.deep.equal([3, 5, 8, 10, 12]);
+          });
+        });
+      });
+      describe("Lifting weight", function () {
+        const examples = [
+          // STR, lifting weight
+          [0, "0 kg"],
+          [10, "100 kg"],
+          [20, "400 kg"],
+          [40, "6400 kg"],
+          [45, "12.5 tons"],
+          [100, "25000 tons"],
+        ];
+        examples;
+
+        it.skip("should be calculated correctly based on STR");
+      });
     },
     { displayName: `${system}: Derived Attributes` }
   );

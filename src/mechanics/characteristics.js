@@ -1,3 +1,5 @@
+import * as assert from "../util/assert.js";
+
 const nameMapping = new Map();
 
 export class Characteristic {
@@ -74,7 +76,32 @@ export const DCV = new Characteristic("DCV", "Defensive Combat Value");
 export const OMCV = new Characteristic("OMCV", "Offensive Mental Combat Value");
 export const DMCV = new Characteristic("DMCV", "Defensive Mental Combat Value");
 
+const SPEED_CHART = new Map(
+  [
+    [0, []],
+    [1, [7]],
+    [2, [6, 12]],
+    [3, [4, 8, 12]],
+    [4, [3, 6, 9, 12]],
+    [5, [3, 5, 8, 10, 12]],
+    [6, [2, 4, 6, 8, 10, 12]],
+    [7, [2, 4, 6, 7, 9, 11, 12]],
+    [8, [2, 3, 5, 6, 8, 9, 11, 12]],
+    [9, [2, 3, 4, 6, 7, 8, 10, 12, 12]],
+    [10, [2, 3, 4, 5, 6, 8, 9, 10, 11, 12]],
+    [11, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    [12, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+  ].map(([k, v]) => [k, Object.freeze(v)])
+);
+console.log(SPEED_CHART);
 export const SPD = new Characteristic("SPD", "Speed");
+SPD.phases = function (spd) {
+  assert.precondition(spd >= 0);
+  if (spd > 12) {
+    spd = 12;
+  }
+  return SPEED_CHART.get(spd);
+};
 
 export const PD = new Characteristic("PD", "Physical Defense");
 export const ED = new Characteristic("ED", "Energy Defense");

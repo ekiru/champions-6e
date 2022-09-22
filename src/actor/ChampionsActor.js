@@ -1,5 +1,6 @@
 import {
   PRE,
+  SPD,
   STR,
   byName as characteristicByName,
 } from "../mechanics/characteristics.js";
@@ -64,9 +65,12 @@ export default class ChampionsActor extends Actor {
     this._calculateTargetNumbers();
 
     const str = this.system.characteristics.str;
-    const pre = this.system.characteristics.pre;
     str.hthDamage = STR.hthDamage(str.total);
+
+    const pre = this.system.characteristics.pre;
     pre.presenceAttackDice = PRE.presenceAttackDice(pre.total);
+
+    this.system.phases = SPD.phases(this.system.characteristics.spd.total);
   }
 
   _applyModifiers() {

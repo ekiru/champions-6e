@@ -42,7 +42,6 @@
           "max": 20
         }
       },
-      "phases": "6, 12",
       "movements": {
         "run": {
           "value": 12,
