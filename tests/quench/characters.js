@@ -1,3 +1,6 @@
+import { openCharacterSheet } from "./helpers/sheets.js";
+import { waitOneMoment } from "./helpers/timers.js";
+
 /**
  * Constructs a helper function to ensure that a characteristic is present before
  *  declaring expectations of it.
@@ -13,17 +16,6 @@ function _expectCharacteristic(expect, fn) {
     expect(char, `${name.toUpperCase()} should be present`).to.exist;
     return expect(fn.call(null, char), displayName);
   };
-}
-
-/**
- * Waits a short time before resolving.
- *
- * @returns {Promise<void>} A promise that returns after a moment.
- */
-function waitOneMoment() {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 50);
-  });
 }
 
 /**
@@ -432,7 +424,6 @@ export function register(system, quench) {
               },
             },
           });
-          character.sheet.render(true);
         });
         after(async function () {
           await character.delete();
@@ -440,8 +431,8 @@ export function register(system, quench) {
 
         let row;
         before(async function () {
-          await waitOneMoment();
-          const sheet = $(`div#CharacterSheet-Actor-${character.id}`);
+          const sheet = await openCharacterSheet(character);
+          console.log(sheet);
           expect(sheet.length).to.equal(1);
           sheet.find('nav.tabs > a[data-tab="characteristics"]').click();
           row = sheet.find(
@@ -474,9 +465,7 @@ export function register(system, quench) {
           name: "Starfire",
           type: "character",
         });
-        character.sheet.render(true);
-        await waitOneMoment();
-        sheet = $(`div#CharacterSheet-Actor-${character.id}`);
+        sheet = await openCharacterSheet(character);
       });
       after(async function () {
         await character.delete();
