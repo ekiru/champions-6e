@@ -261,7 +261,7 @@ export default class CharacterSheet extends ActorSheet {
           damageType: "normal",
           ocv: {
             label: "OCV",
-            value: context.characteristics.cvs.ocv.value,
+            value: context.characteristics.cvs.ocv.total,
           },
           dcv: {
             label: "DCV",
@@ -294,7 +294,7 @@ export default class CharacterSheet extends ActorSheet {
         label: attack.name,
         ocv: {
           label: ocv.toUpperCase(),
-          value: context.characteristics.cvs[ocv].value,
+          value: context.characteristics.cvs[ocv].total,
         },
         dcv: {
           label: dcv.toUpperCase(),

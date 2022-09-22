@@ -378,6 +378,40 @@ export function register(system, quench) {
             ).to.equal(5);
           });
         });
+
+        describe("Calculating attack rolls", function () {
+          let attack;
+          afterEach(async function () {
+            if (attack) {
+              await attack.delete();
+            }
+          });
+
+          it("HTH attack roll should be based on the total OCV", async function () {
+            await createCharacter({
+              "characteristics.ocv": { value: 5, modifier: +3 },
+            });
+            const context = await character.sheet.getData();
+            expect(context.combat.attacks[0].ocv.value).to.equal(8);
+          });
+
+          it("additional attacks should be based on total OCV/OMCV", async function () {
+            await createCharacter({
+              "characteristics.omcv": { value: 6, modifier: +4 },
+            });
+            attack = await Item.create(
+              {
+                name: "Laserbeam",
+                type: "attack",
+                "system.cv.offensive": "omcv",
+              },
+              { parent: character }
+            );
+
+            const context = await character.sheet.getData();
+            expect(context.combat.attacks[2].ocv.value).equal(10);
+          });
+        });
       });
     },
     { displayName: `${system}: Test modifier boxes` }
