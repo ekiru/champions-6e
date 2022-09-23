@@ -73,10 +73,10 @@ function characteristicEffectDice(points) {
 }
 
 export const STR = new RollableCharacteristic("STR", "Strength");
-STR.hthDamage = function (value) {
-  return characteristicEffectDice(value);
-};
-STR.defineAttribute("system.characteristics.str.hthDamage", STR.hthDamage);
+STR.defineAttribute(
+  "system.characteristics.str.hthDamage",
+  characteristicEffectDice
+);
 
 export const DEX = new RollableCharacteristic("DEX", "Dexterity");
 export const CON = new RollableCharacteristic("CON", "Constiution");
@@ -84,9 +84,10 @@ export const INT = new RollableCharacteristic("INT", "Intelligence");
 export const EGO = new RollableCharacteristic("EGO", "Ego");
 
 export const PRE = new RollableCharacteristic("PRE", "Presence");
-PRE.presenceAttackDice = function (value) {
-  return characteristicEffectDice(value);
-};
+PRE.defineAttribute(
+  "system.characteristics.pre.presenceAttackDice",
+  characteristicEffectDice
+);
 
 export const OCV = new Characteristic("OCV", "Offensive Combat Value");
 export const DCV = new Characteristic("DCV", "Defensive Combat Value");

@@ -1,7 +1,5 @@
 import {
-  PRE,
   SPD,
-  STR,
   byName as characteristicByName,
 } from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
@@ -64,14 +62,14 @@ export default class ChampionsActor extends Actor {
     this._applyModifiers();
     this._calculateTargetNumbers();
 
-    for (const [key, value] of Object.entries(
-      STR.derivedAttributes(this.system.characteristics.str.total)
-    )) {
-      foundry.utils.setProperty(this, key, value);
+    for (const [name, data] of Object.entries(this.system.characteristics)) {
+      const characteristic = characteristicByName(name);
+      for (const [key, value] of Object.entries(
+        characteristic.derivedAttributes(data.total)
+      )) {
+        foundry.utils.setProperty(this, key, value);
+      }
     }
-
-    const pre = this.system.characteristics.pre;
-    pre.presenceAttackDice = PRE.presenceAttackDice(pre.total);
 
     this.system.phases = SPD.phases(this.system.characteristics.spd.total);
   }

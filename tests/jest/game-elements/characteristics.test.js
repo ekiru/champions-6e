@@ -112,9 +112,15 @@ describe("mechanics/characteristics", function () {
 
     it("should have the same Presence Attack dice as STR would have for HTH damamge", function () {
       for (let i = 0; i < 100; i++) {
-        expect(PRE.presenceAttackDice(i)).toBe(
-          characteristics.STR.hthDamage(i)
-        );
+        const presenceAttackDice =
+          PRE.derivedAttributes(i)[
+            "system.characteristics.pre.presenceAttackDice"
+          ];
+        const hthDamage =
+          characteristics.STR.derivedAttributes(i)[
+            "system.characteristics.str.hthDamage"
+          ];
+        expect(presenceAttackDice).toBe(hthDamage);
       }
     });
   });
