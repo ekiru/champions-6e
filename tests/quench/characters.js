@@ -487,8 +487,7 @@ export function register(system, quench) {
             character.update({ "system.hap.value": 0 });
             const input = sheet.find(".hap input");
             input.val("5");
-            input.trigger("change");
-            await waitOneMoment();
+            await character.sheet.submit();
             expect(character.system.hap.value).to.equal(5);
           });
         });
