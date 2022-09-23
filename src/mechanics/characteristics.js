@@ -3,6 +3,8 @@ import * as assert from "../util/assert.js";
 const nameMapping = new Map();
 
 export class Characteristic {
+  #derivedAttributes;
+
   constructor(abbreviation, name) {
     this.abbreviation = abbreviation;
     this.name = name;
@@ -10,6 +12,20 @@ export class Characteristic {
     if (abbreviation !== name) {
       nameMapping.set(name.toLowerCase(), this);
     }
+
+    this.#derivedAttributes = new Map();
+  }
+
+  defineAttribute(name, fn) {
+    this.#derivedAttributes.set(name, fn);
+  }
+
+  derivedAttributes(value) {
+    const result = {};
+    for (const [name, fn] of this.#derivedAttributes.entries()) {
+      result[name] = fn(value);
+    }
+    return result;
   }
 
   targetNumber(value) {
@@ -60,6 +76,7 @@ export const STR = new RollableCharacteristic("STR", "Strength");
 STR.hthDamage = function (value) {
   return characteristicEffectDice(value);
 };
+STR.defineAttribute("system.characteristics.str.hthDamage", STR.hthDamage);
 
 export const DEX = new RollableCharacteristic("DEX", "Dexterity");
 export const CON = new RollableCharacteristic("CON", "Constiution");
@@ -93,7 +110,6 @@ const SPEED_CHART = new Map(
     [12, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
   ].map(([k, v]) => [k, Object.freeze(v)])
 );
-console.log(SPEED_CHART);
 export const SPD = new Characteristic("SPD", "Speed");
 SPD.phases = function (spd) {
   assert.precondition(spd >= 0);

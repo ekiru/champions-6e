@@ -64,8 +64,11 @@ export default class ChampionsActor extends Actor {
     this._applyModifiers();
     this._calculateTargetNumbers();
 
-    const str = this.system.characteristics.str;
-    str.hthDamage = STR.hthDamage(str.total);
+    for (const [key, value] of Object.entries(
+      STR.derivedAttributes(this.system.characteristics.str.total)
+    )) {
+      foundry.utils.setProperty(this, key, value);
+    }
 
     const pre = this.system.characteristics.pre;
     pre.presenceAttackDice = PRE.presenceAttackDice(pre.total);

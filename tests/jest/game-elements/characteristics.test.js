@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import * as characteristics from "../../../src/mechanics/characteristics.js";
+import { jest } from "@jest/globals";
 
 describe("mechanics/characteristics", function () {
   describe("constants", function () {
@@ -68,32 +69,35 @@ describe("mechanics/characteristics", function () {
     });
 
     describe("HTH damage", function () {
+      const hthDamage = (str) =>
+        STR.derivedAttributes(str)["system.characteristics.str.hthDamage"];
+
       it("should be nothing for STR 0", function () {
-        expect(STR.hthDamage(0)).toBe(0);
+        expect(hthDamage(0)).toBe(0);
       });
 
       it("should be ½d6 for STR 3 or 4", function () {
-        expect(STR.hthDamage(3)).toBe(0.5);
-        expect(STR.hthDamage(4)).toBe(0.5);
+        expect(hthDamage(3)).toBe(0.5);
+        expect(hthDamage(4)).toBe(0.5);
       });
 
       it("should be 1d6 for STR 5", function () {
-        expect(STR.hthDamage(5)).toBe(1);
+        expect(hthDamage(5)).toBe(1);
       });
 
       it("should be 2d6 for STR 10-12", function () {
-        expect(STR.hthDamage(10)).toBe(2);
-        expect(STR.hthDamage(11)).toBe(2);
-        expect(STR.hthDamage(12)).toBe(2);
+        expect(hthDamage(10)).toBe(2);
+        expect(hthDamage(11)).toBe(2);
+        expect(hthDamage(12)).toBe(2);
       });
 
       it("follows the same pattern even at very high STR", function () {
-        expect(STR.hthDamage(90)).toBe(18);
-        expect(STR.hthDamage(91)).toBe(18);
-        expect(STR.hthDamage(92)).toBe(18);
-        expect(STR.hthDamage(93)).toBe(18.5);
-        expect(STR.hthDamage(94)).toBe(18.5);
-        expect(STR.hthDamage(95)).toBe(19);
+        expect(hthDamage(90)).toBe(18);
+        expect(hthDamage(91)).toBe(18);
+        expect(hthDamage(92)).toBe(18);
+        expect(hthDamage(93)).toBe(18.5);
+        expect(hthDamage(94)).toBe(18.5);
+        expect(hthDamage(95)).toBe(19);
       });
     });
   });
@@ -112,6 +116,26 @@ describe("mechanics/characteristics", function () {
           characteristics.STR.hthDamage(i)
         );
       }
+    });
+  });
+
+  describe("#derivedAttributes", function () {
+    let characteristic;
+    beforeEach(function () {
+      characteristic = new characteristics.Characteristic("", "");
+    });
+
+    it("should return nothing if no attributes have been added", function () {
+      expect(Object.keys(characteristic.derivedAttributes(10))).toHaveLength(0);
+    });
+
+    it("should return an attribute if any have been defined", function () {
+      const attr = jest.fn(() => 255);
+      characteristic.defineAttribute("green", attr);
+
+      const attrs = characteristic.derivedAttributes(11);
+      expect(attr).toHaveBeenCalledWith(11);
+      expect(attrs).toHaveProperty("green", 255);
     });
   });
 });
