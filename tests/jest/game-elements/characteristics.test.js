@@ -143,6 +143,18 @@ describe("mechanics/characteristics", function () {
         expect(liftingWeight(21)).toEqual(liftingWeight(20));
         expect(liftingWeight(32)).toEqual(liftingWeight(30));
       });
+
+      it("intermediate values ending in 3 or 8 should interpolate", function () {
+        expect(liftingWeight(8)).toEqual({ value: 75, unit: "kg" });
+        expect(liftingWeight(33)).toEqual({ value: 2400, unit: "kg" });
+        expect(liftingWeight(43)).toEqual({ value: 9450, unit: "kg" });
+        expect(liftingWeight(93)).toEqual({ value: 9450, unit: "tons" });
+      });
+
+      it("intermediate values ending in 4 or 9 should round up", function () {
+        expect(liftingWeight(19)).toEqual(liftingWeight(20));
+        expect(liftingWeight(94)).toEqual(liftingWeight(95));
+      });
     });
   });
 

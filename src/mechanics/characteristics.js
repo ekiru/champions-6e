@@ -118,12 +118,31 @@ STR.defineAttribute("system.characteristics.str.liftingWeight", function (str) {
       // intermediate between multiples of 5
       assert.precondition(i > 0, "STR must exceed 0");
       const lesser = LIFTING_WEIGHT_TABLE[i - 1];
+      const greater = row;
       switch (str % 5) {
         case 1:
         case 2:
           return {
             value: lesser[1],
             unit: lesser[2],
+          };
+        case 3:
+          if (lesser[2] === greater[2]) {
+            return {
+              value: (lesser[1] + greater[1]) / 2,
+              unit: lesser[2],
+            };
+          } else {
+            assert.that(lesser[2] === "kg" && greater[2] === "tons");
+            return {
+              value: (lesser[1] + greater[1] * 1000) / 2,
+              unit: "kg",
+            };
+          }
+        case 4:
+          return {
+            value: greater[1],
+            unit: greater[2],
           };
       }
     }
