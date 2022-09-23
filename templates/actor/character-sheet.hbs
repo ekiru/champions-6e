@@ -63,7 +63,7 @@
               <th>Base</th>
               <th>Mod</th>
               <th>Total</th>
-              <th>Roll</th>
+              <th>Roll/etc.</th>
             </tr>
           </thead>
           <tbody>
@@ -87,7 +87,11 @@
                 </td>
                 <td>{{numberInput modifier name=modifierPath}}</td>
                 <td>{{total}}</td>
-                <td>{{targetNumberLabel}}</td>
+                <td>
+                  {{#each derivedAttributes}}{{#if @index}},{{/if}}
+                    {{label}}
+                    {{value}}{{/each}}
+                </td>
               </tr>
             {{/each}}
             <tr>

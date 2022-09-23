@@ -131,15 +131,25 @@ export default class CharacterSheet extends ActorSheet {
       const label = name.toUpperCase();
       const char = this.actor.system.characteristics[name];
       const basePath = `system.characteristics.${name}`;
+      const derivedAttributes = [
+        { label: "Roll", value: `${char.targetNumber}-` },
+      ];
+      if (name === "str") {
+        const lift = char.liftingWeight;
+        derivedAttributes.push({
+          label: "Lift",
+          value: `${lift.value} ${lift.unit}`,
+        });
+      }
       context.characteristics.main[name] = {
         label,
         value: char.value,
         targetNumber: char.targetNumber,
-        targetNumberLabel: `${char.targetNumber}-`,
         path: `${basePath}.value`,
         modifier: char.modifier,
         modifierPath: `${basePath}.modifier`,
         total: char.total,
+        derivedAttributes,
       };
     }
 

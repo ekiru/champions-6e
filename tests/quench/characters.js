@@ -520,7 +520,9 @@ export function register(system, quench) {
           );
           expect(row.length).to.equal(1);
 
-          expect(row.children().get(4).textContent).to.equal("10-");
+          expect(row.children().get(4).textContent.trim()).to.match(
+            /^Roll\s+10-$/
+          );
         });
       });
 
