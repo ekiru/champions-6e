@@ -121,7 +121,10 @@ export default class CharacterSheet extends ActorSheet {
       },
       phases: {
         label: "Phases",
-        value: this.actor.system.phases.join(", "),
+        value:
+          this.actor.system.phases.length > 0
+            ? this.actor.system.phases.join(", ")
+            : "—",
       },
       cvs: {},
       defenses: {},
