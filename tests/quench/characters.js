@@ -554,6 +554,11 @@ export function register(system, quench) {
         });
       });
       describe("Lifting weight", function () {
+        let character;
+        afterEach(async function () {
+          await character.delete();
+        });
+
         const examples = [
           // STR, lifting weight
           [0, "0 kg"],
@@ -563,9 +568,30 @@ export function register(system, quench) {
           [45, "12.5 tons"],
           [100, "25000 tons"],
         ];
-        examples;
 
-        it.skip("should be calculated correctly based on STR");
+        it("should be calculated correctly based on STR", async function () {
+          character = await Actor.create({
+            name: "Superman",
+            type: "character",
+          });
+
+          for (const [str, weight] of examples) {
+            await character.update({
+              "system.characteristics.str": {
+                value: 0,
+                modifier: str,
+              },
+            });
+
+            const [value, unit] = weight.split(" ");
+            expect(
+              character.system.characteristics.str.liftingWeight.value
+            ).to.equal(Number(value));
+            expect(
+              character.system.characteristics.str.liftingWeight.unit
+            ).to.equal(unit);
+          }
+        });
       });
     },
     { displayName: `${system}: Derived Attributes` }
