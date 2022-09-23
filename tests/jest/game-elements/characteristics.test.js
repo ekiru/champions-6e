@@ -100,6 +100,43 @@ describe("mechanics/characteristics", function () {
         expect(hthDamage(95)).toBe(19);
       });
     });
+
+    describe("lifting weight", function () {
+      const liftingWeight = (str) =>
+        STR.derivedAttributes(str)["system.characteristics.str.liftingWeight"];
+
+      it("should be as in the table for 0-5", function () {
+        expect(liftingWeight(0)).toEqual({ value: 0, unit: "kg" });
+        expect(liftingWeight(1)).toEqual({ value: 8, unit: "kg" });
+        expect(liftingWeight(2)).toEqual({ value: 16, unit: "kg" });
+        expect(liftingWeight(3)).toEqual({ value: 25, unit: "kg" });
+        expect(liftingWeight(4)).toEqual({ value: 38, unit: "kg" });
+        expect(liftingWeight(5)).toEqual({ value: 50, unit: "kg" });
+      });
+
+      it("should double every 5 STR from 5 to 40", function () {
+        expect(liftingWeight(10)).toEqual({ value: 100, unit: "kg" });
+        expect(liftingWeight(25)).toEqual({ value: 800, unit: "kg" });
+        expect(liftingWeight(40)).toEqual({ value: 6400, unit: "kg" });
+      });
+
+      it("should double every 5 STR from 45 to 90, but in tons", function () {
+        expect(liftingWeight(50)).toEqual({ value: 25, unit: "tons" });
+        expect(liftingWeight(70)).toEqual({ value: 400, unit: "tons" });
+        expect(liftingWeight(90)).toEqual({ value: 6400, unit: "tons" });
+      });
+
+      it("should have discontinuities, rounding to 12.5, at 45 and 95", function () {
+        expect(liftingWeight(45)).toEqual({ value: 12.5, unit: "tons" });
+        expect(liftingWeight(95)).toEqual({ value: 12500, unit: "tons" });
+      });
+
+      it("should cap out at 100", function () {
+        expect(liftingWeight(100)).toEqual({ value: 25000, unit: "tons" });
+        expect(liftingWeight(101)).toEqual({ value: 25000, unit: "tons?" });
+        expect(liftingWeight(10000)).toEqual({ value: 25000, unit: "tons?" });
+      });
+    });
   });
 
   describe("PRE", function () {

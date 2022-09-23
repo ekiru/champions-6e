@@ -77,6 +77,51 @@ STR.defineAttribute(
   "system.characteristics.str.hthDamage",
   characteristicEffectDice
 );
+const LIFTING_WEIGHT_TABLE = [
+  // STR weight unit
+  [0, 0, "kg"],
+  [1, 8, "kg"],
+  [2, 16, "kg"],
+  [3, 25, "kg"],
+  [4, 38, "kg"],
+  [5, 50, "kg"],
+  [10, 100, "kg"],
+  [15, 200, "kg"],
+  [20, 400, "kg"],
+  [25, 800, "kg"],
+  [30, 1600, "kg"],
+  [35, 3200, "kg"],
+  [40, 6400, "kg"],
+  [45, 12.5, "tons"],
+  [50, 25, "tons"],
+  [55, 50, "tons"],
+  [60, 100, "tons"],
+  [65, 200, "tons"],
+  [70, 400, "tons"],
+  [75, 800, "tons"],
+  [80, 1600, "tons"],
+  [85, 3200, "tons"],
+  [90, 6400, "tons"],
+  [95, 12500, "tons"],
+  [100, 25000, "tons"],
+];
+STR.defineAttribute("system.characteristics.str.liftingWeight", function (str) {
+  for (let i = 0; i < LIFTING_WEIGHT_TABLE.length; i++) {
+    const row = LIFTING_WEIGHT_TABLE[i];
+    if (str === row[0]) {
+      return {
+        value: row[1],
+        unit: row[2],
+      };
+    }
+  }
+  // str > 100
+  const oneHundredRow = LIFTING_WEIGHT_TABLE[LIFTING_WEIGHT_TABLE.length - 1];
+  return {
+    value: oneHundredRow[1],
+    unit: oneHundredRow[2] + "?",
+  };
+});
 
 export const DEX = new RollableCharacteristic("DEX", "Dexterity");
 export const CON = new RollableCharacteristic("CON", "Constiution");
