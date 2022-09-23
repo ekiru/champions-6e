@@ -1,7 +1,4 @@
-import {
-  SPD,
-  byName as characteristicByName,
-} from "../mechanics/characteristics.js";
+import { byName as characteristicByName } from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
 
 const everypersonSkillData = [
@@ -70,8 +67,6 @@ export default class ChampionsActor extends Actor {
         foundry.utils.setProperty(this, key, value);
       }
     }
-
-    this.system.phases = SPD.phases(this.system.characteristics.spd.total);
   }
 
   _applyModifiers() {

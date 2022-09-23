@@ -112,13 +112,13 @@ const SPEED_CHART = new Map(
   ].map(([k, v]) => [k, Object.freeze(v)])
 );
 export const SPD = new Characteristic("SPD", "Speed");
-SPD.phases = function (spd) {
+SPD.defineAttribute("system.phases", function (spd) {
   assert.precondition(spd >= 0);
   if (spd > 12) {
     spd = 12;
   }
   return SPEED_CHART.get(spd);
-};
+});
 
 export const PD = new Characteristic("PD", "Physical Defense");
 export const ED = new Characteristic("ED", "Energy Defense");
