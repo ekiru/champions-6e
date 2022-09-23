@@ -106,6 +106,7 @@ const LIFTING_WEIGHT_TABLE = [
   [100, 25000, "tons"],
 ];
 STR.defineAttribute("system.characteristics.str.liftingWeight", function (str) {
+  assert.precondition(Number.isInteger(str), "STR must be an integer");
   for (let i = 0; i < LIFTING_WEIGHT_TABLE.length; i++) {
     const row = LIFTING_WEIGHT_TABLE[i];
     if (str === row[0]) {
@@ -113,6 +114,18 @@ STR.defineAttribute("system.characteristics.str.liftingWeight", function (str) {
         value: row[1],
         unit: row[2],
       };
+    } else if (str < row[0]) {
+      // intermediate between multiples of 5
+      assert.precondition(i > 0, "STR must exceed 0");
+      const lesser = LIFTING_WEIGHT_TABLE[i - 1];
+      switch (str % 5) {
+        case 1:
+        case 2:
+          return {
+            value: lesser[1],
+            unit: lesser[2],
+          };
+      }
     }
   }
   // str > 100

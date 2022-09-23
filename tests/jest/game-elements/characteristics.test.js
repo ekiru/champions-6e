@@ -136,6 +136,13 @@ describe("mechanics/characteristics", function () {
         expect(liftingWeight(101)).toEqual({ value: 25000, unit: "tons?" });
         expect(liftingWeight(10000)).toEqual({ value: 25000, unit: "tons?" });
       });
+
+      it("intermediate values ending in 1, 2, 6, or 7 should round down to the nearest multiple of 5", function () {
+        expect(liftingWeight(6)).toEqual(liftingWeight(5));
+        expect(liftingWeight(17)).toEqual(liftingWeight(15));
+        expect(liftingWeight(21)).toEqual(liftingWeight(20));
+        expect(liftingWeight(32)).toEqual(liftingWeight(30));
+      });
     });
   });
 
