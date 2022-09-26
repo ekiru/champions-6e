@@ -31,5 +31,6 @@
   "gridUnits": "m",
 
   "primaryTokenAttribute": "characteristics.stun",
-  "secondaryTokenAttribute": "characteristics.end"
+  "secondaryTokenAttribute": "characteristics.end",
+  "initiative": "d100"
 }
