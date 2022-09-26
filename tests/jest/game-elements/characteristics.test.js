@@ -181,6 +181,28 @@ describe("mechanics/characteristics", function () {
     });
   });
 
+  describe("SPD", function () {
+    describe("phases", function () {
+      const phases = (spd) =>
+        characteristics.SPD.derivedAttributes(spd)["system.phases"];
+
+      it("there should be no duplicates at any given SPD", function () {
+        for (let spd = 0; spd <= 12; spd++) {
+          const segments = phases(spd);
+          const set = new Set();
+          for (const segment of segments) {
+            expect([spd, segment, set.has(segment)]).toEqual([
+              spd,
+              segment,
+              false,
+            ]);
+            set.add(segment);
+          }
+        }
+      });
+    });
+  });
+
   describe("#derivedAttributes", function () {
     let characteristic;
     beforeEach(function () {
