@@ -30,6 +30,8 @@
     "Actors": "readonly",
     "ChatMessage": "readonly",
     "Combat": "readonly",
+    "CombatTracker": "readonly",
+    "Combatant": "readonly",
     "Dialog": "readonly",
     "Handlebars": "readonly",
     "Hooks": "readonly",

@@ -55,6 +55,7 @@ export function register(system, quench) {
         let combat;
         afterEach(async function () {
           await combat.delete();
+          combat = null;
         });
 
         describe("The second turn of combat", async function () {
@@ -99,7 +100,49 @@ export function register(system, quench) {
           });
         });
 
-        describe.skip("The combat order table");
+        describe("The combat order table", function () {
+          let tracker;
+          beforeEach(async function () {
+            combat = await getDocumentClass("Combat").create({});
+            await combat.createEmbeddedDocuments("Combatant", [
+              { actorId: dean.id, initiative: 0 },
+              { actorId: millie.id, initiative: 1 },
+              { actorId: norm.id, initiative: 2 },
+            ]);
+            await combat.startCombat();
+            await waitOneMoment();
+
+            tracker = $("#combat-tracker table");
+          });
+
+          it("should display the table", function () {
+            expect(tracker.length).to.equal(1);
+          });
+
+          it("should show the dexes in the left column", function () {
+            const dexes = tracker.find("tr > td:first-child");
+            expect(dexes.length).to.equal(2);
+            expect(dexes.get(0).textContent).to.equal("12");
+            expect(dexes.get(1).textContent).to.equal("10");
+          });
+
+          it.skip("should show all the phases", function () {
+            const dex12 = tracker.find("tr:nth-child(2)").children();
+            expect(dex12.length).to.equal(13);
+            expect(dex12.get(4).textContent).to.equal(millie.name);
+            expect(dex12.get(6).textContent).to.equal(dean.name);
+            expect(dex12.get(8).textContent).to.equal(millie.name);
+            expect(dex12.get(12).textContent).to.equal(
+              [millie.name, dean.name].join(", ")
+            );
+
+            const dex10 = tracker.find("tr:nth-child(3)").children();
+            expect(dex10.length).to.equal(13);
+            expect(dex10.get(6).textContent).to.equal(norm.name);
+            expect(dex10.get(12).textContent).to.equal(norm.name);
+          });
+          it.skip("should highlight Millie's phase on segment 12");
+        });
       });
     },
     { displayName: `${system}: Initiative Order` }

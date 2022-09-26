@@ -5,6 +5,7 @@ import AttackSheet from "./item/AttackSheet.js";
 import SkillSheet from "./item/SkillSheet.js";
 import ChampionsCombat from "./documents/ChampionsCombat.js";
 import EuclideanRuler from "./documents/EuclideanRuler.js";
+import ChampionsCombatTracker from "./sheets/ChampionsCombatTracker.js";
 
 // Register Quench tests if it's available.
 Hooks.on("quenchReady", async function (quench) {
@@ -17,6 +18,7 @@ Hooks.once("init", function () {
   CONFIG.Item.documentClass = ChampionsItem;
   CONFIG.Canvas.rulerClass = EuclideanRuler;
   CONFIG.Combat.documentClass = ChampionsCombat;
+  CONFIG.ui.combat = ChampionsCombatTracker;
 
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("champions-6e", CharacterSheet, {

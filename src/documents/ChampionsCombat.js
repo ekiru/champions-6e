@@ -3,22 +3,7 @@ import { compareByLexically } from "../util/sort.js";
 export default class ChampionsCombat extends Combat {
   /** @override */
   setupTurns() {
-    const phases = {};
-    for (let i = 1; i <= 12; i++) {
-      phases[i] = [];
-    }
-
-    const combatants = this.combatants.contents.sort(
-      compareByLexically(
-        (combatant) => -combatant.actor.system.characteristics.dex.total,
-        (combatant) => -combatant.initiative
-      )
-    );
-    for (const combatant of combatants) {
-      for (const phase of combatant.actor.system.phases) {
-        phases[phase].push(combatant);
-      }
-    }
+    const phases = this.phaseChart();
 
     const turns = [];
     const startingSegment = this.round === 1 ? 12 : 1;
@@ -39,6 +24,32 @@ export default class ChampionsCombat extends Combat {
     };
 
     return (this.turns = turns);
+  }
+
+  /**
+   * Calculates which combatants have phases in each segment.
+   *
+   * @returns {Object<Array<Combatant>>} An Object mapping segment numbers to an
+   * ordered list of Combatants with phases in that segment.
+   */
+  phaseChart() {
+    const phases = {};
+    for (let i = 1; i <= 12; i++) {
+      phases[i] = [];
+    }
+
+    const combatants = this.combatants.contents.sort(
+      compareByLexically(
+        (combatant) => -combatant.actor.system.characteristics.dex.total,
+        (combatant) => -combatant.initiative
+      )
+    );
+    for (const combatant of combatants) {
+      for (const phase of combatant.actor.system.phases) {
+        phases[phase].push(combatant);
+      }
+    }
+    return phases;
   }
 
   /** @override */
