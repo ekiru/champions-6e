@@ -16,11 +16,17 @@ export default class ChampionsCombatTracker extends CombatTracker {
     context.table = [];
     if (context.hasCombat) {
       const byDex = new Map();
-      const phases = context.combat.phaseChart();
+      const combat = context.combat;
+      const phases = combat.phaseChart();
 
       for (let i = 1; i <= 12; i++) {
         for (const combatant of phases[i]) {
           const dex = combatant.actor.system.characteristics.dex.total;
+          const isCurrent =
+            combat.combatant &&
+            combatant.actorId === combat.combatant.actorId &&
+            i === combat.current.segment;
+
           if (!byDex.has(dex)) {
             const segments = [];
             for (let segment = 0; segment < 12; segment++) {
@@ -31,10 +37,10 @@ export default class ChampionsCombatTracker extends CombatTracker {
           const thisDex = byDex.get(dex);
           thisDex[i - 1].push({
             name: combatant.actor.name,
+            class: isCurrent ? "current-phase" : "",
           });
         }
       }
-      console.log(byDex);
 
       for (const [dex, segments] of byDex.entries()) {
         context.table.push({ dex, segments });

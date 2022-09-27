@@ -93,3 +93,13 @@ form.item .tab.notes {
 .chat-message .flavor-text .failure {
   color: red;
 }
+
+/* Combat tracker */
+td.segment ol {
+  list-style-type: none;
+}
+
+li.current-phase {
+  font-weight: bold;
+  color: chartreuse;
+}

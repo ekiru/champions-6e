@@ -125,7 +125,6 @@ export function register(system, quench) {
 
           it("should show the dexes in the left column", function () {
             const dexes = tracker.find("tr > td:first-child");
-            console.log(dexes);
             expect(dexes.length).to.equal(2);
             expectTextContent(dexes.get(0)).to.equal("12");
             expectTextContent(dexes.get(1)).to.equal("10");
@@ -146,7 +145,20 @@ export function register(system, quench) {
             expectTextContent(dex10.get(6)).to.equal(norm.name);
             expectTextContent(dex10.get(12)).to.equal(norm.name);
           });
-          it.skip("should highlight Millie's phase on segment 12");
+
+          it("should highlight Millie's phase on segment 12", function () {
+            expect(
+              tracker.find("li.current-phase"),
+              "only one current phase should exist"
+            ).to.have.lengthOf(1);
+            const dex12 = tracker.find("tr:nth-child(2)").children();
+            const currentPhase = $(dex12.get(12)).find("li.current-phase");
+            expect(
+              currentPhase,
+              "current phase should be in dex 12 and segment 12"
+            ).to.have.lengthOf(1);
+            expectTextContent(currentPhase.get(0)).to.equal(millie.name);
+          });
         });
       });
     },

@@ -1,9 +1,13 @@
+import * as assert from "../util/assert.js";
 import { compareByLexically } from "../util/sort.js";
 
 export default class ChampionsCombat extends Combat {
+  #phaseChart;
+
   /** @override */
   setupTurns() {
     const phases = this.phaseChart();
+    this.#phaseChart = phases;
 
     const turns = [];
     const startingSegment = this.round === 1 ? 12 : 1;
@@ -21,6 +25,7 @@ export default class ChampionsCombat extends Combat {
       turn: this.turn,
       combatantId: current?.id,
       tokenId: current?.tokenId,
+      segment: this.turn !== null ? this.#phaseForTurn(this.turn) : null,
     };
 
     return (this.turns = turns);
@@ -52,6 +57,28 @@ export default class ChampionsCombat extends Combat {
     return phases;
   }
 
+  #phaseForTurn(turn) {
+    assert.precondition(
+      this.#phaseChart !== undefined,
+      "#phaseForTurn needs #phaseChart to be initialized"
+    );
+    if (this.round === 1) {
+      // Turn 1 is only segment 12.
+      return 12;
+    }
+    let i = 0;
+    for (const [segment, combatants] of Object.entries(this.#phaseChart)) {
+      for (const combatant of combatants) {
+        combatant;
+        if (i === turn) {
+          return Number(segment);
+        }
+        i++;
+      }
+    }
+    assert.that(false, `${turn} is bigger than the phase chart`);
+  }
+
   /** @override */
   _onUpdate(data, options, userId) {
     super._onUpdate(data, options, userId);
@@ -62,6 +89,11 @@ export default class ChampionsCombat extends Combat {
     ) {
       // in this case, the base Combat class won't update turns, but we need to in order to handle Turn 1 correctly
       this.setupTurns();
+    }
+
+    if (!("segment" in this.current)) {
+      this.current.segment =
+        this.turn !== null ? this.#phaseForTurn(this.turn) : null;
     }
   }
 }
