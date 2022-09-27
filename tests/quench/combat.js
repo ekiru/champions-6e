@@ -1,4 +1,5 @@
 import { waitOneMoment } from "./helpers/timers.js";
+import { expectTextContent, provideExpect } from "./helpers/webExpectations.js";
 
 /**
  * Registers the tests for rolls.
@@ -10,6 +11,8 @@ export function register(system, quench) {
   quench.registerBatch(
     `${system}.cucumber.combat.initiative`,
     function ({ describe, it, expect, before, after }) {
+      provideExpect(expect);
+
       describe("Initiative order", function () {
         let dean, norm, millie;
         before("Given the following characters", async function () {
@@ -109,6 +112,7 @@ export function register(system, quench) {
               { actorId: millie.id, initiative: 1 },
               { actorId: norm.id, initiative: 2 },
             ]);
+            await combat.activate();
             await combat.startCombat();
             await waitOneMoment();
 
@@ -121,25 +125,26 @@ export function register(system, quench) {
 
           it("should show the dexes in the left column", function () {
             const dexes = tracker.find("tr > td:first-child");
+            console.log(dexes);
             expect(dexes.length).to.equal(2);
-            expect(dexes.get(0).textContent).to.equal("12");
-            expect(dexes.get(1).textContent).to.equal("10");
+            expectTextContent(dexes.get(0)).to.equal("12");
+            expectTextContent(dexes.get(1)).to.equal("10");
           });
 
-          it.skip("should show all the phases", function () {
+          it("should show all the phases", function () {
             const dex12 = tracker.find("tr:nth-child(2)").children();
             expect(dex12.length).to.equal(13);
-            expect(dex12.get(4).textContent).to.equal(millie.name);
-            expect(dex12.get(6).textContent).to.equal(dean.name);
-            expect(dex12.get(8).textContent).to.equal(millie.name);
-            expect(dex12.get(12).textContent).to.equal(
-              [millie.name, dean.name].join(", ")
-            );
+            expectTextContent(dex12.get(4)).to.equal(millie.name);
+            expectTextContent(dex12.get(6)).to.equal(dean.name);
+            expectTextContent(dex12.get(8)).to.equal(millie.name);
+            expectTextContent(dex12.get(12), (textContent) =>
+              textContent.replaceAll(/\s\s+/g, ", ")
+            ).to.equal([millie.name, dean.name].join(", "));
 
             const dex10 = tracker.find("tr:nth-child(3)").children();
             expect(dex10.length).to.equal(13);
-            expect(dex10.get(6).textContent).to.equal(norm.name);
-            expect(dex10.get(12).textContent).to.equal(norm.name);
+            expectTextContent(dex10.get(6)).to.equal(norm.name);
+            expectTextContent(dex10.get(12)).to.equal(norm.name);
           });
           it.skip("should highlight Millie's phase on segment 12");
         });
