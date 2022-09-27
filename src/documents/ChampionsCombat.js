@@ -3,6 +3,7 @@ import { compareByLexically } from "../util/sort.js";
 
 export default class ChampionsCombat extends Combat {
   #phaseChart;
+  #ties;
 
   /** @override */
   setupTurns() {
@@ -28,6 +29,7 @@ export default class ChampionsCombat extends Combat {
       segment: this.turn !== null ? this.#phaseForTurn(this.turn) : null,
     };
 
+    this.#resolveTies();
     return (this.turns = turns);
   }
 
@@ -49,9 +51,18 @@ export default class ChampionsCombat extends Combat {
         (combatant) => -combatant.initiative
       )
     );
+    this.#ties = new Set();
     for (const combatant of combatants) {
       for (const phase of combatant.actor.system.phases) {
+        const priorCount = phases[phase].length;
         phases[phase].push(combatant);
+        if (priorCount > 0) {
+          const dex = combatant.actor.system.characteristics.dex.total;
+          const prior = phases[phase][priorCount - 1];
+          if (prior.actor.system.characteristics.dex.total === dex) {
+            this.#ties.add(combatant).add(prior);
+          }
+        }
       }
     }
     return phases;
@@ -94,6 +105,25 @@ export default class ChampionsCombat extends Combat {
     if (!("segment" in this.current)) {
       this.current.segment =
         this.turn !== null ? this.#phaseForTurn(this.turn) : null;
+    }
+
+    this.#resolveTies();
+  }
+
+  async #resolveTies() {
+    const tiedCombatants = this.combatants.contents
+      .filter(
+        (combatant) =>
+          this.#ties &&
+          this.#ties.has(combatant) &&
+          combatant.initiative === null
+      )
+      .map((combatant) => combatant.id);
+    if (tiedCombatants.length > 0) {
+      await this.rollInitiative(tiedCombatants, {
+        updateTurn: false,
+        messageOptions: { flavor: "Breaking initiative ties" },
+      });
     }
   }
 }

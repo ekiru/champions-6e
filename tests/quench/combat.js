@@ -103,6 +103,29 @@ export function register(system, quench) {
           });
         });
 
+        describe("Tie breaking", function () {
+          it("should be performed automatically", async function () {
+            combat = await getDocumentClass("Combat").create({});
+            await combat.createEmbeddedDocuments("Combatant", [
+              { actorId: dean.id },
+              { actorId: millie.id },
+              { actorId: norm.id },
+            ]);
+            await combat.startCombat();
+            await waitOneMoment();
+
+            for (const combatant of combat.combatants.contents) {
+              if (combatant.actorId == norm.id) {
+                continue;
+              }
+              expect(
+                combatant.initiative,
+                `Initiative was not rolled for ${combatant.name}`
+              ).to.exist;
+            }
+          });
+        });
+
         describe("The combat order table", function () {
           let tracker;
           beforeEach(async function () {
