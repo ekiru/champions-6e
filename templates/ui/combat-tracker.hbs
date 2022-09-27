@@ -125,24 +125,48 @@
     </div>
   </header>
 
-  <!-- TODO: fixup -->
   <div id="combat-tracker" class="directory-list">
     <table>
-      <tr>
-        <th>DEX</th>
-        <th>1</th>
-        <th>2</th>
-        <th>3</th>
-        <th>4</th>
-        <th>5</th>
-        <th>6</th>
-        <th>7</th>
-        <th>8</th>
-        <th>9</th>
-        <th>10</th>
-        <th>11</th>
-        <th>12</th>
-      </tr>
+      <thead>
+        <tr>
+          <th title="Dexterity (and tiebreak roll, if necessary)">DEX</th>
+          <th><!--image--></th>
+          <th>Name</th>
+          <th class="body">BODY</th>
+          <th class="stun">STUN</th>
+          <th class="end">END</th>
+        </tr>
+      </thead>
+      {{#each segments as |segment|}}
+        <tbody>
+          <tr class="segment-header">
+            <td colspan="6">Segment {{segment.number}}</td>
+          </tr>
+          {{#each segment.combatants}}
+            <tr
+              class="combatant actor directory-item {{css}}"
+              data-combatant-id="{{id}}"
+            >
+              <td>{{dex}}{{#if initiative}}/{{initiative}}{{/if}}</td>
+              <td><img src="{{img}}" height="64" width="64" /></td>
+              <td>{{name}}</td>
+              <td class="body">{{body}}</td>
+              <td class="stun">{{stun}}</td>
+              <td class="end">{{end}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      {{/each}}
+      {{#if segments}}
+        <tbody>
+          <tr class="segment-header">
+            <td colspan="6">Post-Segment 12 Recovery</td>
+          </tr>
+        </tbody>
+      {{/if}}
+    </table>
+
+    <table>
       {{#each table as |row|}}
         <tr>
           <td>{{row.dex}}</td>

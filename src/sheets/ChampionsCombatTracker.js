@@ -13,6 +13,30 @@ export default class ChampionsCombatTracker extends CombatTracker {
     const context = await super.getData();
     context.combatClass = context.hasCombat ? "combat" : "";
 
+    context.segments = [];
+    if (context.hasCombat) {
+      const phases = context.combat.phaseChart();
+
+      for (let segmentNumber = 1; segmentNumber <= 12; segmentNumber++) {
+        const segment = {
+          number: segmentNumber,
+        };
+        if (phases[segmentNumber].length > 0) {
+          segment.combatants = phases[segmentNumber].map((combatant) => ({
+            id: combatant.id,
+            dex: combatant.actor.system.characteristics.dex.total,
+            initiative: combatant.initiative,
+            img: combatant.img,
+            name: combatant.name,
+            body: combatant.actor.system.characteristics.body.value,
+            stun: combatant.actor.system.characteristics.stun.value,
+            end: combatant.actor.system.characteristics.end.value,
+          }));
+          context.segments.push(segment);
+        }
+      }
+    }
+
     context.table = [];
     if (context.hasCombat) {
       const byDex = new Map();
