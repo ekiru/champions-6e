@@ -1,4 +1,17 @@
 import * as assert from "../util/assert.js";
+import { preprocessUpdate } from "../util/validation.js";
+
+const ATTACK_SCHEMA = {
+  numberFields: [{ path: "system.damage.dice", default: 2 }],
+};
+
+const SKILL_SCHEMA = {
+  numberFields: [
+    { path: "system.bonus.value", default: 0 },
+    { path: "system.targetNumber", default: 11 },
+    { path: "system.skillLevel.amount", default: 1 },
+  ],
+};
 
 export default class ChampionsItem extends Item {
   /**
@@ -31,6 +44,19 @@ export default class ChampionsItem extends Item {
   }
 
   async _preUpdate(changes) {
+    let schema;
+    switch (this.type) {
+      case "attack":
+        schema = ATTACK_SCHEMA;
+        break;
+      case "skill":
+        schema = SKILL_SCHEMA;
+        break;
+      default:
+        assert.notYetImplemented();
+    }
+    preprocessUpdate(schema, changes);
+
     const type = this.system.type;
     const newType = changes.system?.type ?? type;
     let newSLClass = changes.system?.skillLevel?.class;

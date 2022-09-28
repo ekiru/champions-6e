@@ -1,5 +1,56 @@
 import { byName as characteristicByName } from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
+import { preprocessUpdate } from "../util/validation.js";
+
+const CHARACTER_SCHEMA = {
+  numberFields: [
+    { path: "system.hap.value", default: 0 },
+    { path: "system.characteristics.str.value", default: 10 },
+    { path: "system.characteristics.str.modifier", default: 0 },
+    { path: "system.characteristics.dex.value", default: 10 },
+    { path: "system.characteristics.dex.modifier", default: 0 },
+    { path: "system.characteristics.con.value", default: 10 },
+    { path: "system.characteristics.con.modifier", default: 0 },
+    { path: "system.characteristics.int.value", default: 10 },
+    { path: "system.characteristics.int.modifier", default: 0 },
+    { path: "system.characteristics.ego.value", default: 10 },
+    { path: "system.characteristics.ego.modifier", default: 0 },
+    { path: "system.characteristics.pre.value", default: 10 },
+    { path: "system.characteristics.pre.modifier", default: 0 },
+    { path: "system.characteristics.ocv.value", default: 3 },
+    { path: "system.characteristics.ocv.modifier", default: 0 },
+    { path: "system.characteristics.dcv.value", default: 3 },
+    { path: "system.characteristics.dcv.modifier", default: 0 },
+    { path: "system.characteristics.omcv.value", default: 3 },
+    { path: "system.characteristics.omcv.modifier", default: 0 },
+    { path: "system.characteristics.dmcv.value", default: 3 },
+    { path: "system.characteristics.dmcv.modifier", default: 0 },
+    { path: "system.characteristics.spd.value", default: 2 },
+    { path: "system.characteristics.spd.modifier", default: 0 },
+    { path: "system.characteristics.pd.value", default: 2 },
+    { path: "system.characteristics.pd.modifier", default: 0 },
+    { path: "system.characteristics.ed.value", default: 2 },
+    { path: "system.characteristics.ed.modifier", default: 0 },
+    { path: "system.characteristics.rpd.value", default: 0 },
+    { path: "system.characteristics.rpd.modifier", default: 0 },
+    { path: "system.characteristics.red.value", default: 0 },
+    { path: "system.characteristics.red.modifier", default: 0 },
+    { path: "system.characteristics.rec.value", default: 4 },
+    { path: "system.characteristics.rec.modifier", default: 0 },
+    { path: "system.characteristics.body.value", default: 10 },
+    { path: "system.characteristics.body.max", default: 10 },
+    { path: "system.characteristics.stun.value", default: 20 },
+    { path: "system.characteristics.stun.max", default: 20 },
+    { path: "system.characteristics.end.value", default: 20 },
+    { path: "system.characteristics.end.max", default: 20 },
+    { path: "system.movements.run.value", default: 12 },
+    { path: "system.movements.run.modifier", default: 0 },
+    { path: "system.movements.leap.value", default: 12 },
+    { path: "system.movements.leap.modifier", default: 0 },
+    { path: "system.movements.swim.value", default: 12 },
+    { path: "system.movements.swim.modifier", default: 0 },
+  ],
+};
 
 const everypersonSkillData = [
   { name: "Acting", characteristic: "pre" },
@@ -53,6 +104,11 @@ export default class ChampionsActor extends Actor {
     if (userId === game.user.id) {
       await this.createEmbeddedDocuments("Item", everypersonSkillData);
     }
+  }
+
+  /** @override */
+  async _preUpdate(changes) {
+    preprocessUpdate(CHARACTER_SCHEMA, changes);
   }
 
   prepareDerivedData() {
