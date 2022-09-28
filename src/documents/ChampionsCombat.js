@@ -6,6 +6,19 @@ export default class ChampionsCombat extends Combat {
   #ties;
 
   /** @override */
+  async previousRound() {
+    // Combat.previousRound assumes that the number of turns stays the same for every
+    // round, which isn't true for us.
+    let result = await super.previousRound();
+    if (this.round === 1 && this.turn !== null) {
+      result = await this.update({
+        turn: Math.max(this.turns.length - 1, 0),
+      });
+    }
+    return result;
+  }
+
+  /** @override */
   setupTurns() {
     const phases = this.phaseChart();
     this.#phaseChart = phases;

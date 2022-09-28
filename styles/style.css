@@ -95,11 +95,10 @@ form.item .tab.notes {
 }
 
 /* Combat tracker */
-td.segment ol {
+#combat-tracker td.segment ol {
   list-style-type: none;
 }
 
-li.current-phase {
-  font-weight: bold;
-  color: chartreuse;
+#combat-tracker tr.active td {
+  border-top: 1px solid var(--color-border-highlight);
 }

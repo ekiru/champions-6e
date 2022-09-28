@@ -62,16 +62,18 @@ export function register(system, quench) {
         });
 
         describe("The second turn of combat", async function () {
-          it("if Millie wins the tiebreak it should go Millie, Dean, Norm, Millie, Millie, Dean, Norm", async function () {
+          beforeEach(async function createCombat() {
             combat = await getDocumentClass("Combat").create({});
             await combat.createEmbeddedDocuments("Combatant", [
               { actorId: dean.id, initiative: 0 },
               { actorId: millie.id, initiative: 1 },
               { actorId: norm.id, initiative: 2 },
             ]);
-            await combat.update({ round: 2 });
+            await combat.update({ round: 2, turn: 0 });
             await waitOneMoment();
+          });
 
+          it("if Millie wins the tiebreak it should go Millie, Dean, Norm, Millie, Millie, Dean, Norm", async function () {
             expect(combat.turns.map((c) => c.actor.name)).to.deep.equal([
               millie.name,
               dean.name,
@@ -81,6 +83,12 @@ export function register(system, quench) {
               dean.name,
               norm.name,
             ]);
+          });
+
+          it("when rewinding back to turn 1 it should go to the last phase", async function () {
+            await combat.previousRound();
+
+            expect(combat.turn).to.equal(2);
           });
         });
 
@@ -133,7 +141,7 @@ export function register(system, quench) {
             await combat.createEmbeddedDocuments("Combatant", [
               { actorId: dean.id, initiative: 0 },
               { actorId: millie.id, initiative: 1 },
-              { actorId: norm.id, initiative: 2 },
+              { actorId: norm.id },
             ]);
             await combat.activate();
             await combat.startCombat();
@@ -146,41 +154,52 @@ export function register(system, quench) {
             expect(tracker.length).to.equal(1);
           });
 
-          it("should show the dexes in the left column", function () {
-            const dexes = tracker.find("tr > td:first-child");
-            expect(dexes.length).to.equal(2);
-            expectTextContent(dexes.get(0)).to.equal("12");
-            expectTextContent(dexes.get(1)).to.equal("10");
+          it("should show the dexes (and / tiebreaks) in the left column", function () {
+            const dexes = tracker.find(
+              "tbody > tr:not(.segment-header) > td:first-child"
+            );
+            expect(dexes.length).to.equal(3);
+            expectTextContent(dexes.get(0)).to.equal("12/1");
+            expectTextContent(dexes.get(1)).to.equal("12/0");
+            expectTextContent(dexes.get(2)).to.equal("10");
           });
 
-          it("should show all the phases", function () {
-            const dex12 = tracker.find("tr:nth-child(2)").children();
-            expect(dex12.length).to.equal(13);
-            expectTextContent(dex12.get(4)).to.equal(millie.name);
-            expectTextContent(dex12.get(6)).to.equal(dean.name);
-            expectTextContent(dex12.get(8)).to.equal(millie.name);
-            expectTextContent(dex12.get(12), (textContent) =>
-              textContent.replaceAll(/\s\s+/g, ", ")
-            ).to.equal([millie.name, dean.name].join(", "));
+          it("should show all the phases for this turn", function () {
+            const nameCol = 2;
 
-            const dex10 = tracker.find("tr:nth-child(3)").children();
-            expect(dex10.length).to.equal(13);
-            expectTextContent(dex10.get(6)).to.equal(norm.name);
-            expectTextContent(dex10.get(12)).to.equal(norm.name);
+            const tbodies = tracker.find("tbody");
+            expect(tbodies).to.have.lengthOf(2);
+            const segment12 = $(tbodies.get(0));
+            const phases = segment12.children();
+            expect(phases).to.have.lengthOf(4); // 3 phases + a header
+
+            expectTextContent(phases.get(0).children[0]).to.equal("Segment 12");
+
+            expectTextContent(phases.get(1).children[nameCol]).to.equal(
+              millie.name
+            );
+            expectTextContent(phases.get(2).children[nameCol]).to.equal(
+              dean.name
+            );
+            expectTextContent(phases.get(3).children[nameCol]).to.equal(
+              norm.name
+            );
           });
 
           it("should highlight Millie's phase on segment 12", function () {
             expect(
-              tracker.find("li.current-phase"),
+              tracker.find("tr.active"),
               "only one current phase should exist"
             ).to.have.lengthOf(1);
-            const dex12 = tracker.find("tr:nth-child(2)").children();
-            const currentPhase = $(dex12.get(12)).find("li.current-phase");
+            const segment12 = $(tracker.find("tbody").get(0));
+            const currentPhase = segment12.find("tr.active");
             expect(
               currentPhase,
-              "current phase should be in dex 12 and segment 12"
+              "current phase should be in segment 12"
             ).to.have.lengthOf(1);
-            expectTextContent(currentPhase.get(0)).to.equal(millie.name);
+            expectTextContent(currentPhase.children().get(2)).to.equal(
+              millie.name
+            );
           });
         });
       });

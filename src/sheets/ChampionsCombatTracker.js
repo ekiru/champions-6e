@@ -16,8 +16,14 @@ export default class ChampionsCombatTracker extends CombatTracker {
     context.segments = [];
     if (context.hasCombat) {
       const phases = context.combat.phaseChart();
+      const startingPoint = context.combat.round === 1 ? 12 : 1;
 
-      for (let segmentNumber = 1; segmentNumber <= 12; segmentNumber++) {
+      let i = 0;
+      for (
+        let segmentNumber = startingPoint;
+        segmentNumber <= 12;
+        segmentNumber++
+      ) {
         const segment = {
           number: segmentNumber,
         };
@@ -25,12 +31,16 @@ export default class ChampionsCombatTracker extends CombatTracker {
           segment.combatants = phases[segmentNumber].map((combatant) => ({
             id: combatant.id,
             dex: combatant.actor.system.characteristics.dex.total,
-            initiative: combatant.initiative,
+            initiative:
+              combatant.initiative !== null
+                ? String(combatant.initiative)
+                : null,
             img: combatant.img,
             name: combatant.name,
             body: combatant.actor.system.characteristics.body.value,
             stun: combatant.actor.system.characteristics.stun.value,
             end: combatant.actor.system.characteristics.end.value,
+            css: i++ === context.combat.turn ? "active" : "",
           }));
           context.segments.push(segment);
         }

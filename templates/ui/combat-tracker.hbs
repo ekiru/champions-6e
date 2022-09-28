@@ -165,23 +165,6 @@
         </tbody>
       {{/if}}
     </table>
-
-    <table>
-      {{#each table as |row|}}
-        <tr>
-          <td>{{row.dex}}</td>
-          {{#each row.segments as |segment|}}
-            <td class="segment">
-              <ol class="combatants">
-                {{#each segment}}
-                  <li class="{{class}}">{{name}}</li>
-                {{/each}}
-              </ol>
-            </td>
-          {{/each}}
-        </tr>
-      {{/each}}
-    </table>
   </div>
 
   <!-- TODO: adjust wording -->
