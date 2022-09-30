@@ -23,7 +23,7 @@ Feature: Damage Class adder
     Given my character's STR is 10
     When they use a basic HTH attack
     And they subtract 3 DC from it
-    Then te dice to be rolled should be 0d6
+    Then the dice to be rolled should be 0d6
 
   Scenario: Specifying AP per d6
     Given my character has an attack
