@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import {
+  addDamageClasses,
   countKillingBody,
   countKillingDamage,
   countKillingStun,
@@ -90,5 +91,36 @@ describe("Killing damage rolls", function () {
     const damage = countKillingDamage(dice, multiplier, halfDie);
     expect(damage.body).toBe(countKillingBody(dice, halfDie));
     expect(damage.stun).toBe(damage.body * multiplier);
+  });
+});
+
+describe("Damage classes", function () {
+  describe("Normal damage (5 AP per d6)", function () {
+    it("should add 4 dice for +4 DCs", function () {
+      expect(addDamageClasses(4.5, 5, 4)).toBe(8.5);
+    });
+    it("should subtract 1 die for -1 DCs", function () {
+      expect(addDamageClasses(4.5, 5, -1)).toBe(3.5);
+    });
+  });
+
+  describe("Drain (10 AP per d6)", function () {
+    it("should add a half die for +1 DC", function () {
+      expect(addDamageClasses(2, 10, 1)).toBe(2.5);
+    });
+
+    it("should add a full die for +2 DC", function () {
+      expect(addDamageClasses(2, 10, 2)).toBe(3);
+    });
+  });
+
+  describe("KA (15 AP per d6)", function () {
+    it("should add ½ die when adding 2 DC to an integer number of dice", function () {
+      expect(addDamageClasses(2, 15, 2)).toBe(2.5);
+    });
+
+    it("should add +1 when adding 1 DC to an integer number of dice", function () {
+      expect(addDamageClasses(2, 15, 1)).toBe(2.1);
+    });
   });
 });

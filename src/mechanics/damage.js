@@ -34,6 +34,30 @@ function bodyForDie(die) {
 }
 
 /**
+ * Adds DCs to a damage roll.
+ *
+ * @param {number} baseDice The initial number of dice
+ * @param {number} apPerDie How many AP each die costs
+ * @param {number} damageClasses The number of DCs to add/subtract
+ * @returns {number} The resulting number of dice (x.1 means xd6+1)
+ */
+export function addDamageClasses(baseDice, apPerDie, damageClasses) {
+  let addedDice;
+  const rawAddition = (damageClasses * 5) / apPerDie;
+  const integralPart =
+    rawAddition > 0 ? Math.floor(rawAddition) : Math.ceil(rawAddition);
+  const fractionalPart = rawAddition - integralPart;
+  if (fractionalPart === 0 || fractionalPart === 0.5) {
+    addedDice = rawAddition;
+  } else if (fractionalPart > 0.5) {
+    addedDice = rawAddition > 0 ? integralPart + 0.5 : integralPart - 0.5;
+  } else {
+    addedDice = rawAddition > 0 ? integralPart + 0.1 : integralPart - 0.1;
+  }
+  return baseDice + addedDice;
+}
+
+/**
  * Counts the STUN and BODY done by a killing attack.
  *
  * @param {Array<number>} dice The results rolled on the full dice.
