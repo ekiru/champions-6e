@@ -1,3 +1,9 @@
+import * as build from "./helpers/build.js";
+import {
+  nextDialog,
+  nextMessage,
+  openCharacterSheet,
+} from "./helpers/sheets.js";
 import { waitOneMoment } from "./helpers/timers.js";
 import { expectTextContent, provideExpect } from "./helpers/webExpectations.js";
 
@@ -205,5 +211,86 @@ export function register(system, quench) {
       });
     },
     { displayName: `${system}: Initiative Order` }
+  );
+
+  quench.registerBatch(
+    `${system}.cucumber.combat.damage-classes.adder`,
+    function ({ describe, it, expect, beforeEach, afterEach }) {
+      describe("Damage Class Adder", function () {
+        afterEach(async function () {
+          await build.afterEach(this);
+        });
+
+        describe("Haymaker", function () {
+          beforeEach("given my character's STR is 23", async function () {
+            await build.character(this, {
+              characteristics: {
+                str: { value: 23, modifier: 0 },
+              },
+            });
+          });
+
+          it.skip("when they haymaker a HTH attack for +4 DC, it should roll 8½d6", async function () {
+            const sheet = await openCharacterSheet(this.character);
+            const attack = sheet
+              .find("a.attack-roll")
+              .filter((i, elem) =>
+                elem.textContent.includes("Basic HTH Attack")
+              );
+            expect(attack).to.have.lengthOf(1);
+
+            const dialogP = nextDialog();
+            attack.click();
+            const dialog = await dialogP;
+            dialog.element.find('[name="dcs"]').val("4");
+            const messageP = nextMessage();
+            dialog.element.find('button[data-button="roll"]').click();
+            const message = await messageP;
+            try {
+              expect(message.rolls[0].formula).to.equal("8d6+1d6");
+            } finally {
+              await message.delete();
+            }
+          });
+        });
+
+        describe("Adding DCs to Drain", function () {
+          beforeEach("given my character has a Drain with 6d6", function () {});
+
+          it.skip("when they add 3 DC to it, it should roll 7½ d6");
+        });
+
+        describe("Adding STR to a HKA", function () {
+          beforeEach("given my character has a HKA with 2d6", function () {});
+
+          it.skip("when they add 4 DC to it, it should roll 3d6+1", function () {});
+        });
+
+        describe("Reducing damage below 0 DC", function () {
+          beforeEach("given my character's STR is 10", function () {});
+
+          it.skip(
+            "when they subtract 3 DC from their HTH attack, it should roll 0d6"
+          );
+        });
+
+        describe("Specifying AP per d6", function () {
+          beforeEach("given my character has an attack", function () {});
+
+          it.skip(
+            "when I change the attack's AP per d6 to 7½, it should cost 7½ AP per d6"
+          );
+        });
+
+        describe("AP per d6 for Killing Attacks", function () {
+          beforeEach("given my characte rhas an attack", function () {});
+
+          it.skip(
+            "when I change the attack to do Killing Damage, then the attack should cost 15 AP per d6"
+          );
+        });
+      });
+    },
+    { displayName: `${system}: Damage Class Adder` }
   );
 }
