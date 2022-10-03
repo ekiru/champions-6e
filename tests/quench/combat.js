@@ -292,17 +292,62 @@ export function register(system, quench) {
         });
 
         describe("Adding STR to a HKA", function () {
-          beforeEach("given my character has a HKA with 2d6", function () {});
+          beforeEach(
+            "given my character has a HKA with 2d6",
+            async function () {
+              await build.character(this, {});
+              await build.ownedAttack(this, this.character, "HKA", {
+                damage: {
+                  apPerDie: 15,
+                  dice: 2,
+                  type: "killing",
+                },
+              });
+            }
+          );
 
-          it.skip("when they add 4 DC to it, it should roll 3d6+1", function () {});
+          // skipping because Xd6+1 roll aren't implemented yet.
+          it.skip("when they add 4 DC to it, it should roll 3d6+1", async function () {
+            const attack = await findAttack(this.character, "HKA");
+            const dialogP = nextDialog();
+            attack.click();
+            const dialog = await dialogP;
+            dialog.element.find('[name="dcs"]').val("4");
+            const messageP = nextMessage();
+            dialog.element.find('button[data-button="roll"]').click();
+            const message = await messageP;
+            try {
+              expect(message.rolls[0].formula).to.equal("3d6 * d3 + 1");
+            } finally {
+              await message.delete();
+            }
+          });
         });
 
         describe("Reducing damage below 0 DC", function () {
-          beforeEach("given my character's STR is 10", function () {});
+          beforeEach("given my character's STR is 10", async function () {
+            await build.character(this, {
+              characteristics: {
+                str: { value: 10, modifier: 0 },
+              },
+            });
+          });
 
-          it.skip(
-            "when they subtract 3 DC from their HTH attack, it should roll 0d6"
-          );
+          it("when they subtract 3 DC from their HTH attack, it should roll 0d6", async function () {
+            const attack = await findAttack(this.character, "Basic HTH Attack");
+            const dialogP = nextDialog();
+            attack.click();
+            const dialog = await dialogP;
+            dialog.element.find('[name="dcs"]').val("-3");
+            const messageP = nextMessage();
+            dialog.element.find('button[data-button="roll"]').click();
+            const message = await messageP;
+            try {
+              expect(message.rolls[0].formula).to.equal("0d6");
+            } finally {
+              await message.delete();
+            }
+          });
         });
 
         describe("Specifying AP per d6", function () {

@@ -59,6 +59,9 @@ export class Damage {
   }
 
   static fromDCs(dc, apPerDie) {
+    if (dc <= 0) {
+      return new Damage(0, apPerDie);
+    }
     const { dice, adjustment } = diceForDCs(dc, apPerDie);
     return new Damage(dice, apPerDie, adjustment);
   }

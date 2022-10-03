@@ -212,12 +212,18 @@ export async function attackRollDialog(
  * Rolls a killing damage roll.
  *
  * @param {number} dice The number of dice to roll.
- * @param {object} options Options: pass {@code Roll} to override the Roll class.
+ * @param {object} options Options: pass {@code Roll} to override the Roll class, or
+ * dcs (and apPerDie) to add or subtract DCs.
  * @returns {object} The body and stun properties indicate the damage done. The
  * message property holds any ChatMessage created.
  */
 export async function performKillingDamageRoll(dice, options = {}) {
   const rollClass = options.Roll ?? Roll;
+  if (options.dcs) {
+    dice = Damage.fromDice(dice, options.apPerDie).addDamageClasses(
+      options.dcs
+    ).dice;
+  }
   const hasHalf = !Number.isInteger(dice);
   let diceString;
   let formula;
