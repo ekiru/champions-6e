@@ -2,6 +2,7 @@ import * as build from "./helpers/build.js";
 import {
   nextDialog,
   nextMessage,
+  openAttackSheet,
   openCharacterSheet,
 } from "./helpers/sheets.js";
 import { waitOneMoment } from "./helpers/timers.js";
@@ -351,11 +352,22 @@ export function register(system, quench) {
         });
 
         describe("Specifying AP per d6", function () {
-          beforeEach("given my character has an attack", function () {});
+          beforeEach("given my character has an attack", async function () {
+            await build.character(this, {});
+            await build.ownedAttack(this, this.character, "Whatever", {});
+          });
 
-          it.skip(
-            "when I change the attack's AP per d6 to 7½, it should cost 7½ AP per d6"
-          );
+          it("when I change the attack's AP per d6 to 7½, it should cost 7½ AP per d6", async function () {
+            const sheet = await openAttackSheet(this.attack);
+            expect(sheet).to.have.lengthOf(1);
+
+            const field = sheet.find('select[name="system.damage.apPerDie"]');
+            expect(field).to.have.lengthOf(1);
+            field.val("7.5");
+            await this.attack.sheet.submit();
+
+            expect(this.attack.system.damage.apPerDie).to.equal("7.5");
+          });
         });
 
         describe("AP per d6 for Killing Attacks", function () {

@@ -40,6 +40,16 @@ export default class AttackSheet extends ItemSheet {
           killing: "Killing Damage",
           effect: "Effect-Only",
         }),
+        apPerDie: fields.selection("AP per 1d6", "system.damage.apPerDie", {
+          5: "Normal Damage (5/1d6)",
+          6.25: "6¼ per 1d6 (Normal Damage attacks with +¼ Advantage)",
+          7.5: "7½ per 1d6 (Normal Damage attacks with +½ Advantage)",
+          10: "Drain, MBlast (10/1d6)",
+          12.5: "12½ per 1d6 (Normal Damage with +1½ or 10-point attacks with +¼ advantages)",
+          15: "Killing Damage (15/1d6)",
+          20: "20 per 1d6 (Killing Damage with +¼, 10-point attacks with +1, etc.)",
+          22.5: "22½ per 1d6 (Killing damage with +½ Advantage)",
+        }),
       },
       defense: fields.selection(
         "Targeted Defense",
