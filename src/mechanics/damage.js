@@ -1,3 +1,5 @@
+import * as assert from "../util/assert.js";
+
 export const DEFENSE_TYPES = Object.freeze({
   pd: "Physical",
   ed: "Energy",
@@ -33,28 +35,74 @@ function bodyForDie(die) {
   }
 }
 
-/**
- * Adds DCs to a damage roll.
- *
- * @param {number} baseDice The initial number of dice
- * @param {number} apPerDie How many AP each die costs
- * @param {number} damageClasses The number of DCs to add/subtract
- * @returns {number} The resulting number of dice (x.1 means xd6+1)
- */
-export function addDamageClasses(baseDice, apPerDie, damageClasses) {
-  let addedDice;
-  const rawAddition = (damageClasses * 5) / apPerDie;
-  const integralPart =
-    rawAddition > 0 ? Math.floor(rawAddition) : Math.ceil(rawAddition);
-  const fractionalPart = rawAddition - integralPart;
-  if (fractionalPart === 0 || fractionalPart === 0.5) {
-    addedDice = rawAddition;
-  } else if (fractionalPart > 0.5) {
-    addedDice = rawAddition > 0 ? integralPart + 0.5 : integralPart - 0.5;
-  } else {
-    addedDice = rawAddition > 0 ? integralPart + 0.1 : integralPart - 0.1;
+export class Damage {
+  #dice;
+  #adjustment; // 0: none, 0.5 = ½d6, 1 = +1, -1 = -1
+  #apPerDie;
+
+  constructor(dice, apPerDie, adjustment = 0) {
+    assert.precondition(
+      adjustment === 0 ||
+        adjustment === 0.5 ||
+        adjustment === +1 ||
+        adjustment === -1,
+      "adjustment for Damage must be either 0, 0.5, or ±1"
+    );
+    this.#adjustment = adjustment;
+    this.#dice = dice;
+    this.#apPerDie = apPerDie;
+
+    if (this.#adjustment === 0 && !Number.isInteger(this.#dice)) {
+      const integralPart =
+        this.#dice > 0 ? Math.floor(this.#dice) : Math.ceil(this.#dice);
+      const fractionalPart = this.#dice - integralPart;
+      if (fractionalPart >= 0.5) {
+        this.#dice = integralPart;
+        this.#adjustment = 0.5;
+      } else if (fractionalPart > 0) {
+        this.#dice = integralPart;
+        this.#adjustment = +1;
+      }
+    }
   }
-  return baseDice + addedDice;
+
+  get dice() {
+    switch (this.#adjustment) {
+      case 0:
+        return this.#dice;
+      case 0.5:
+        return this.#dice + 0.5;
+      case +1:
+        return this.#dice + 0.1;
+      case -1:
+        return this.#dice - 0.1;
+      default:
+        assert.that(false, "Invalid damage adjustment");
+        return NaN;
+    }
+  }
+
+  /**
+   * Adds DCs to the damage roll.
+   *
+   * @param {number} damageClasses The number of DCs to add/subtract
+   * @returns {number} The resulting number of dice (x.1 means xd6+1)
+   */
+  addDamageClasses(damageClasses) {
+    let addedDice;
+    const rawAddition = (damageClasses * 5) / this.#apPerDie;
+    const integralPart =
+      rawAddition > 0 ? Math.floor(rawAddition) : Math.ceil(rawAddition);
+    const fractionalPart = rawAddition - integralPart;
+    if (fractionalPart === 0 || fractionalPart === 0.5) {
+      addedDice = rawAddition;
+    } else if (fractionalPart > 0.5) {
+      addedDice = rawAddition > 0 ? integralPart + 0.5 : integralPart - 0.5;
+    } else {
+      addedDice = rawAddition > 0 ? integralPart + 0.1 : integralPart - 0.1;
+    }
+    return new Damage(this.dice + addedDice, this.#apPerDie);
+  }
 }
 
 /**
