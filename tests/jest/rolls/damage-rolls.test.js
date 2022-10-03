@@ -199,4 +199,10 @@ describe("Damage classes", function () {
       expect(new Damage(2, 15, +1).addDamageClasses(1).dice).toBe(2.5);
     });
   });
+
+  describe("Advantaged attacks", function () {
+    it("subtracting -7 DCs to a 2d6 KA with a +½ advantage (22½d6) should do ½d6-1 damage", function () {
+      expect(new Damage(2, 22.5).addDamageClasses(-7).dice).toBe(0.4);
+    });
+  });
 });
