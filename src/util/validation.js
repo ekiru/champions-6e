@@ -14,7 +14,6 @@
 export function preprocessUpdate({ numberFields }, changes) {
   for (const field of numberFields) {
     const change = foundry.utils.getProperty(changes, field.path);
-    console.log(field, change);
     if (field.default !== undefined && change === null) {
       foundry.utils.setProperty(changes, field.path, field.default);
     }
