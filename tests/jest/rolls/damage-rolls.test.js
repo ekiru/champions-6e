@@ -103,6 +103,10 @@ describe("Damage classes", function () {
       expect(Damage.fromDCs(2.5, 5).dice).toBe(2.5);
     });
 
+    it.skip("7 DCs at 6¼ AP per d6 should be 5½d6", function () {
+      expect(Damage.fromDCs(7, 6.25).dice).toBe(5.5);
+    });
+
     it("3 DCs at 10 AP per d6 should be 1½d6", function () {
       expect(Damage.fromDCs(3, 10).dice).toBe(1.5);
     });

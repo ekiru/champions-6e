@@ -1,4 +1,5 @@
 import * as assert from "../util/assert.js";
+import { calculateDC, DC_TABLE } from "./damage/_damageClassTable.js";
 
 export const DEFENSE_TYPES = Object.freeze({
   pd: "Physical",
@@ -35,28 +36,6 @@ function bodyForDie(die) {
   }
 }
 
-const DamageRollDie = Object.freeze({
-  Full: 0,
-  Half: 0.5,
-  PlusOne: +1,
-  MinusOne: -1,
-});
-
-const DC_TABLE = new Map([
-  [5, [DamageRollDie.Full]],
-  [10, [DamageRollDie.Half, DamageRollDie.Full]],
-  [15, [DamageRollDie.PlusOne, DamageRollDie.Half, DamageRollDie.Full]],
-  [
-    20,
-    [
-      DamageRollDie.PlusOne,
-      DamageRollDie.Half,
-      DamageRollDie.MinusOne,
-      DamageRollDie.Full,
-    ],
-  ],
-]);
-
 export class Damage {
   #dc;
   #dice;
@@ -75,30 +54,7 @@ export class Damage {
     this.#dice = dice;
     this.#apPerDie = apPerDie;
 
-    if (DC_TABLE.has(this.#apPerDie)) {
-      const forFullDice = (this.#dice * this.#apPerDie) / 5;
-      let extra = 0;
-      if (this.#adjustment !== DamageRollDie.Full) {
-        if (this.#apPerDie === 5) {
-          extra = 0.5;
-        } else {
-          const table = DC_TABLE.get(this.#apPerDie);
-          for (let i = 0; i < table.length; i++) {
-            if (table[i] === this.#adjustment) {
-              extra = i + 1;
-              break;
-            }
-          }
-          assert.that(
-            extra !== 0,
-            `Couldn't find adjustment ${this.#adjustment} in table for ${
-              this.#apPerDie
-            } AP per die`
-          );
-        }
-      }
-      this.#dc = forFullDice + extra;
-    }
+    this.#dc = calculateDC(dice, apPerDie, adjustment);
   }
 
   static fromDCs(dc, apPerDie) {
