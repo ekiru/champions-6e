@@ -160,19 +160,7 @@ export class Damage {
    * @returns {number} The resulting number of dice (x.1 means xd6+1)
    */
   addDamageClasses(damageClasses) {
-    let addedDice;
-    const rawAddition = (damageClasses * 5) / this.#apPerDie;
-    const integralPart =
-      rawAddition > 0 ? Math.floor(rawAddition) : Math.ceil(rawAddition);
-    const fractionalPart = rawAddition - integralPart;
-    if (fractionalPart === 0 || fractionalPart === 0.5) {
-      addedDice = rawAddition;
-    } else if (fractionalPart > 0.5) {
-      addedDice = rawAddition > 0 ? integralPart + 0.5 : integralPart - 0.5;
-    } else {
-      addedDice = rawAddition > 0 ? integralPart + 0.1 : integralPart - 0.1;
-    }
-    return new Damage(this.dice + addedDice, this.#apPerDie);
+    return Damage.fromDCs(this.dc + damageClasses, this.#apPerDie);
   }
 }
 

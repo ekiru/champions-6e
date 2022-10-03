@@ -179,8 +179,8 @@ describe("Damage classes", function () {
       expect(new Damage(2, 15).addDamageClasses(1).dice).toBe(2.1);
     });
 
-    it.skip("should change a +1 to a ½ die when adding 1 DC", function () {
-      expect(new Damage(2, 15, +1).addDamageClasses(2)).toBe(2.5);
+    it("should change a +1 to a ½ die when adding 1 DC", function () {
+      expect(new Damage(2, 15, +1).addDamageClasses(1).dice).toBe(2.5);
     });
   });
 });
