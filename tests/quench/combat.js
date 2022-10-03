@@ -367,15 +367,27 @@ export function register(system, quench) {
             await this.attack.sheet.submit();
 
             expect(this.attack.system.damage.apPerDie).to.equal("7.5");
+            this.attack.sheet.close();
           });
         });
 
-        describe("AP per d6 for Killing Attacks", function () {
-          beforeEach("given my characte rhas an attack", function () {});
+        describe("AP per d6 for Normal versus Killing Attacks", function () {
+          beforeEach("given my character has an attack", async function () {
+            await build.character(this, {});
+            await build.ownedAttack(this, this.character, "Whatever", {
+              damage: { type: "effect", apPerDie: 10 },
+            });
+          });
 
-          it.skip(
-            "when I change the attack to do Killing Damage, then the attack should cost 15 AP per d6"
-          );
+          it("when I change the attack to do Killing Damage, then the attack should cost 15 AP per d6", async function () {
+            await this.attack.update({ "system.damage.type": "killing" });
+            expect(this.attack.system.damage.apPerDie).to.equal(15);
+          });
+
+          it("when I change the attack to do Normal Damage, then the attack should cost 5 AP per d6", async function () {
+            await this.attack.update({ "system.damage.type": "normal" });
+            expect(this.attack.system.damage.apPerDie).to.equal(5);
+          });
         });
       });
     },

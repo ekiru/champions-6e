@@ -57,6 +57,43 @@ export default class ChampionsItem extends Item {
     }
     preprocessUpdate(schema, changes);
 
+    switch (this.type) {
+      case "attack":
+        this.#preUpdateAttack(changes);
+        break;
+      case "skill":
+        this.#preUpdateSkill(changes);
+        break;
+      default:
+        assert.notYetImplemented();
+    }
+  }
+
+  #preUpdateAttack(changes) {
+    if (changes.system?.damage?.apPerDie !== undefined) {
+      const apPerDie = Number(changes.system.damage.apPerDie);
+      if (apPerDie === this.system.damage.apPerDie) {
+        delete changes.system.damage.apPerDie;
+      }
+    }
+    if (changes.system?.damage?.type !== undefined) {
+      // changing types, reset AP per 1d6.
+      switch (changes.system.damage.type) {
+        case "effect": // no default for effect-only rolls
+          break;
+        case "normal":
+          changes.system.damage.apPerDie = changes.system.damage.apPerDie ?? 5;
+          break;
+        case "killing":
+          changes.system.damage.apPerDie = changes.system.damage.apPerDie ?? 15;
+          break;
+        default:
+          assert.notYetImplemented();
+      }
+    }
+  }
+
+  #preUpdateSkill(changes) {
     const type = this.system.type;
     const newType = changes.system?.type ?? type;
     let newSLClass = changes.system?.skillLevel?.class;
