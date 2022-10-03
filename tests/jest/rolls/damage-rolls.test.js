@@ -95,16 +95,62 @@ describe("Killing damage rolls", function () {
 });
 
 describe("Damage classes", function () {
+  describe("Damage.fromDC()", function () {
+    it("2 DCs at 5 AP per d6 should be 2d6", function () {
+      expect(Damage.fromDCs(2, 5).dice).toBe(2);
+    });
+    it("should understand half DCs for 5 AP per d6", function () {
+      expect(Damage.fromDCs(2.5, 5).dice).toBe(2.5);
+    });
+
+    it("3 DCs at 10 AP per d6 should be 1½d6", function () {
+      expect(Damage.fromDCs(3, 10).dice).toBe(1.5);
+    });
+
+    it("4 DCs at 15 AP per d6 should be 1d6+1", function () {
+      expect(Damage.fromDCs(4, 15).dice).toBe(1.1);
+    });
+
+    it("3 DCs at 20 AP per d6 should be 1d6-1", function () {
+      expect(Damage.fromDCs(3, 20).dice).toBe(0.9);
+    });
+  });
+
+  describe("Damage.fromDice()", function () {
+    it("should roundtrip the various possibilities", function () {
+      expect(Damage.fromDice(1).dice).toBe(1);
+      expect(Damage.fromDice(2.1).dice).toBe(2.1);
+      expect(Damage.fromDice(3.5).dice).toBe(3.5);
+    });
+  });
+
   describe("Normal damage (5 AP per d6)", function () {
+    it("should be 5 for 5d6", function () {
+      expect(new Damage(5, 5).dc).toBe(5);
+    });
+    it("should be 2.5 for 2½d6", function () {
+      expect(new Damage(2, 5, 0.5).dc).toBe(2.5);
+    });
+
     it("should add 4 dice for +4 DCs", function () {
-      expect(new Damage(4.5, 5).addDamageClasses(4).dice).toBe(8.5);
+      expect(new Damage(4, 5, 0.5).addDamageClasses(4).dice).toBe(8.5);
     });
     it("should subtract 1 die for -1 DCs", function () {
-      expect(new Damage(4.5, 5).addDamageClasses(-1).dice).toBe(3.5);
+      expect(new Damage(4, 5, 0.5).addDamageClasses(-1).dice).toBe(3.5);
     });
   });
 
   describe("Drain (10 AP per d6)", function () {
+    it("should be 1 for ½d6", function () {
+      expect(new Damage(0, 10, 0.5).dc).toBe(1);
+    });
+    it("should be 2 for 1d6", function () {
+      expect(new Damage(1, 10).dc).toBe(2);
+    });
+    it("should be 3 for 1½d6", function () {
+      expect(new Damage(1, 10, 0.5).dc).toBe(3);
+    });
+
     it("should add a half die for +1 DC", function () {
       expect(new Damage(2, 10).addDamageClasses(1).dice).toBe(2.5);
     });
@@ -115,6 +161,16 @@ describe("Damage classes", function () {
   });
 
   describe("KA (15 AP per d6)", function () {
+    it("should be 1 for 1 point of damage", function () {
+      expect(new Damage(0, 15, +1).dc).toBe(1);
+    });
+    it("should be 2 for ½d6", function () {
+      expect(new Damage(0, 15, 0.5).dc).toBe(2);
+    });
+    it("should be 3 for 1d6", function () {
+      expect(new Damage(1, 15).dc).toBe(3);
+    });
+
     it("should add ½ die when adding 2 DC to an integer number of dice", function () {
       expect(new Damage(2, 15).addDamageClasses(2).dice).toBe(2.5);
     });
@@ -124,7 +180,7 @@ describe("Damage classes", function () {
     });
 
     it.skip("should change a +1 to a ½ die when adding 1 DC", function () {
-      expect(new Damage(2.1, 15).addDamageClasses(2)).toBe(2.5);
+      expect(new Damage(2, 15, +1).addDamageClasses(2)).toBe(2.5);
     });
   });
 });

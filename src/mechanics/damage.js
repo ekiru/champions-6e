@@ -35,7 +35,30 @@ function bodyForDie(die) {
   }
 }
 
+const DamageRollDie = Object.freeze({
+  Full: 0,
+  Half: 0.5,
+  PlusOne: +1,
+  MinusOne: -1,
+});
+
+const DC_TABLE = new Map([
+  [5, [DamageRollDie.Full]],
+  [10, [DamageRollDie.Half, DamageRollDie.Full]],
+  [15, [DamageRollDie.PlusOne, DamageRollDie.Half, DamageRollDie.Full]],
+  [
+    20,
+    [
+      DamageRollDie.PlusOne,
+      DamageRollDie.Half,
+      DamageRollDie.MinusOne,
+      DamageRollDie.Full,
+    ],
+  ],
+]);
+
 export class Damage {
+  #dc;
   #dice;
   #adjustment; // 0: none, 0.5 = ½d6, 1 = +1, -1 = -1
   #apPerDie;
@@ -52,18 +75,66 @@ export class Damage {
     this.#dice = dice;
     this.#apPerDie = apPerDie;
 
-    if (this.#adjustment === 0 && !Number.isInteger(this.#dice)) {
-      const integralPart =
-        this.#dice > 0 ? Math.floor(this.#dice) : Math.ceil(this.#dice);
-      const fractionalPart = this.#dice - integralPart;
-      if (fractionalPart >= 0.5) {
-        this.#dice = integralPart;
-        this.#adjustment = 0.5;
-      } else if (fractionalPart > 0) {
-        this.#dice = integralPart;
-        this.#adjustment = +1;
+    if (DC_TABLE.has(this.#apPerDie)) {
+      const forFullDice = (this.#dice * this.#apPerDie) / 5;
+      let extra = 0;
+      if (this.#adjustment !== DamageRollDie.Full) {
+        if (this.#apPerDie === 5) {
+          extra = 0.5;
+        } else {
+          const table = DC_TABLE.get(this.#apPerDie);
+          for (let i = 0; i < table.length; i++) {
+            if (table[i] === this.#adjustment) {
+              extra = i + 1;
+              break;
+            }
+          }
+          assert.that(
+            extra !== 0,
+            `Couldn't find adjustment ${this.#adjustment} in table for ${
+              this.#apPerDie
+            } AP per die`
+          );
+        }
       }
+      this.#dc = forFullDice + extra;
     }
+  }
+
+  static fromDCs(dc, apPerDie) {
+    assert.precondition(
+      DC_TABLE.has(apPerDie),
+      `unsupported AP per die ${apPerDie}`
+    );
+    let dice = 0;
+    let adjustment = 0;
+    if (apPerDie === 5) {
+      dice = Math.floor(dc);
+      adjustment = dc - dice;
+    } else if (dc > 0) {
+      const table = DC_TABLE.get(apPerDie);
+      dice = Math.floor(dc / table.length);
+      adjustment = table[(dc - 1) % table.length];
+    }
+    return new Damage(dice, apPerDie, adjustment);
+  }
+
+  static fromDice(dice, apPerDie) {
+    let adjustment = 0;
+    const integralPart = dice > 0 ? Math.floor(dice) : Math.ceil(dice);
+    const fractionalPart = dice - integralPart;
+    if (fractionalPart >= 0.5) {
+      dice = integralPart;
+      adjustment = 0.5;
+    } else if (fractionalPart > 0) {
+      dice = integralPart;
+      adjustment = +1;
+    }
+    return new Damage(dice, apPerDie, adjustment);
+  }
+
+  get dc() {
+    return this.#dc;
   }
 
   get dice() {
@@ -75,7 +146,7 @@ export class Damage {
       case +1:
         return this.#dice + 0.1;
       case -1:
-        return this.#dice - 0.1;
+        return this.#dice + 0.9;
       default:
         assert.that(false, "Invalid damage adjustment");
         return NaN;
