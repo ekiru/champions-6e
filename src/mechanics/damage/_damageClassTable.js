@@ -3,6 +3,7 @@ import * as assert from "../../util/assert.js";
 const DamageRollDie = Object.freeze({
   Full: 0,
   Half: 0.5,
+  HalfMinusOne: -0.5,
   PlusOne: +1,
   MinusOne: -1,
 });
@@ -13,7 +14,8 @@ class TableColumn {
     this.table = Object.freeze(
       table.map((entry) => {
         if (typeof entry === "number") {
-          return Object.freeze({ dice: +0, adjustment: entry });
+          const dice = entry === DamageRollDie.Full ? +1 : +0;
+          return Object.freeze({ dice, adjustment: entry });
         } else {
           if (entry.adjustment === undefined) {
             entry.adjustment = DamageRollDie.Full;
@@ -47,7 +49,28 @@ const DC_TABLE = new Map([
       { dice: +4 },
     ]),
   ],
+  [
+    7.5,
+    new TableColumn(4, [
+      { dice: +0, adjustment: DamageRollDie.Half },
+      { dice: +1 },
+      { dice: +2 },
+      { dice: +2, adjustment: DamageRollDie.Half },
+      { dice: +3 },
+      { dice: +4 },
+    ]),
+  ],
   [10, new TableColumn(1, [DamageRollDie.Half, DamageRollDie.Full])],
+  [
+    12.5,
+    new TableColumn(2, [
+      DamageRollDie.PlusOne,
+      DamageRollDie.Half,
+      { dice: +1 },
+      { dice: +1, adjustment: DamageRollDie.Half },
+      { dice: +2 },
+    ]),
+  ],
   [
     15,
     new TableColumn(1, [
@@ -63,6 +86,20 @@ const DC_TABLE = new Map([
       DamageRollDie.Half,
       DamageRollDie.MinusOne,
       DamageRollDie.Full,
+    ]),
+  ],
+  [
+    22.5,
+    new TableColumn(2, [
+      DamageRollDie.PlusOne,
+      DamageRollDie.HalfMinusOne,
+      DamageRollDie.Half,
+      DamageRollDie.MinusOne,
+      { dice: +1 },
+      { dice: +1, adjustment: DamageRollDie.PlusOne },
+      { dice: +1, adjustment: DamageRollDie.Half },
+      { dice: +1, adjustment: DamageRollDie.MinusOne },
+      { dice: +2 },
     ]),
   ],
 ]);
@@ -121,8 +158,9 @@ export function diceForDCs(dc, apPerDie) {
     adjustment = dc - dice;
   } else if (dc > 0) {
     const column = DC_TABLE.get(apPerDie);
-    dice = Math.floor(dc / column.length);
-    adjustment = column.get((dc - 1) % column.length).adjustment;
+    const entry = column.get((dc - 1) % column.length);
+    dice = Math.floor((dc * column.period) / column.length);
+    adjustment = entry.adjustment;
   }
   return { dice, adjustment };
 }

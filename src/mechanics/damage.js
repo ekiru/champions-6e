@@ -45,10 +45,11 @@ export class Damage {
   constructor(dice, apPerDie, adjustment = 0) {
     assert.precondition(
       adjustment === 0 ||
+        adjustment === -0.5 ||
         adjustment === 0.5 ||
         adjustment === +1 ||
         adjustment === -1,
-      "adjustment for Damage must be either 0, 0.5, or ±1"
+      "adjustment for Damage must be either 0, ±0.5, or ±1"
     );
     this.#adjustment = adjustment;
     this.#dice = dice;
@@ -76,6 +77,12 @@ export class Damage {
     return new Damage(dice, apPerDie, adjustment);
   }
 
+  toString() {
+    return `Damage { dc: ${this.#dc}, dice: ${this.#dice}, adjustment: ${
+      this.#adjustment
+    }, apPerDie: ${this.#apPerDie} }`;
+  }
+
   get dc() {
     return this.#dc;
   }
@@ -84,6 +91,8 @@ export class Damage {
     switch (this.#adjustment) {
       case 0:
         return this.#dice;
+      case -0.5: // ½d6-1
+        return this.#dice + 0.4;
       case 0.5:
         return this.#dice + 0.5;
       case +1:

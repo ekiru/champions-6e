@@ -103,12 +103,20 @@ describe("Damage classes", function () {
       expect(Damage.fromDCs(2.5, 5).dice).toBe(2.5);
     });
 
-    it.skip("7 DCs at 6¼ AP per d6 should be 5½d6", function () {
+    it("7 DCs at 6¼ AP per d6 should be 5½d6", function () {
       expect(Damage.fromDCs(7, 6.25).dice).toBe(5.5);
+    });
+
+    it("7 DCs at 7½ AP per d6 should be 4½d6", function () {
+      expect(Damage.fromDCs(7, 7.5).dice).toBe(4.5);
     });
 
     it("3 DCs at 10 AP per d6 should be 1½d6", function () {
       expect(Damage.fromDCs(3, 10).dice).toBe(1.5);
+    });
+
+    it("6 DCs at 12½ AP per d6 should be 2d6+1", function () {
+      expect(Damage.fromDCs(6, 12.5).dice).toBe(2.1);
     });
 
     it("4 DCs at 15 AP per d6 should be 1d6+1", function () {
@@ -117,6 +125,10 @@ describe("Damage classes", function () {
 
     it("3 DCs at 20 AP per d6 should be 1d6-1", function () {
       expect(Damage.fromDCs(3, 20).dice).toBe(0.9);
+    });
+
+    it("11 DCs at 22½ AP per d6 should be 2½d6-1", function () {
+      expect(Damage.fromDCs(11, 22.5).dice).toBe(2.4);
     });
   });
 
