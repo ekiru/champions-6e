@@ -1,37 +1,69 @@
 import * as assert from "../../util/assert.js";
 
-export const DamageRollDie = Object.freeze({
+const DamageRollDie = Object.freeze({
   Full: 0,
   Half: 0.5,
   PlusOne: +1,
   MinusOne: -1,
 });
 
-export const DC_TABLE = new Map([
-  [5, [DamageRollDie.Full]],
-  /* [
+class TableColumn {
+  constructor(period, table) {
+    this.period = period;
+    this.table = Object.freeze(
+      table.map((entry) => {
+        if (typeof entry === "number") {
+          return Object.freeze({ dice: +0, adjustment: entry });
+        } else {
+          if (entry.adjustment === undefined) {
+            entry.adjustment = DamageRollDie.Full;
+          }
+          return Object.freeze(entry);
+        }
+      })
+    );
+
+    Object.freeze(this);
+  }
+
+  get(index) {
+    return this.table[index];
+  }
+
+  get length() {
+    return this.table.length;
+  }
+}
+
+const DC_TABLE = new Map([
+  [5, new TableColumn(1, [DamageRollDie.Full])],
+  [
     6.25,
-    {
-      period: 4,
-      table: [
-        { dice: +0, adjustment: DamageRollDie.Half },
-        { dice: +1, adjustment: DamageRollDie.Half },
-        { dice: +2 },
-        { dice: +3 },
-        { dice: +4 },
-      ],
-    },
-  ], */
-  [10, [DamageRollDie.Half, DamageRollDie.Full]],
-  [15, [DamageRollDie.PlusOne, DamageRollDie.Half, DamageRollDie.Full]],
+    new TableColumn(4, [
+      { dice: +0, adjustment: DamageRollDie.Half },
+      { dice: +1, adjustment: DamageRollDie.Half },
+      { dice: +2 },
+      { dice: +3 },
+      { dice: +4 },
+    ]),
+  ],
+  [10, new TableColumn(1, [DamageRollDie.Half, DamageRollDie.Full])],
+  [
+    15,
+    new TableColumn(1, [
+      DamageRollDie.PlusOne,
+      DamageRollDie.Half,
+      DamageRollDie.Full,
+    ]),
+  ],
   [
     20,
-    [
+    new TableColumn(1, [
       DamageRollDie.PlusOne,
       DamageRollDie.Half,
       DamageRollDie.MinusOne,
       DamageRollDie.Full,
-    ],
+    ]),
   ],
 ]);
 
@@ -53,9 +85,9 @@ export function calculateDC(dice, apPerDie, adjustment) {
       if (apPerDie === 5) {
         extra = 0.5;
       } else {
-        const table = DC_TABLE.get(apPerDie);
-        for (let i = 0; i < table.length; i++) {
-          if (table[i] === adjustment) {
+        const column = DC_TABLE.get(apPerDie);
+        for (let i = 0; i < column.length; i++) {
+          if (column.get(i).adjustment === adjustment) {
             extra = i + 1;
             break;
           }
@@ -68,4 +100,29 @@ export function calculateDC(dice, apPerDie, adjustment) {
     }
     return forFullDice + extra;
   }
+}
+
+/**
+ * Calculate the dice roll for a given DC.
+ *
+ * @param {number} dc The number of DCs
+ * @param {number} apPerDie How many AP a single dice of damage costs for the power
+ * @returns {object} The `dice` and any `adjustment` to roll for the DCs.
+ */
+export function diceForDCs(dc, apPerDie) {
+  assert.precondition(
+    DC_TABLE.has(apPerDie),
+    `unsupported AP per die ${apPerDie}`
+  );
+  let dice = 0;
+  let adjustment = 0;
+  if (apPerDie === 5) {
+    dice = Math.floor(dc);
+    adjustment = dc - dice;
+  } else if (dc > 0) {
+    const column = DC_TABLE.get(apPerDie);
+    dice = Math.floor(dc / column.length);
+    adjustment = column.get((dc - 1) % column.length).adjustment;
+  }
+  return { dice, adjustment };
 }

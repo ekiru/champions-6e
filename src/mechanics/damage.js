@@ -1,5 +1,5 @@
 import * as assert from "../util/assert.js";
-import { calculateDC, DC_TABLE } from "./damage/_damageClassTable.js";
+import { calculateDC, diceForDCs } from "./damage/_damageClassTable.js";
 
 export const DEFENSE_TYPES = Object.freeze({
   pd: "Physical",
@@ -58,20 +58,7 @@ export class Damage {
   }
 
   static fromDCs(dc, apPerDie) {
-    assert.precondition(
-      DC_TABLE.has(apPerDie),
-      `unsupported AP per die ${apPerDie}`
-    );
-    let dice = 0;
-    let adjustment = 0;
-    if (apPerDie === 5) {
-      dice = Math.floor(dc);
-      adjustment = dc - dice;
-    } else if (dc > 0) {
-      const table = DC_TABLE.get(apPerDie);
-      dice = Math.floor(dc / table.length);
-      adjustment = table[(dc - 1) % table.length];
-    }
+    const { dice, adjustment } = diceForDCs(dc, apPerDie);
     return new Damage(dice, apPerDie, adjustment);
   }
 
