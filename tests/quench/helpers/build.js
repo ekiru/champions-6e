@@ -24,6 +24,14 @@ export async function character(context, systemData) {
   documents.push(context.character);
 }
 
+/**
+ * Builds an attack belonging to a character and stores it in `context.attack`.
+ *
+ * @param {*} context The context on which to store the new attack
+ * @param {Actor} owner The owner f the attack
+ * @param {string} name The name of the attack
+ * @param {*} systemData Any system data to include for the attack
+ */
 export async function ownedAttack(context, owner, name, systemData) {
   context.attack = await Item.create(
     {
