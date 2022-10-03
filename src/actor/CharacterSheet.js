@@ -291,6 +291,7 @@ export default class CharacterSheet extends ActorSheet {
           diceString: formatDice(
             this.actor.system.characteristics.str.hthDamage
           ),
+          apPerDie: 5,
         },
         {
           basic: true,
@@ -301,6 +302,7 @@ export default class CharacterSheet extends ActorSheet {
           diceString: formatDice(
             this.actor.system.characteristics.pre.presenceAttackDice
           ),
+          apPerDie: 5,
         },
       ],
     };
@@ -325,6 +327,7 @@ export default class CharacterSheet extends ActorSheet {
           DEFENSE_TYPES[attack.system.defense.value],
         dice,
         diceString: formatDice(dice),
+        apPerDie: attack.system.damage.apPerDie,
       });
     });
 
@@ -386,10 +389,11 @@ export default class CharacterSheet extends ActorSheet {
       attackRollDialog(label, ocv, options);
     });
     html.find(".damage-roll").click(function () {
+      const apPerDie = Number(this.dataset.apPerDie);
       const dice = Number(this.dataset.dice);
       const damageType = this.dataset.damageType;
       const label = this.dataset.label;
-      damageRollDialog(label, dice, damageType, { actor });
+      damageRollDialog(label, dice, damageType, apPerDie, { actor });
     });
     html.find(".knockback-roll").click(function () {
       const body = Number(this.dataset.body);

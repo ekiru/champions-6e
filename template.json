@@ -66,6 +66,7 @@
         "offensive": "ocv"
       },
       "damage": {
+        "apPerDie": 5,
         "dice": 2,
         "type": "normal"
       },

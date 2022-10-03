@@ -218,8 +218,21 @@ export function register(system, quench) {
     function ({ describe, it, expect, beforeEach, afterEach }) {
       describe("Damage Class Adder", function () {
         afterEach(async function () {
-          await build.afterEach(this);
+          await build.afterEach();
         });
+
+        const findAttack = async function (character, attackName) {
+          const sheet = await openCharacterSheet(character);
+          const attackRoll = sheet
+            .find("a.attack-roll")
+            .filter((i, elem) => elem.textContent.includes(attackName));
+          expect(attackRoll).to.have.lengthOf(1);
+          const row = attackRoll.parent("td").parent("tr");
+          expect(row).to.have.lengthOf(1);
+          const damage = row.find("a.damage-roll");
+          expect(damage).to.have.lengthOf(1);
+          return damage;
+        };
 
         describe("Haymaker", function () {
           beforeEach("given my character's STR is 23", async function () {
@@ -230,15 +243,8 @@ export function register(system, quench) {
             });
           });
 
-          it.skip("when they haymaker a HTH attack for +4 DC, it should roll 8½d6", async function () {
-            const sheet = await openCharacterSheet(this.character);
-            const attack = sheet
-              .find("a.attack-roll")
-              .filter((i, elem) =>
-                elem.textContent.includes("Basic HTH Attack")
-              );
-            expect(attack).to.have.lengthOf(1);
-
+          it("when they haymaker a HTH attack for +4 DC, it should roll 8½d6", async function () {
+            const attack = await findAttack(this.character, "Basic HTH Attack");
             const dialogP = nextDialog();
             attack.click();
             const dialog = await dialogP;
@@ -247,7 +253,7 @@ export function register(system, quench) {
             dialog.element.find('button[data-button="roll"]').click();
             const message = await messageP;
             try {
-              expect(message.rolls[0].formula).to.equal("8d6+1d6");
+              expect(message.rolls[0].formula).to.equal("8d6 + 1d6");
             } finally {
               await message.delete();
             }
@@ -255,9 +261,34 @@ export function register(system, quench) {
         });
 
         describe("Adding DCs to Drain", function () {
-          beforeEach("given my character has a Drain with 6d6", function () {});
+          beforeEach(
+            "given my character has a Drain with 6d6",
+            async function () {
+              await build.character(this, {});
+              await build.ownedAttack(this, this.character, "Drain", {
+                damage: {
+                  apPerDie: 10,
+                  dice: 6,
+                },
+              });
+            }
+          );
 
-          it.skip("when they add 3 DC to it, it should roll 7½ d6");
+          it("when they add 3 DC to it, it should roll 7½ d6", async function () {
+            const attack = await findAttack(this.character, "Drain");
+            const dialogP = nextDialog();
+            attack.click();
+            const dialog = await dialogP;
+            dialog.element.find('[name="dcs"]').val("3");
+            const messageP = nextMessage();
+            dialog.element.find('button[data-button="roll"]').click();
+            const message = await messageP;
+            try {
+              expect(message.rolls[0].formula).to.equal("7d6 + 1d6");
+            } finally {
+              await message.delete();
+            }
+          });
         });
 
         describe("Adding STR to a HKA", function () {

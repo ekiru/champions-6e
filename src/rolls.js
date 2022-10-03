@@ -1,5 +1,9 @@
 import { highestDcvHit, targetNumberToHit } from "./mechanics/attack.js";
-import { countKillingDamage, countNormalDamage } from "./mechanics/damage.js";
+import {
+  countKillingDamage,
+  countNormalDamage,
+  Damage,
+} from "./mechanics/damage.js";
 
 /**
  * Adds a message field to the response unless options.message is present and false.
@@ -275,12 +279,17 @@ const formatDamage = (type, label, dice, { body, stun }) => {
  * Rolls a normal damage roll.
  *
  * @param {number} dice The number of dice to roll.
- * @param {object} options Options: pass {@code Roll} to override the Roll class.
+ * @param {object} options Options: pass {@code Roll} to override the Roll class, dcs to add or subtract DCs.
  * @returns {object} The body and stun properties indicate the damage done. The
  * message property holds any ChatMessage created.
  */
 export async function performNormalDamageRoll(dice, options = {}) {
   const rollClass = options.Roll ?? Roll;
+  if (options.dcs) {
+    dice = Damage.fromDice(dice, options.apPerDie).addDamageClasses(
+      options.dcs
+    ).dice;
+  }
   const hasHalf = !Number.isInteger(dice);
   let formula;
   let diceString;
@@ -318,19 +327,27 @@ const damageRollTemplate =
  * @param {string} label A label for the damage roll.
  * @param {number} dice The default dice of damage.
  * @param {"normal" | "killing"} type The default damage type.
+ * @param {number} apPerDie The number of AP per 1d6 of the attack.
  * @param {object} options Options to customize the dialog or chat message.
  * @param {Actor} options.actor The actor for whom the roll is being performed.
  */
-export async function damageRollDialog(label, dice, type, { actor } = {}) {
+export async function damageRollDialog(
+  label,
+  dice,
+  type,
+  apPerDie,
+  { actor } = {}
+) {
   const title = `${label ? label + " " : ""}Damage Roll`;
   const context = { label, dice, type };
   rollDialog(title, damageRollTemplate, context, (html) => {
     const dice = Number(html.find("input[name='dice']").get(0).value);
+    const dcs = Number(html.find("input[name='dcs']").get(0).value);
     const type = html.find("select[name='type']").get(0).value;
     if (type === "normal") {
-      performNormalDamageRoll(dice, { actor, label });
+      performNormalDamageRoll(dice, { actor, label, dcs, apPerDie });
     } else if (type === "killing") {
-      performKillingDamageRoll(dice, { actor, label });
+      performKillingDamageRoll(dice, { actor, label, dcs, apPerDie });
     }
   });
 }

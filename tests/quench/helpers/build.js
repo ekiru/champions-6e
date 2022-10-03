@@ -1,13 +1,11 @@
+let documents = [];
+
 /**
  * Cleans up any built objects.
- *
- * @param {*} context The context for which the objects were created.
  */
-export async function afterEach(context) {
-  if (context.character) {
-    await context.character.delete();
-    context.character = null;
-  }
+export async function afterEach() {
+  await Promise.allSettled(documents.map((doc) => doc.delete()));
+  documents = [];
 }
 
 /**
@@ -22,4 +20,17 @@ export async function character(context, systemData) {
     type: "character",
     system: systemData,
   });
+
+  documents.push(context.character);
+}
+
+export async function ownedAttack(context, owner, name, systemData) {
+  context.attack = await Item.create(
+    {
+      name,
+      type: "attack",
+      system: systemData,
+    },
+    { parent: owner }
+  );
 }
