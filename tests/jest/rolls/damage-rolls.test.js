@@ -95,6 +95,12 @@ describe("Killing damage rolls", function () {
 });
 
 describe("Damage classes", function () {
+  describe("Damage.get baseDice()", function () {
+    it("should be equal to one more X for Xd6-1", function () {
+      expect(Damage.fromDice(3.9, 5).baseDice).toBe(4);
+    });
+  });
+
   describe("Damage.fromDC()", function () {
     it("2 DCs at 5 AP per d6 should be 2d6", function () {
       expect(Damage.fromDCs(2, 5).dice).toBe(2);
@@ -136,7 +142,9 @@ describe("Damage classes", function () {
     it("should roundtrip the various possibilities", function () {
       expect(Damage.fromDice(1).dice).toBe(1);
       expect(Damage.fromDice(2.1).dice).toBe(2.1);
+      expect(Damage.fromDice(4.4).dice).toBe(4.4);
       expect(Damage.fromDice(3.5).dice).toBe(3.5);
+      expect(Damage.fromDice(5.9).dice).toBe(5.9);
     });
   });
 

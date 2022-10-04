@@ -223,15 +223,13 @@ export async function performKillingDamageRoll(dice, options = {}) {
     dice = dice.addDamageClasses(options.dcs);
   }
   const hasHalf = dice.hasHalf;
-  let diceString;
+  const diceString = dice.diceString;
   let formula;
   if (!hasHalf) {
     formula = `${dice.baseDice}d6 * d3`;
-    diceString = `${dice.baseDice}d6`;
   } else {
     const wholeDice = dice.baseDice;
     formula = `${wholeDice}d6 * d3 + d6`;
-    diceString = `${wholeDice}½d6`;
   }
   const roll = new rollClass(formula);
   const result = await roll.roll({ async: true });
@@ -295,14 +293,12 @@ export async function performNormalDamageRoll(dice, options = {}) {
   }
   const hasHalf = dice.hasHalf;
   let formula;
-  let diceString;
+  const diceString = dice.diceString;
   if (!hasHalf) {
     formula = `${dice.baseDice}d6`;
-    diceString = formula;
   } else {
     const wholeDice = dice.baseDice;
     formula = `${wholeDice}d6 + d6`;
-    diceString = `${wholeDice}½d6`;
   }
   const roll = new rollClass(formula);
   const result = await roll.roll({ async: true });

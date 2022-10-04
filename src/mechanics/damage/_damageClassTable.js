@@ -161,6 +161,9 @@ export function diceForDCs(dc, apPerDie) {
     const entry = column.get((dc - 1) % column.length);
     dice = Math.floor((dc * column.period) / column.length);
     adjustment = entry.adjustment;
+    if (entry.adjustment === DamageRollDie.MinusOne) {
+      dice += 1;
+    }
   }
   return { dice, adjustment };
 }
