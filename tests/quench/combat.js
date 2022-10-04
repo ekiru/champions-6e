@@ -15,6 +15,8 @@ import { expectTextContent, provideExpect } from "./helpers/webExpectations.js";
  * @param {*} quench The Quench module.
  */
 export function register(system, quench) {
+  quench.registerBatch(`${system}.cucumber`);
+
   quench.registerBatch(
     `${system}.cucumber.combat.initiative`,
     function ({ describe, it, expect, before, after }) {
@@ -212,6 +214,90 @@ export function register(system, quench) {
       });
     },
     { displayName: `${system}: Initiative Order` }
+  );
+
+  quench.registerBatch(
+    `${system}.cucumber.combat.initiative.changes`,
+    function ({ describe, it, expect, beforeEach, afterEach }) {
+      describe("Changes to initiative order", function () {
+        afterEach(build.afterEach);
+
+        describe.skip("Speeding up", function () {
+          beforeEach(async function () {
+            await build
+              .at(this, "numberMan")
+              .character()
+              .withCharacteristic("spd", 5)
+              .build();
+            await build
+              .at(this, "skitter")
+              .character()
+              .withCharacteristic("spd", 3)
+              .build();
+            await build.combat([this.numberMan, this.skitter]);
+            await this.combat.startCombat();
+            await this.combat.nextRound();
+            await this.combat.moveToPhase(3, this.numberMan);
+            await this.numberMan.update({
+              "system.characteristics.spd.modifier": +2,
+            });
+            this.combat.setupTurns();
+          });
+
+          it("Number Man's next Phase should be in segment 6", async function () {
+            while (this.combat.combatant.actorId !== this.numberMan.id) {
+              await this.combat.nextTurn();
+            }
+
+            expect(this.combat.current.segment).to.equal(6);
+          });
+
+          it("The current Phase should be Skitter's in segment 4", function () {
+            expect(this.combat.current.segment).to.equal(4);
+            expect(this.combat.combatant.actorId).to.equal(this.skitter.id);
+          });
+        });
+
+        describe.skip("Speeding up to a speed with a Phase in the next segment", function () {
+          beforeEach(async function () {
+            await Promise.all([
+              build
+                .at(this, "numberMan")
+                .character()
+                .withCharacteristic("spd", 5)
+                .build(),
+              build
+                .at(this, "velocity")
+                .character()
+                .withCharacteristic("spd", 7)
+                .build(),
+            ]);
+            await build.combat(this, [this.numberMan, this.velocity]);
+            await this.combat.startCombat();
+            await this.combat.nextRound();
+            await this.combat.moveToPhase(8, this.numberMan);
+            await this.numberMan.update({
+              "system.characteristics.spd.value": 6,
+            });
+            this.combat.setupTurns();
+          });
+
+          it("Number Man's next Phase should be in Segment 10", async function () {
+            while (this.combat.combatant.actorId !== this.numberMan.id) {
+              await this.combat.nextTurn();
+            }
+
+            expect(this.combat.current.segment).to.equal(10);
+          });
+
+          it("The current Phase should be Velocity's in segment 9", function () {
+            expect(this.combat.combatant.actorId).to.equal(this.velocity.id);
+            expect(this.combat.current.segment).to.equal(9);
+          });
+        });
+      });
+    },
+    { displayName: `${system}: Changes to Initiative Order` }
   );
 
   quench.registerBatch(
