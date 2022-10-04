@@ -49,7 +49,7 @@ export class Damage {
         adjustment === 0.5 ||
         adjustment === +1 ||
         adjustment === -1,
-      "adjustment for Damage must be either 0, ±0.5, or ±1"
+      `adjustment for Damage must be either 0, ±0.5, or ±1, but got ${adjustment}`
     );
     this.#adjustment = adjustment;
     this.#dice = dice;
@@ -86,6 +86,10 @@ export class Damage {
     }, apPerDie: ${this.#apPerDie} }`;
   }
 
+  get baseDice() {
+    return this.#dice;
+  }
+
   get dc() {
     return this.#dc;
   }
@@ -106,6 +110,10 @@ export class Damage {
         assert.that(false, "Invalid damage adjustment");
         return NaN;
     }
+  }
+
+  get hasHalf() {
+    return this.#adjustment === 0.5;
   }
 
   /**

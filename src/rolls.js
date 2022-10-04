@@ -211,7 +211,7 @@ export async function attackRollDialog(
 /**
  * Rolls a killing damage roll.
  *
- * @param {number} dice The number of dice to roll.
+ * @param {Damage} dice The damage dice to roll.
  * @param {object} options Options: pass {@code Roll} to override the Roll class, or
  * dcs (and apPerDie) to add or subtract DCs.
  * @returns {object} The body and stun properties indicate the damage done. The
@@ -220,18 +220,16 @@ export async function attackRollDialog(
 export async function performKillingDamageRoll(dice, options = {}) {
   const rollClass = options.Roll ?? Roll;
   if (options.dcs) {
-    dice = Damage.fromDice(dice, options.apPerDie).addDamageClasses(
-      options.dcs
-    ).dice;
+    dice = dice.addDamageClasses(options.dcs);
   }
-  const hasHalf = !Number.isInteger(dice);
+  const hasHalf = dice.hasHalf;
   let diceString;
   let formula;
   if (!hasHalf) {
-    formula = `${dice}d6 * d3`;
-    diceString = `${dice}d6`;
+    formula = `${dice.baseDice}d6 * d3`;
+    diceString = `${dice.baseDice}d6`;
   } else {
-    const wholeDice = Math.floor(dice);
+    const wholeDice = dice.baseDice;
     formula = `${wholeDice}d6 * d3 + d6`;
     diceString = `${wholeDice}½d6`;
   }
@@ -284,7 +282,7 @@ const formatDamage = (type, label, dice, { body, stun }) => {
 /**
  * Rolls a normal damage roll.
  *
- * @param {number} dice The number of dice to roll.
+ * @param {Damage} dice The damage dice to roll.
  * @param {object} options Options: pass {@code Roll} to override the Roll class, dcs to add or subtract DCs.
  * @returns {object} The body and stun properties indicate the damage done. The
  * message property holds any ChatMessage created.
@@ -292,18 +290,16 @@ const formatDamage = (type, label, dice, { body, stun }) => {
 export async function performNormalDamageRoll(dice, options = {}) {
   const rollClass = options.Roll ?? Roll;
   if (options.dcs) {
-    dice = Damage.fromDice(dice, options.apPerDie).addDamageClasses(
-      options.dcs
-    ).dice;
+    dice = dice.addDamageClasses(options.dcs);
   }
-  const hasHalf = !Number.isInteger(dice);
+  const hasHalf = dice.hasHalf;
   let formula;
   let diceString;
   if (!hasHalf) {
-    formula = `${dice}d6`;
+    formula = `${dice.baseDice}d6`;
     diceString = formula;
   } else {
-    const wholeDice = Math.floor(dice);
+    const wholeDice = dice.baseDice;
     formula = `${wholeDice}d6 + d6`;
     diceString = `${wholeDice}½d6`;
   }
@@ -350,10 +346,11 @@ export async function damageRollDialog(
     const dice = Number(html.find("input[name='dice']").get(0).value);
     const dcs = Number(html.find("input[name='dcs']").get(0).value);
     const type = html.find("select[name='type']").get(0).value;
+    const damage = Damage.fromDice(dice, apPerDie);
     if (type === "normal") {
-      performNormalDamageRoll(dice, { actor, label, dcs, apPerDie });
+      performNormalDamageRoll(damage, { actor, label, dcs, apPerDie });
     } else if (type === "killing") {
-      performKillingDamageRoll(dice, { actor, label, dcs, apPerDie });
+      performKillingDamageRoll(damage, { actor, label, dcs, apPerDie });
     }
   });
 }

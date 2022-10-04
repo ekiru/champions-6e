@@ -1,3 +1,4 @@
+import { Damage } from "../../src/mechanics/damage.js";
 import * as rolls from "../../src/rolls.js";
 
 /**
@@ -415,13 +416,17 @@ export function register(system, quench) {
       describe("Normal damage rolls", function () {
         it("should count the damage for whole dice correctly", async function () {
           const Roll = fakeDice([[1, 2, 3, 4, 5, 6, 6, 6]]);
-          result = await rolls.performNormalDamageRoll(8, { Roll });
+          result = await rolls.performNormalDamageRoll(new Damage(8, 5), {
+            Roll,
+          });
           expect(result.body).to.equal(10);
           expect(result.stun).to.equal(33);
         });
         it("should count the damage for half dice correctly", async function () {
           const Roll = fakeDice([[1, 2, 3, 4, 5, 6, 6], [6]]);
-          result = await rolls.performNormalDamageRoll(7.5, { Roll });
+          result = await rolls.performNormalDamageRoll(new Damage(7, 5, 0.5), {
+            Roll,
+          });
           expect(result.body).to.equal(9);
           expect(result.stun).to.equal(30);
         });
@@ -429,7 +434,10 @@ export function register(system, quench) {
         describe("chat messages", function () {
           const label = "Lightbolt";
           beforeEach(async function () {
-            result = await rolls.performNormalDamageRoll(7.5, { actor, label });
+            result = await rolls.performNormalDamageRoll(
+              new Damage(7, 5, 0.5),
+              { actor, label }
+            );
           });
 
           it("should include a chat message with the roll", function () {
@@ -460,13 +468,18 @@ export function register(system, quench) {
       describe("Killing damage rolls", function () {
         it("should count the damage for whole dice correctly", async function () {
           const Roll = fakeDice([[1, 3, 6], [3]]);
-          result = await rolls.performKillingDamageRoll(3, { Roll });
+          result = await rolls.performKillingDamageRoll(new Damage(3, 15), {
+            Roll,
+          });
           expect(result.body).to.equal(10);
           expect(result.stun).to.equal(30);
         });
         it("should count the damage for half dice correctly", async function () {
           const Roll = fakeDice([[1, 3, 6], [3], [1]]);
-          result = await rolls.performKillingDamageRoll(3.5, { Roll });
+          result = await rolls.performKillingDamageRoll(
+            new Damage(3, 15, 0.5),
+            { Roll }
+          );
           expect(result.body).to.equal(11);
           expect(result.stun).to.equal(33);
         });
@@ -474,10 +487,13 @@ export function register(system, quench) {
         describe("chat messages", function () {
           const label = "Boots with the Spur";
           beforeEach(async function () {
-            result = await rolls.performKillingDamageRoll(3.5, {
-              actor,
-              label,
-            });
+            result = await rolls.performKillingDamageRoll(
+              new Damage(3, 15, 0.5),
+              {
+                actor,
+                label,
+              }
+            );
           });
 
           it("should include a chat message with the roll", function () {
