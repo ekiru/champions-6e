@@ -45,15 +45,11 @@ export async function character(context, systemData) {
  * @param {Actor[]} characters Characters to add to the Combat.
  */
 export async function combat(context, characters) {
-  context.combat = await Combat.create({
-    combatants: await Promise.all(
-      characters.map((char) =>
-        Combatant.create({
-          actorId: char.id,
-        })
-      )
-    ),
-  });
+  context.combat = await Combat.create({});
+  await context.combat.createEmbeddedDocuments(
+    "Combatant",
+    characters.map((char) => ({ actorId: char.id }))
+  );
 }
 
 /**
@@ -132,7 +128,7 @@ class DocumentBuilder {
 
 class CharacterBuilder extends DocumentBuilder {
   constructor(context, path) {
-    super(context, path ?? "character");
+    super(context, path ?? "character", Actor);
     this.setProperty("name", "Starfire");
     this.setProperty("type", "character");
   }

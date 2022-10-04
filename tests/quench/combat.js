@@ -15,7 +15,50 @@ import { expectTextContent, provideExpect } from "./helpers/webExpectations.js";
  * @param {*} quench The Quench module.
  */
 export function register(system, quench) {
-  quench.registerBatch(`${system}.cucumber`);
+  quench.registerBatch(
+    `${system}.combat.class`,
+    function ({ describe, it, expect, beforeEach, afterEach }) {
+      describe("Combat#moveToPhase()", function () {
+        afterEach(build.afterEach);
+        beforeEach(async function () {
+          await Promise.all([
+            build
+              .at(this, "speedy")
+              .character()
+              .withCharacteristic("spd", 12)
+              .withCharacteristic("dex", 10)
+              .build(),
+            build
+              .at(this, "agile")
+              .character()
+              .withCharacteristic("spd", 6)
+              .withCharacteristic("dex", 20)
+              .build(),
+          ]);
+          await build.combat(this, [this.speedy], [this.agile]);
+          await this.combat.startCombat();
+          await this.combat.nextRound();
+          await waitOneMoment();
+        });
+
+        it("should end up on the specified phase and character", async function () {
+          await this.combat.moveToPhase(4, this.speedy);
+
+          expect(this.combat.current.segment).to.equal(4);
+          expect(this.combat.combatant.actorId).to.equal(this.speedy.id);
+        });
+
+        it.skip(
+          "should throw an error if the character doesn't have a phase that segment"
+        );
+        it.skip("should move backwards if we're past that segment");
+        it.skip(
+          "should throw an error if trying to move before segment 12 in round 1"
+        );
+      });
+    },
+    { displayName: `${system}: Combat class` }
+  );
 
   quench.registerBatch(
     `${system}.cucumber.combat.initiative`,

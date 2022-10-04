@@ -46,6 +46,21 @@ export default class ChampionsCombat extends Combat {
     return (this.turns = turns);
   }
 
+  async moveToPhase(segment, character) {
+    assert.precondition(segment >= 1 && segment < 12);
+    assert.precondition(character instanceof Actor);
+
+    while (this.current.segment <= segment) {
+      if (
+        this.current.segment === segment &&
+        this.combatant.actorId === character.id
+      ) {
+        return;
+      }
+      await this.nextTurn();
+    }
+  }
+
   /**
    * Calculates which combatants have phases in each segment.
    *
