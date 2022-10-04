@@ -231,6 +231,14 @@ export async function performKillingDamageRoll(dice, options = {}) {
     const wholeDice = dice.baseDice;
     formula = `${wholeDice}d6 * d3 + d6`;
   }
+  switch (dice.plusOrMinus) {
+    case +1:
+      formula += " + 1";
+      break;
+    case -1:
+      formula += " - 1";
+      break;
+  }
   const roll = new rollClass(formula);
   const result = await roll.roll({ async: true });
   const rolledDice = result.dice[0].results.map((res) => res.result);
@@ -299,6 +307,14 @@ export async function performNormalDamageRoll(dice, options = {}) {
   } else {
     const wholeDice = dice.baseDice;
     formula = `${wholeDice}d6 + d6`;
+  }
+  switch (dice.plusOrMinus) {
+    case +1:
+      formula += " + 1";
+      break;
+    case -1:
+      formula += " - 1";
+      break;
   }
   const roll = new rollClass(formula);
   const result = await roll.roll({ async: true });

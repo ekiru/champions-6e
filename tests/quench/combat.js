@@ -308,7 +308,7 @@ export function register(system, quench) {
           );
 
           // skipping because Xd6+1 roll aren't implemented yet.
-          it.skip("when they add 4 DC to it, it should roll 3d6+1", async function () {
+          it("when they add 4 DC to it, it should roll 3d6+1", async function () {
             const attack = await findAttack(this.character, "HKA");
             const dialogP = nextDialog();
             attack.click();
@@ -318,7 +318,7 @@ export function register(system, quench) {
             dialog.element.find('button[data-button="roll"]').click();
             const message = await messageP;
             try {
-              expect(message.rolls[0].formula).to.equal("3d6 * d3 + 1");
+              expect(message.rolls[0].formula).to.equal("3d6 * 1d3 + 1");
             } finally {
               await message.delete();
             }

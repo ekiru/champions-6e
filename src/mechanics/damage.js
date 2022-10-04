@@ -144,7 +144,7 @@ export class Damage {
   }
 
   get hasHalf() {
-    return this.#adjustment === 0.5;
+    return this.#adjustment === 0.5 || this.#adjustment === -0.5;
   }
 
   get plusOrMinus() {
