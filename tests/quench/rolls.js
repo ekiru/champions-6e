@@ -431,6 +431,24 @@ export function register(system, quench) {
           expect(result.stun).to.equal(30);
         });
 
+        it("should count the damage for Xd6+1 correctly", async function () {
+          const Roll = fakeDice([[1, 2, 3, 4, 5, 6, 6, 6]]);
+          result = await rolls.performNormalDamageRoll(new Damage(8, 5, 1), {
+            Roll,
+          });
+          expect(result.body).to.equal(10);
+          expect(result.stun).to.equal(34);
+        });
+
+        it("should count the damage for Xd6-1 correctly", async function () {
+          const Roll = fakeDice([[1, 2, 3, 4, 5, 6, 6, 6]]);
+          result = await rolls.performNormalDamageRoll(new Damage(8, 5, -1), {
+            Roll,
+          });
+          expect(result.body).to.equal(10);
+          expect(result.stun).to.equal(32);
+        });
+
         describe("chat messages", function () {
           const label = "Lightbolt";
           beforeEach(async function () {
@@ -482,6 +500,27 @@ export function register(system, quench) {
           );
           expect(result.body).to.equal(11);
           expect(result.stun).to.equal(33);
+        });
+
+        it("should count the damage for Xd6+1 correctly", async function () {
+          const Roll = fakeDice([[1, 3, 6], [3]]);
+          result = await rolls.performKillingDamageRoll(new Damage(3, 15, +1), {
+            Roll,
+          });
+          expect(result.body).to.equal(11);
+          expect(result.stun).to.equal(33);
+        });
+
+        it("should count the damage for Xd6-1 correctly", async function () {
+          const Roll = fakeDice([[1, 3, 6], [3]]);
+          result = await rolls.performKillingDamageRoll(
+            new Damage(3, 22.5, -1),
+            {
+              Roll,
+            }
+          );
+          expect(result.body).to.equal(9);
+          expect(result.stun).to.equal(27);
         });
 
         describe("chat messages", function () {

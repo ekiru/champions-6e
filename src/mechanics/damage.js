@@ -116,6 +116,18 @@ export class Damage {
     return this.#adjustment === 0.5;
   }
 
+  get plusOrMinus() {
+    switch (this.#adjustment) {
+      case -0.5:
+      case -1:
+        return -1;
+      case +1:
+        return +1;
+      default:
+        return 0;
+    }
+  }
+
   /**
    * Adds DCs to the damage roll.
    *
@@ -133,11 +145,12 @@ export class Damage {
  * @param {Array<number>} dice The results rolled on the full dice.
  * @param {number} multiplier The result of the multiplier die.
  * @param {number?} halfDie The value of the half-die, if any.
+ * @param {number?} plusOrMinus A bonus or malus to the pips of BODY.
  * @returns {object} An object containing the {@code stun} and {@code body} for the
  * roll.
  */
-export function countKillingDamage(dice, multiplier, halfDie) {
-  const body = countKillingBody(dice, halfDie);
+export function countKillingDamage(dice, multiplier, halfDie, plusOrMinus) {
+  const body = countKillingBody(dice, halfDie, plusOrMinus);
   return {
     body,
     stun: body * multiplier,
@@ -149,14 +162,15 @@ export function countKillingDamage(dice, multiplier, halfDie) {
  *
  * @param {Array<number>} dice The results of the full dice rolled.
  * @param {number?} halfDie The results of the halfDie, if any.
+ * @param {number?} plusOrMinus A bonus or malus to the pips of BODY.
  * @returns  {number} The BODY rolled for the attack.
  */
-export function countKillingBody(dice, halfDie) {
+export function countKillingBody(dice, halfDie, plusOrMinus) {
   let body = sumArray(dice);
   if (halfDie) {
     body += Math.ceil(halfDie / 2);
   }
-  return body;
+  return body + plusOrMinus;
 }
 
 /**
@@ -175,13 +189,14 @@ export function countKillingStun(body, multiplier) {
  *
  * @param {Array<number>} dice The results rolled on the full dice.
  * @param {number?} halfDie The value of the half-die, if any.
+ * @param {number} plusOrMinus Any plus or minus to add to the STUN.
  * @returns {object} An object containing the {@code stun} and {@code body} for the
  * roll.
  */
-export function countNormalDamage(dice, halfDie) {
+export function countNormalDamage(dice, halfDie, plusOrMinus) {
   return {
     body: countNormalBody(dice, halfDie),
-    stun: countNormalStun(dice, halfDie),
+    stun: countNormalStun(dice, halfDie, plusOrMinus),
   };
 }
 
@@ -206,10 +221,11 @@ export function countNormalBody(dice, halfDie) {
  *
  * @param {Array<number>} dice The results of rolling the dice.
  * @param {number?} halfDie The result of the half-die, if any.
+ * @param {number} plusOrMinus +1, -1, or 0 to add to the result.
  * @returns {number} The STUN for the roll.
  */
-export function countNormalStun(dice, halfDie) {
-  const stun = sumArray(dice);
+export function countNormalStun(dice, halfDie, plusOrMinus) {
+  const stun = sumArray(dice) + plusOrMinus;
   if (halfDie) {
     return stun + Math.ceil(halfDie / 2);
   } else {

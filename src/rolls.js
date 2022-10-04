@@ -240,7 +240,8 @@ export async function performKillingDamageRoll(dice, options = {}) {
   const response = countKillingDamage(
     rolledDice,
     multiplier,
-    hasHalf && result.dice[2].total
+    hasHalf && result.dice[2].total,
+    dice.plusOrMinus
   );
   response.roll = result;
   await addMessage(
@@ -308,7 +309,8 @@ export async function performNormalDamageRoll(dice, options = {}) {
   const rolledDice = result.dice[0].results.map((res) => res.result);
   const response = countNormalDamage(
     rolledDice,
-    hasHalf && result.dice[1].total
+    hasHalf && result.dice[1].total,
+    dice.plusOrMinus
   );
   response.roll = result;
   await addMessage(
