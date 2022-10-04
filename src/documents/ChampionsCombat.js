@@ -55,10 +55,12 @@ export default class ChampionsCombat extends Combat {
         this.current.segment === segment &&
         this.combatant.actorId === character.id
       ) {
-        return;
+        break;
       }
       await this.nextTurn();
     }
+    assert.that(this.current.segment === segment);
+    assert.that(this.combatant.actorId === character.id);
   }
 
   /**

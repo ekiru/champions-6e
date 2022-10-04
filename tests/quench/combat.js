@@ -1,3 +1,4 @@
+import { AssertionError } from "../../src/util/assert.js";
 import * as build from "./helpers/build.js";
 import {
   nextDialog,
@@ -48,9 +49,16 @@ export function register(system, quench) {
           expect(this.combat.combatant.actorId).to.equal(this.speedy.id);
         });
 
-        it.skip(
-          "should throw an error if the character doesn't have a phase that segment"
-        );
+        it("should throw an error if the character doesn't have a phase that segment", async function () {
+          let error;
+          try {
+            await this.combat.moveToPhase(5, this.agile);
+          } catch (e) {
+            error = e;
+          }
+          expect(error).to.be.an.instanceof(AssertionError);
+        });
+
         it.skip("should move backwards if we're past that segment");
         it.skip(
           "should throw an error if trying to move before segment 12 in round 1"
