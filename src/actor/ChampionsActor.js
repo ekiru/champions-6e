@@ -1,3 +1,4 @@
+import * as hooks from "../hooks.js";
 import { byName as characteristicByName } from "../mechanics/characteristics.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
@@ -99,6 +100,9 @@ const MODIFIABLE_TRAITS = [].concat(
 );
 
 export default class ChampionsActor extends Actor {
+  #oldPhases;
+  #oldSpeed;
+
   async _onCreate(data, options, userId) {
     await super._onCreate(data, options, userId);
     if (userId === game.user.id) {
@@ -107,8 +111,34 @@ export default class ChampionsActor extends Actor {
   }
 
   /** @override */
-  async _preUpdate(changes) {
+  async _preUpdate(changes, options, userId) {
+    super._preUpdate(changes, options, userId);
     preprocessUpdate(CHARACTER_SCHEMA, changes);
+
+    if (foundry.utils.hasProperty(changes, "system.characteristics.spd")) {
+      this.#oldSpeed = this.system.characteristics.spd.total;
+      this.#oldPhases = this.system.phases;
+    } else {
+      this.#oldSpeed = undefined;
+    }
+  }
+
+  /** @override*/
+  async _onUpdate(changes, options, userId) {
+    super._onUpdate(changes, options, userId);
+    if (game.userId === userId && this.#oldSpeed !== undefined) {
+      const newSpeed = this.system.characteristics.spd.total;
+      if (newSpeed !== this.#oldSpeed) {
+        Hooks.callAll(
+          hooks.SPD_CHANGE,
+          this,
+          this.#oldSpeed,
+          this.#oldPhases,
+          newSpeed,
+          this.system.phase
+        );
+      }
+    }
   }
 
   prepareDerivedData() {

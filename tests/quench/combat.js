@@ -272,8 +272,7 @@ export function register(system, quench) {
     function ({ describe, it, expect, beforeEach, afterEach }) {
       describe("Changes to initiative order", function () {
         afterEach(build.afterEach);
-
-        describe.skip("Speeding up", function () {
+        describe("Speeding up", function () {
           beforeEach(async function () {
             await build
               .at(this, "numberMan")
@@ -285,31 +284,35 @@ export function register(system, quench) {
               .character()
               .withCharacteristic("spd", 3)
               .build();
-            await build.combat([this.numberMan, this.skitter]);
+            await build.combat(this, [this.numberMan, this.skitter]);
             await this.combat.startCombat();
             await this.combat.nextRound();
             await this.combat.moveToPhase(3, this.numberMan);
             await this.numberMan.update({
               "system.characteristics.spd.modifier": +2,
             });
-            this.combat.setupTurns();
+            await this.combat.updatePhases();
+            await waitOneMoment();
           });
 
           it("Number Man's next Phase should be in segment 6", async function () {
-            while (this.combat.combatant.actorId !== this.numberMan.id) {
+            do {
               await this.combat.nextTurn();
-            }
+            } while (this.combat.combatant.actorId !== this.numberMan.id);
+            expect(this.combat.combatant.actorId === this.numberMan.id);
 
             expect(this.combat.current.segment).to.equal(6);
           });
 
-          it("The current Phase should be Skitter's in segment 4", function () {
+          it("The next Phase should be Skitter's in segment 4", async function () {
+            this.combat.current, this.combat.turn;
+            await this.combat.nextTurn();
             expect(this.combat.current.segment).to.equal(4);
             expect(this.combat.combatant.actorId).to.equal(this.skitter.id);
           });
         });
 
-        describe.skip("Speeding up to a speed with a Phase in the next segment", function () {
+        describe("Speeding up to a speed with a Phase in the next segment", function () {
           beforeEach(async function () {
             await Promise.all([
               build
@@ -330,18 +333,20 @@ export function register(system, quench) {
             await this.numberMan.update({
               "system.characteristics.spd.value": 6,
             });
-            this.combat.setupTurns();
+            this.combat.updatePhases();
           });
 
           it("Number Man's next Phase should be in Segment 10", async function () {
-            while (this.combat.combatant.actorId !== this.numberMan.id) {
+            do {
               await this.combat.nextTurn();
-            }
+            } while (this.combat.combatant.actorId !== this.numberMan.id);
+            expect(this.combat.combatant.actorId === this.numberMan.id);
 
             expect(this.combat.current.segment).to.equal(10);
           });
 
-          it("The current Phase should be Velocity's in segment 9", function () {
+          it("The next Phase should be Velocity's in segment 9", async function () {
+            await this.combat.nextTurn();
             expect(this.combat.combatant.actorId).to.equal(this.velocity.id);
             expect(this.combat.current.segment).to.equal(9);
           });

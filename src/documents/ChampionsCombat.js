@@ -1,9 +1,19 @@
+import * as hooks from "../hooks.js";
 import * as assert from "../util/assert.js";
 import { compareByLexically } from "../util/sort.js";
+
+const supersuper = function (self) {
+  Object.getPrototypeOf(Object.getPrototypeOf(self));
+};
 
 export default class ChampionsCombat extends Combat {
   #phaseChart;
   #ties;
+  #preservePosition;
+
+  #spdChanges = new Map();
+  #spdChangeHook;
+  #spdChangesPending;
 
   /** @override */
   async previousRound() {
@@ -18,9 +28,17 @@ export default class ChampionsCombat extends Combat {
     return result;
   }
 
-  /** @override */
-  setupTurns() {
-    const phases = this.phaseChart();
+  /**
+   * Sets up turns based on characters' SPD and DEX, rolling tie-breaks if necessary.
+   *
+   * @override
+   * @param {boolean?} spdChanged whether or not to apply the rules for SPD changes.
+   */
+  setupTurns(spdChanged = false) {
+    if (this.#spdChangesPending) {
+      spdChanged = true;
+    }
+    const phases = this.phaseChart(spdChanged);
     this.#phaseChart = phases;
 
     const turns = [];
@@ -31,6 +49,7 @@ export default class ChampionsCombat extends Combat {
     if (this.turn !== null) {
       // in case the number of turns shrunk
       this.turn = Math.min(this.turn, turns.length - 1);
+      this.update({ turn: this.turn });
     }
 
     const current = turns[this.turn];
@@ -42,6 +61,14 @@ export default class ChampionsCombat extends Combat {
       segment: this.turn !== null ? this.#phaseForTurn(this.turn) : null,
     };
 
+    if (spdChanged) {
+      if (this.#ties.size) {
+        this.#spdChangesPending = true;
+      } else {
+        this.#spdChanges.clear();
+        this.#spdChangesPending = false;
+      }
+    }
     this.#resolveTies();
     return (this.turns = turns);
   }
@@ -63,17 +90,34 @@ export default class ChampionsCombat extends Combat {
     assert.that(this.combatant.actorId === character.id);
   }
 
+  async updatePhases() {
+    this.setupTurns(true);
+  }
+
   /**
    * Calculates which combatants have phases in each segment.
    *
+   * @param {boolean} spdChanged Whether or not to apply the SPD change rules.
    * @returns {Object<Array<Combatant>>} An Object mapping segment numbers to an
    * ordered list of Combatants with phases in that segment.
    */
-  phaseChart() {
+  phaseChart(spdChanged) {
     const phases = {};
     for (let i = 1; i <= 12; i++) {
       phases[i] = [];
     }
+
+    const addPhase = (combatant, phase) => {
+      const priorCount = phases[phase].length;
+      phases[phase].push(combatant);
+      if (priorCount > 0) {
+        const dex = combatant.actor.system.characteristics.dex.total;
+        const prior = phases[phase][priorCount - 1];
+        if (prior.actor.system.characteristics.dex.total === dex) {
+          this.#ties.add(combatant).add(prior);
+        }
+      }
+    };
 
     const combatants = this.combatants.contents.sort(
       compareByLexically(
@@ -83,16 +127,24 @@ export default class ChampionsCombat extends Combat {
     );
     this.#ties = new Set();
     for (const combatant of combatants) {
+      const oldPhases = this.#spdChanges.get(combatant.actorId)?.old?.phases;
+      let nextOldPhase;
+      if (spdChanged && oldPhases) {
+        for (const phase of oldPhases) {
+          if (this.current.segment == null || phase > this.current.segment) {
+            nextOldPhase = phase;
+            break;
+          }
+          addPhase(combatant, phase);
+        }
+      }
       for (const phase of combatant.actor.system.phases) {
-        const priorCount = phases[phase].length;
-        phases[phase].push(combatant);
-        if (priorCount > 0) {
-          const dex = combatant.actor.system.characteristics.dex.total;
-          const prior = phases[phase][priorCount - 1];
-          if (prior.actor.system.characteristics.dex.total === dex) {
-            this.#ties.add(combatant).add(prior);
+        if (spdChanged && oldPhases && this.current.segment) {
+          if (phase <= this.current.segment || phase < nextOldPhase) {
+            continue;
           }
         }
+        addPhase(combatant, phase);
       }
     }
     return phases;
@@ -121,8 +173,51 @@ export default class ChampionsCombat extends Combat {
   }
 
   /** @override */
-  _onUpdate(data, options, userId) {
-    super._onUpdate(data, options, userId);
+  _onCreate(data, options, userId) {
+    super._onCreate(data, options, userId);
+
+    this.#spdChangeHook = Hooks.on(
+      hooks.SPD_CHANGE,
+      (actor, oldSpeed, oldPhases, newSpeed, newPhases) => {
+        if (this.getCombatantByActor(actor.id)) {
+          // TODO: check that this works for tokens
+          this.#spdChanges.set(actor.id, {
+            old: { spd: oldSpeed, phases: new Set(oldPhases) },
+            new: { spd: newSpeed, phases: newPhases },
+          });
+        }
+      }
+    );
+  }
+
+  /** @override */
+  _onDelete(options, userId) {
+    Hooks.off(hooks.SPD_CHANGE, this.#spdChangeHook);
+
+    super._onDelete(options, userId);
+  }
+
+  /** @override */
+  _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
+    supersuper(this)._onUpdateEmbeddedDocuments.call(
+      this,
+      embeddedName,
+      documents,
+      result,
+      options,
+      userId
+    );
+
+    this.setupTurns();
+
+    if (this.active && options.render !== false) {
+      this.collection.render();
+    }
+  }
+
+  /** @override */
+  async _onUpdate(data, options, userId) {
+    await super._onUpdate(data, options, userId);
 
     if (
       Object.prototype.hasOwnProperty.call(data, "round") &&
@@ -137,7 +232,7 @@ export default class ChampionsCombat extends Combat {
         this.turn !== null ? this.#phaseForTurn(this.turn) : null;
     }
 
-    this.#resolveTies();
+    await this.#resolveTies();
   }
 
   async #resolveTies() {
@@ -154,6 +249,7 @@ export default class ChampionsCombat extends Combat {
         updateTurn: false,
         messageOptions: { flavor: "Breaking initiative ties" },
       });
+      this.#ties.clear();
     }
   }
 }
