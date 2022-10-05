@@ -46,6 +46,7 @@ export async function character(context, systemData) {
  */
 export async function combat(context, characters) {
   context.combat = await Combat.create({});
+  documents.push(context.combat);
   await context.combat.createEmbeddedDocuments(
     "Combatant",
     characters.map((char) => ({ actorId: char.id }))
