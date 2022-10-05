@@ -449,7 +449,6 @@ export function register(system, quench) {
             }
           );
 
-          // skipping because Xd6+1 roll aren't implemented yet.
           it("when they add 4 DC to it, it should roll 3d6+1", async function () {
             const attack = await findAttack(this.character, "HKA");
             const dialogP = nextDialog();
