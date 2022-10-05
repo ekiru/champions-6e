@@ -199,6 +199,15 @@
             data-tooltip="COMBAT.RoundNext"
             data-control="nextRound"
           ><i class="fas fa-step-forward"></i></a>
+          <a
+            class="combat-control"
+            data-tooltip="Update Phases"
+            data-control="updatePhases"
+            {{disabled hasSpdChanges}}
+          >
+            <i class="fas fa-arrows-rotate"></i>
+            Update Phases
+          </a>
         {{else}}
           <a class="combat-control center" data-control="startCombat">{{localize
               "COMBAT.Begin"

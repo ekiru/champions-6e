@@ -3,17 +3,30 @@ import * as assert from "../util/assert.js";
 import { compareByLexically } from "../util/sort.js";
 
 const supersuper = function (self) {
-  Object.getPrototypeOf(Object.getPrototypeOf(self));
+  // 1 = ChampionsCombat, 2 = Combat, 3 = ClientDocumentMixin(Combat)
+  return Object.getPrototypeOf(
+    Object.getPrototypeOf(Object.getPrototypeOf(self))
+  );
 };
 
 export default class ChampionsCombat extends Combat {
   #phaseChart;
   #ties;
-  #preservePosition;
 
   #spdChanges = new Map();
   #spdChangeHook;
   #spdChangesPending;
+
+  get hasSpdChanges() {
+    return this.#spdChanges.size > 0;
+  }
+
+  get phaseChart() {
+    if (!this.#phaseChart) {
+      this.#phaseChart = this.calculatePhaseChart();
+    }
+    return this.#phaseChart;
+  }
 
   /** @override */
   async previousRound() {
@@ -38,7 +51,7 @@ export default class ChampionsCombat extends Combat {
     if (this.#spdChangesPending) {
       spdChanged = true;
     }
-    const phases = this.phaseChart(spdChanged);
+    const phases = this.calculatePhaseChart(spdChanged);
     this.#phaseChart = phases;
 
     const turns = [];
@@ -92,6 +105,9 @@ export default class ChampionsCombat extends Combat {
 
   async updatePhases() {
     this.setupTurns(true);
+    if (this.active) {
+      this.collection.render();
+    }
   }
 
   /**
@@ -101,7 +117,7 @@ export default class ChampionsCombat extends Combat {
    * @returns {Object<Array<Combatant>>} An Object mapping segment numbers to an
    * ordered list of Combatants with phases in that segment.
    */
-  phaseChart(spdChanged) {
+  calculatePhaseChart(spdChanged) {
     const phases = {};
     for (let i = 1; i <= 12; i++) {
       phases[i] = [];
@@ -199,7 +215,8 @@ export default class ChampionsCombat extends Combat {
 
   /** @override */
   _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
-    supersuper(this)._onUpdateEmbeddedDocuments.call(
+    const ss = supersuper(this);
+    ss._onUpdateEmbeddedDocuments.call(
       this,
       embeddedName,
       documents,
