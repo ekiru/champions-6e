@@ -9,9 +9,18 @@ const supersuper = function (self) {
   );
 };
 
-Hooks.on(hooks.SPD_CHANGE, (...args) =>
-  game.combats.forEach((combat) => combat.onSpdChange(...args))
-);
+Hooks.on(hooks.SPD_CHANGE, (...args) => {
+  let renderNeeded = false;
+  for (const combat of game.combats) {
+    const changed = combat.onSpdChange(...args);
+    if (changed && combat.collection.viewed === combat) {
+      renderNeeded = renderNeeded || true;
+    }
+  }
+  if (renderNeeded) {
+    game.combats.render();
+  }
+});
 
 export default class ChampionsCombat extends Combat {
   #phaseChart;
@@ -202,16 +211,15 @@ export default class ChampionsCombat extends Combat {
         if (old.spd === change.new.spd) {
           // changed back, no need to apply a spd change later.
           this.#spdChanges.delete(actor.id);
-          return;
+          return true;
         }
         change.old = old;
       }
       // TODO: check that this works for tokens
       this.#spdChanges.set(actor.id, change);
-      if (this.collection.viewed === this) {
-        this.collection.render();
-      }
+      return true;
     }
+    return false;
   }
 
   /** @override */
