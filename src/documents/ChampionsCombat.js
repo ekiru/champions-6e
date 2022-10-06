@@ -1,6 +1,6 @@
 import * as hooks from "../hooks.js";
 import * as assert from "../util/assert.js";
-import { compareByLexically } from "../util/sort.js";
+import { compareBy, compareByLexically } from "../util/sort.js";
 
 const supersuper = function (self) {
   // 1 = ChampionsCombat, 2 = Combat, 3 = ClientDocumentMixin(Combat)
@@ -38,6 +38,15 @@ export default class ChampionsCombat extends Combat {
       this.#phaseChart = this.calculatePhaseChart();
     }
     return this.#phaseChart;
+  }
+
+  get pendingChanges() {
+    const changes = [];
+    for (const [id, change] of this.#spdChanges) {
+      changes.push({ actor: game.actors.get(id), change });
+    }
+    changes.sort(compareBy(({ actor }) => actor.name));
+    return changes;
   }
 
   /** @override */

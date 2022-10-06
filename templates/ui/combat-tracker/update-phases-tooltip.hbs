@@ -1,0 +1,13 @@
+<div class="update-phases">
+  <p>Update Phases</p>
+  <ul>
+    {{#each changes}}
+      <li>
+        {{actor.name}}: SPD
+        {{change.old.spd}}
+        →
+        {{change.new.spd}}
+      </li>
+    {{/each}}
+  </ul>
+</div>

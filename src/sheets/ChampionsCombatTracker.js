@@ -14,6 +14,12 @@ export default class ChampionsCombatTracker extends CombatTracker {
     context.segments = [];
     if (context.hasCombat) {
       context.hasSpdChanges = context.combat.hasSpdChanges;
+      if (context.hasSpdChanges) {
+        context.spdChangeTooltip = await renderTemplate(
+          "systems/champions-6e/templates/ui/combat-tracker/update-phases-tooltip.hbs",
+          { changes: context.combat.pendingChanges }
+        );
+      }
 
       const phases = context.combat.phaseChart;
       const startingPoint = context.combat.round === 1 ? 12 : 1;
