@@ -9,12 +9,15 @@ const supersuper = function (self) {
   );
 };
 
+Hooks.on(hooks.SPD_CHANGE, (...args) =>
+  game.combats.forEach((combat) => combat.onSpdChange(...args))
+);
+
 export default class ChampionsCombat extends Combat {
   #phaseChart;
   #ties;
 
   #spdChanges = new Map();
-  #spdChangeHook;
   #spdChangesPending;
 
   get hasSpdChanges() {
@@ -188,39 +191,27 @@ export default class ChampionsCombat extends Combat {
     assert.that(false, `${turn} is bigger than the phase chart`);
   }
 
-  /** @override */
-  _onCreate(data, options, userId) {
-    super._onCreate(data, options, userId);
-
-    this.#spdChangeHook = Hooks.on(
-      hooks.SPD_CHANGE,
-      (actor, oldSpeed, oldPhases, newSpeed, newPhases) => {
-        if (this.getCombatantByActor(actor.id)) {
-          const change = {
-            old: { spd: oldSpeed, phases: new Set(oldPhases) },
-            new: { spd: newSpeed, phases: newPhases },
-          };
-          if (this.#spdChanges.has(actor.id)) {
-            const { old } = this.#spdChanges.get(actor.id);
-            if (old.spd === change.new.spd) {
-              // changed back, no need to apply a spd change later.
-              this.#spdChanges.delete(actor.id);
-              return;
-            }
-            change.old = old;
-          }
-          // TODO: check that this works for tokens
-          this.#spdChanges.set(actor.id, change);
+  onSpdChange(actor, oldSpeed, oldPhases, newSpeed, newPhases) {
+    if (this.getCombatantByActor(actor.id)) {
+      const change = {
+        old: { spd: oldSpeed, phases: new Set(oldPhases) },
+        new: { spd: newSpeed, phases: newPhases },
+      };
+      if (this.#spdChanges.has(actor.id)) {
+        const { old } = this.#spdChanges.get(actor.id);
+        if (old.spd === change.new.spd) {
+          // changed back, no need to apply a spd change later.
+          this.#spdChanges.delete(actor.id);
+          return;
         }
+        change.old = old;
       }
-    );
-  }
-
-  /** @override */
-  _onDelete(options, userId) {
-    Hooks.off(hooks.SPD_CHANGE, this.#spdChangeHook);
-
-    super._onDelete(options, userId);
+      // TODO: check that this works for tokens
+      this.#spdChanges.set(actor.id, change);
+      if (this.collection.viewed === this) {
+        this.collection.render();
+      }
+    }
   }
 
   /** @override */
@@ -237,7 +228,7 @@ export default class ChampionsCombat extends Combat {
 
     this.setupTurns();
 
-    if (this.active && options.render !== false) {
+    if (this.collection.viewed === this && options.render !== false) {
       this.collection.render();
     }
   }
