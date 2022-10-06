@@ -196,11 +196,21 @@ export default class ChampionsCombat extends Combat {
       hooks.SPD_CHANGE,
       (actor, oldSpeed, oldPhases, newSpeed, newPhases) => {
         if (this.getCombatantByActor(actor.id)) {
-          // TODO: check that this works for tokens
-          this.#spdChanges.set(actor.id, {
+          const change = {
             old: { spd: oldSpeed, phases: new Set(oldPhases) },
             new: { spd: newSpeed, phases: newPhases },
-          });
+          };
+          if (this.#spdChanges.has(actor.id)) {
+            const { old } = this.#spdChanges.get(actor.id);
+            if (old.spd === change.new.spd) {
+              // changed back, no need to apply a spd change later.
+              this.#spdChanges.delete(actor.id);
+              return;
+            }
+            change.old = old;
+          }
+          // TODO: check that this works for tokens
+          this.#spdChanges.set(actor.id, change);
         }
       }
     );

@@ -289,6 +289,9 @@ export function register(system, quench) {
             await this.combat.nextRound();
             await this.combat.moveToPhase(3, this.numberMan);
             await this.numberMan.update({
+              "system.characteristics.spd.modifier": +1,
+            });
+            await this.numberMan.update({
               "system.characteristics.spd.modifier": +2,
             });
             await this.combat.updatePhases();
