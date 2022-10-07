@@ -78,7 +78,7 @@ export const standardManeuvers = [
   }),
   new Maneuver("Brace", {
     time: TIME.HALF_PHASE,
-    ocv: +2,
+    ocv: new SpecialModifier("+2*"),
     dcv: HALVED,
     summary: "Only to offset the Range Modifier",
   }),
