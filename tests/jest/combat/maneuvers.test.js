@@ -8,22 +8,31 @@ import {
 
 describe("The Maneuver class", function () {
   describe("constructor", function () {
+    const summary = "Whatever";
+
     it("should throw without an OCV modifier", function () {
-      expect(() => new Maneuver("Strike", { time: 0.5, dcv: +0 })).toThrow(
-        "missing OCV modifier"
-      );
+      expect(
+        () => new Maneuver("Strike", { time: 0.5, dcv: +0, summary })
+      ).toThrow("missing OCV modifier");
     });
 
     it("should throw without a DCV modifier", function () {
-      expect(() => new Maneuver("Strike", { time: 0.5, ocv: +0 })).toThrow(
-        "missing DCV modifier"
-      );
+      expect(
+        () => new Maneuver("Strike", { time: 0.5, ocv: +0, summary })
+      ).toThrow("missing DCV modifier");
     });
 
     it("should throw without a time", function () {
-      expect(() => new Maneuver("Strike", { ocv: +0, dcv: +0 })).toThrow(
-        "missing time"
-      );
+      expect(
+        () => new Maneuver("Strike", { ocv: +0, dcv: +0, summary })
+      ).toThrow("missing time");
+    });
+
+    it("should throw without a summary", function () {
+      expect(
+        () =>
+          new Maneuver("Strike", { time: TIME.HALF_PHASE, ocv: +0, dcv: +0 })
+      ).toThrow("missing or invalid summary");
     });
   });
 
@@ -34,6 +43,7 @@ describe("The Maneuver class", function () {
         ocv: +1,
         dcv: +2,
         time: TIME.NO_TIME,
+        summary: "A short description",
       });
     });
 
@@ -51,6 +61,10 @@ describe("The Maneuver class", function () {
 
     it("should expose the time taken", function () {
       expect(maneuver.time).toBe(TIME.NO_TIME);
+    });
+
+    it("should expose the summary", function () {
+      expect(maneuver.summary).toBe("A short description");
     });
   });
 });

@@ -32,10 +32,10 @@ export const TIME = Object.freeze({
 const TIME_SET = new Set(Object.values(TIME));
 
 export class Maneuver {
-  constructor(name, { ocv, dcv, time }) {
+  constructor(name, { ocv, dcv, time, summary }) {
     this.name = name;
 
-    assert.precondition(ocv != undefined, "missing OCV modifier");
+    assert.precondition(ocv !== undefined, "missing OCV modifier");
     assert.precondition(
       Number.isInteger(ocv) ||
         ocv === HALVED ||
@@ -45,7 +45,7 @@ export class Maneuver {
     );
     this.ocv = ocv;
 
-    assert.precondition(dcv != undefined, "missing DCV modifier");
+    assert.precondition(dcv !== undefined, "missing DCV modifier");
     assert.precondition(
       Number.isInteger(dcv) || dcv === HALVED,
       "invalid DCV modifier, must be an integer or HALVED"
@@ -55,6 +55,12 @@ export class Maneuver {
     assert.precondition(time !== undefined, "missing time");
     assert.precondition(TIME_SET.has(time), "invalid time");
     this.time = time;
+
+    assert.precondition(
+      typeof summary === "string",
+      "missing or invalid summary"
+    );
+    this.summary = summary;
   }
 }
 
@@ -64,38 +70,108 @@ export class Maneuver {
  * @type {any[]}
  */
 export const standardManeuvers = [
-  new Maneuver("Block", { time: TIME.HALF_PHASE, ocv: +0, dcv: +0 }),
-  new Maneuver("Brace", { time: TIME.HALF_PHASE, ocv: +2, dcv: HALVED }),
-  new Maneuver("Disarm", { time: TIME.HALF_PHASE, ocv: -2, dcv: +0 }),
+  new Maneuver("Block", {
+    time: TIME.HALF_PHASE,
+    ocv: +0,
+    dcv: +0,
+    summary: "Block attacks, Abort",
+  }),
+  new Maneuver("Brace", {
+    time: TIME.HALF_PHASE,
+    ocv: +2,
+    dcv: HALVED,
+    summary: "Only to offset the Range Modifier",
+  }),
+  new Maneuver("Disarm", {
+    time: TIME.HALF_PHASE,
+    ocv: -2,
+    dcv: +0,
+    summary: "Disarm target with successful STR Vs. STR Contest",
+  }),
   new Maneuver("Dodge", {
     time: TIME.HALF_PHASE,
     ocv: NOT_APPLICABLE,
     dcv: +3,
+    summary: "Dodge all attacks, Abort",
   }),
-  new Maneuver("Grab", { time: TIME.HALF_PHASE, ocv: -1, dcv: -2 }),
-  new Maneuver("Grab By", { time: TIME.HALF_PHASE, ocv: -3, dcv: -4 }),
-  new Maneuver("Haymaker", { time: TIME.HALF_PHASE_BUT, ocv: +0, dcv: -5 }),
-  new Maneuver("Move By", { time: TIME.HALF_PHASE, ocv: -2, dcv: -2 }),
+  new Maneuver("Grab", {
+    time: TIME.HALF_PHASE,
+    ocv: -1,
+    dcv: -2,
+    summary: "Grab Two Limbs; can Squeeze, Slam, or Throw",
+  }),
+  new Maneuver("Grab By", {
+    time: TIME.HALF_PHASE,
+    ocv: -3,
+    dcv: -4,
+    summary: "Move and Grab object, +(v/10) to STR",
+  }),
+  new Maneuver("Haymaker", {
+    time: TIME.HALF_PHASE_BUT,
+    ocv: +0,
+    dcv: -5,
+    summary: "+4 DC to any attack; +1 Segment to perform",
+  }),
+  new Maneuver("Move By", {
+    time: TIME.HALF_PHASE,
+    ocv: -2,
+    dcv: -2,
+    summary: "(STR/2) + (v/10)d6; attacker takes ⅓ damage",
+  }),
   new Maneuver("Move Through", {
     time: TIME.HALF_PHASE,
     ocv: new SpecialModifier("-v/10"),
     dcv: -3,
+    summary: "STR + (v/6)d6; attacker takes ½ or full damage",
   }),
   new Maneuver("Multiple Attack", {
     time: TIME.FULL_PHASE,
     ocv: new SpecialModifier("var"),
     dcv: HALVED,
+    summary: "Attack one or more targets multiple times",
   }),
-  new Maneuver("Set", { time: TIME.FULL_PHASE, ocv: +1, dcv: +0 }),
-  new Maneuver("Shove", { time: TIME.HALF_PHASE, ocv: -1, dcv: -1 }),
-  new Maneuver("Strike", { time: TIME.HALF_PHASE, ocv: +0, dcv: +0 }),
-  new Maneuver("Throw", { time: TIME.HALF_PHASE, ocv: +0, dcv: +0 }),
-  new Maneuver("Trip", { time: TIME.HALF_PHASE, ocv: -1, dcv: -2 }),
+  new Maneuver("Set", {
+    time: TIME.FULL_PHASE,
+    ocv: +1,
+    dcv: +0,
+    summary: "Take extra time to aim a Ranged attack",
+  }),
+  new Maneuver("Shove", {
+    time: TIME.HALF_PHASE,
+    ocv: -1,
+    dcv: -1,
+    summary: "Push target back 1m per 5 STR used",
+  }),
+  new Maneuver("Strike", {
+    time: TIME.HALF_PHASE,
+    ocv: +0,
+    dcv: +0,
+    summary: "STR damage or by weapon type",
+  }),
+  new Maneuver("Throw", {
+    time: TIME.HALF_PHASE,
+    ocv: +0,
+    dcv: +0,
+    summary: "Throw object or character, does STR damage",
+  }),
+  new Maneuver("Trip", {
+    time: TIME.HALF_PHASE,
+    ocv: -1,
+    dcv: -2,
+    summary: "Knock a target to the ground, making him Prone",
+  }),
 
-  new Maneuver("Dive for Cover", { time: TIME.HALF_PHASE, ocv: +0, dcv: +0 }),
+  // Optional Maneuvers
+  new Maneuver("Dive for Cover", {
+    time: TIME.HALF_PHASE,
+    ocv: +0,
+    dcv: +0,
+    summary: "Character avoids attack; Abort",
+  }),
   new Maneuver("Pulling a Punch", {
     time: TIME.HALF_PHASE,
     ocv: new SpecialModifier("-1/5d6"),
     dcv: +0,
+    summary: "Strike, normal STUN damage, ½ BODY damage",
   }),
 ];
