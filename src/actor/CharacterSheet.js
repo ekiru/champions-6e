@@ -1,4 +1,5 @@
 import { DEFENSE_TYPES } from "../mechanics/damage.js";
+import { SpecialModifier, standardManeuvers } from "../mechanics/maneuvers.js";
 import {
   attackRollDialog,
   damageRollDialog,
@@ -56,6 +57,24 @@ function formatDice(dice) {
     return `${dice}d6`;
   } else {
     return `${wholeDice}½d6`;
+  }
+}
+
+/**
+ * Formats an OCV or DCV modifier for a maneuver.
+ *
+ * @param {number | symbol | SpecialModifier} modifier The modifier.
+ * @returns {string} A textual form of the modifier appropriate for use in the maneuver table.
+ */
+function formatManeuverModifier(modifier) {
+  if (modifier instanceof SpecialModifier) {
+    return modifier.label;
+  } else if (typeof modifier === "symbol") {
+    return modifier.description;
+  } else if (modifier >= 0) {
+    return `+${modifier}`;
+  } else {
+    return modifier.toString();
   }
 }
 
@@ -330,6 +349,17 @@ export default class CharacterSheet extends ActorSheet {
         apPerDie: attack.system.damage.apPerDie,
       });
     });
+
+    context.combat.maneuvers = [];
+    for (const maneuver of standardManeuvers) {
+      const data = {
+        name: maneuver.name,
+        ocv: formatManeuverModifier(maneuver.ocv),
+        dcv: formatManeuverModifier(maneuver.dcv),
+        effects: maneuver.summary,
+      };
+      context.combat.maneuvers.push(data);
+    }
 
     return context;
   }

@@ -9,6 +9,8 @@ import {
 import { waitOneMoment } from "./helpers/timers.js";
 import { expectTextContent, provideExpect } from "./helpers/webExpectations.js";
 
+import * as maneuvers from "./combat/maneuvers.js";
+
 /**
  * Registers the tests for rolls.
  *
@@ -16,6 +18,8 @@ import { expectTextContent, provideExpect } from "./helpers/webExpectations.js";
  * @param {*} quench The Quench module.
  */
 export function register(system, quench) {
+  maneuvers.register(system, quench);
+
   quench.registerBatch(
     `${system}.combat.class`,
     function ({ describe, it, expect, beforeEach, afterEach }) {

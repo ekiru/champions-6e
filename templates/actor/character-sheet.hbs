@@ -461,6 +461,22 @@
           {{/each}}
         </tbody>
       </table>
+
+      <table class="maneuvers">
+        <thead>
+          <tr><th>Maneuver</th> <th>OCV</th> <th>DCV</th> <th>Effects</th></tr>
+        </thead>
+        <tbody>
+          {{#each combat.maneuvers}}
+            <tr>
+              <td>{{name}}</td>
+              <td>{{ocv}}</td>
+              <td>{{dcv}}</td>
+              <td>{{effects}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
     </div>
     <div class="tab notes flexcol" data-tab="notes">
       {{editor
