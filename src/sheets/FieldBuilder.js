@@ -1,5 +1,5 @@
 const TEMPLATE_BASE = "systems/champions-6e/templates/field";
-const FIELD_TYPES = "editor number selection".split(" ");
+const FIELD_TYPES = "editor number selection text".split(" ");
 
 // this condition allows this file to be imported in the jest environment.
 if (globalThis.Hooks) {

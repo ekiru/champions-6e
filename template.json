@@ -79,7 +79,8 @@
       "ocv": { "value": 0, "type": "plus/minus" },
       "dcv": { "value": 0, "type": "plus/minus" },
       "time": "HALF_PHASE",
-      "summary": ""
+      "summary": "",
+      "description": "<p></p>"
     },
     "skill": {
       "description": "<p></p>",

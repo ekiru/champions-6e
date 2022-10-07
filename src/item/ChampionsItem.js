@@ -6,7 +6,9 @@ const ATTACK_SCHEMA = {
   numberFields: [{ path: "system.damage.dice", default: 2 }],
 };
 
-const MANEUVER_SCHEMA = {};
+const MANEUVER_SCHEMA = {
+  numberFields: [],
+};
 
 const SKILL_SCHEMA = {
   numberFields: [
@@ -18,7 +20,6 @@ const SKILL_SCHEMA = {
 
 export default class ChampionsItem extends Item {
   get asManeuver() {
-    // TODO switch to not using direct values in OCV/DCV
     assert.precondition(this.type === "maneuver");
     return Maneuver.fromItem(this.name, {
       ocv: this.system.ocv,

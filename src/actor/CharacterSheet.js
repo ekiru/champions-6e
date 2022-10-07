@@ -351,15 +351,20 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     context.combat.maneuvers = [];
-    for (const maneuver of standardManeuvers) {
+    const addManeuver = (maneuver, id = null) => {
       const data = {
         name: maneuver.name,
         ocv: formatManeuverModifier(maneuver.ocv),
         dcv: formatManeuverModifier(maneuver.dcv),
         effects: maneuver.summary,
+        id,
       };
       context.combat.maneuvers.push(data);
+    };
+    for (let maneuver of this.actor.itemTypes.maneuver) {
+      addManeuver(maneuver.asManeuver, maneuver.id);
     }
+    standardManeuvers.forEach(addManeuver);
 
     return context;
   }

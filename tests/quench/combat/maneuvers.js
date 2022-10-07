@@ -1,6 +1,7 @@
 import { TIME } from "../../../src/mechanics/maneuvers.js";
 import * as build from "../helpers/build.js";
 import { openCharacterSheet } from "../helpers/sheets.js";
+import { waitOneMoment } from "../helpers/timers.js";
 
 /**
  * Registers the tests for Maneuvers
@@ -51,6 +52,13 @@ export function register(system, quench) {
             );
             expect(addManeuver).to.have.lengthOf(1);
             addManeuver.click();
+            await waitOneMoment();
+          });
+
+          afterEach(function () {
+            for (const maneuver of this.character.itemTypes.maneuver) {
+              maneuver.sheet.close();
+            }
           });
 
           it("a new Martial Maneuver should appear", function () {

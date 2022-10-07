@@ -464,15 +464,38 @@
 
       <table class="maneuvers">
         <thead>
-          <tr><th>Maneuver</th> <th>OCV</th> <th>DCV</th> <th>Effects</th></tr>
+          <tr>
+            <th>Maneuver</th>
+            <th>OCV</th>
+            <th>DCV</th>
+            <th>Effects</th>
+            <th>
+              <a class="item-create" data-type="maneuver">
+                <i class="fas fa-plus"></i>
+                Add Maneuver
+              </a>
+            </th>
+          </tr>
         </thead>
         <tbody>
           {{#each combat.maneuvers}}
-            <tr>
+            <tr class="actor-item" data-item-id="{{id}}">
               <td>{{name}}</td>
               <td>{{ocv}}</td>
               <td>{{dcv}}</td>
               <td>{{effects}}</td>
+              {{#if id}}
+                <td class="item-controls">
+                  <a class="item-control item-edit" title="Edit Maneuver">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a class="item-control item-delete" title="Delete Maneuver">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </td>
+              {{else}}
+                <td></td>
+              {{/if}}
             </tr>
           {{/each}}
         </tbody>
