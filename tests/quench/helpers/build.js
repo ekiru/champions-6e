@@ -148,6 +148,7 @@ class DocumentBuilder {
       this.#options
     );
     this.#context[this.#path] = document;
+    documents.push(document);
   }
 }
 
