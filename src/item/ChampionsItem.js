@@ -1,9 +1,12 @@
+import { Maneuver } from "../mechanics/maneuvers.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
 
 const ATTACK_SCHEMA = {
   numberFields: [{ path: "system.damage.dice", default: 2 }],
 };
+
+const MANEUVER_SCHEMA = {};
 
 const SKILL_SCHEMA = {
   numberFields: [
@@ -14,6 +17,17 @@ const SKILL_SCHEMA = {
 };
 
 export default class ChampionsItem extends Item {
+  get asManeuver() {
+    // TODO switch to not using direct values in OCV/DCV
+    assert.precondition(this.type === "maneuver");
+    return Maneuver.fromItem(this.name, {
+      ocv: this.system.ocv,
+      dcv: this.system.dcv,
+      time: this.system.time,
+      summary: this.system.summary,
+    });
+  }
+
   /**
    * Calculates the target number for the skill.
    *
@@ -49,6 +63,9 @@ export default class ChampionsItem extends Item {
       case "attack":
         schema = ATTACK_SCHEMA;
         break;
+      case "maneuver":
+        schema = MANEUVER_SCHEMA;
+        break;
       case "skill":
         schema = SKILL_SCHEMA;
         break;
@@ -60,6 +77,8 @@ export default class ChampionsItem extends Item {
     switch (this.type) {
       case "attack":
         this.#preUpdateAttack(changes);
+        break;
+      case "maneuver":
         break;
       case "skill":
         this.#preUpdateSkill(changes);

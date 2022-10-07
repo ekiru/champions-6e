@@ -89,6 +89,15 @@ class Builder {
   character() {
     return new CharacterBuilder(this.#context, this.#path);
   }
+
+  /**
+   * Begins building a maneuver.
+   *
+   * @returns {ManeuverBuilder} A builder for the maneuver.
+   */
+  maneuver() {
+    return new ManeuverBuilder(this.#context, this.#path);
+  }
 }
 
 class DocumentBuilder {
@@ -109,8 +118,23 @@ class DocumentBuilder {
     this.#options = {};
   }
 
+  setOption(name, value) {
+    foundry.utils.setProperty(this.#options, name, value);
+  }
+
   setProperty(name, value) {
     foundry.utils.setProperty(this.#data, name, value);
+  }
+
+  /**
+   * Sets a parent for the Document.
+   *
+   * @param {Document} owner The parent.
+   * @returns {Builder} `this` for chaining.
+   */
+  ownedBy(owner) {
+    this.setOption("owner", owner);
+    return this;
   }
 
   /**
@@ -144,5 +168,13 @@ class CharacterBuilder extends DocumentBuilder {
   withCharacteristic(name, value) {
     this.setProperty(`system.characteristics.${name}.value`, value);
     return this;
+  }
+}
+
+class ManeuverBuilder extends DocumentBuilder {
+  constructor(context, path) {
+    super(context, path ?? "maneuver", Item);
+    this.setProperty("name", "Punch");
+    this.setProperty("type", "maneuver");
   }
 }

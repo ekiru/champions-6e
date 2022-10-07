@@ -6,6 +6,7 @@ import * as assert from "../util/assert.js";
  * @type {symbol}
  */
 export const HALVED = Symbol("½");
+
 /**
  * Indicates that the OCV modifier is irrelevant to the maneuver
  *
@@ -20,6 +21,31 @@ export class SpecialModifier {
 }
 
 /**
+ * Parses a modifier from a maneuver Item.
+ *
+ * @private
+ * @param {object} modifier Modifier data from a maneuver Item
+ * @param {"plus/minus" | "half" | "n/a" | "special"} modifier.type The type of modifier
+ * @param {number?} modifier.value The bonus or malus for a plus/minus modifier
+ * @param {string?} modifier.label The label for a special modifier.
+ * @returns {number | symbol | SpecialModifier} The parsed modifier.
+ */
+function parseModifier(modifier) {
+  switch (modifier.type) {
+    case "plus/minus":
+      return modifier.value;
+    case "half":
+      return HALVED;
+    case "n/a":
+      return NOT_APPLICABLE;
+    case "special":
+      return new SpecialModifier(modifier.label);
+    default:
+      assert.notYetImplemented();
+  }
+}
+
+/**
  * Provides constants defining possible values for the time required for maneuvers.
  */
 export const TIME = Object.freeze({
@@ -30,6 +56,17 @@ export const TIME = Object.freeze({
   NO_TIME: Symbol("—"),
 });
 const TIME_SET = new Set(Object.values(TIME));
+
+/**
+ * Parses a time from a maneuver item.
+ *
+ * @param {string} time The unparsed time identifier.
+ * @returns {symbol} The parsed time.
+ */
+function parseTime(time) {
+  assert.precondition(time in TIME);
+  return TIME[time];
+}
 
 export class Maneuver {
   constructor(name, { ocv, dcv, time, summary }) {
@@ -61,6 +98,15 @@ export class Maneuver {
       "missing or invalid summary"
     );
     this.summary = summary;
+  }
+
+  static fromItem(name, { ocv, dcv, time, summary }) {
+    return new Maneuver(name, {
+      ocv: parseModifier(ocv),
+      dcv: parseModifier(dcv),
+      time: parseTime(time),
+      summary: summary,
+    });
   }
 }
 
