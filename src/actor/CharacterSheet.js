@@ -356,6 +356,7 @@ export default class CharacterSheet extends ActorSheet {
         name: maneuver.name,
         ocv: formatManeuverModifier(maneuver.ocv),
         dcv: formatManeuverModifier(maneuver.dcv),
+        time: maneuver.time.description,
         effects: maneuver.summary,
         id,
       };
