@@ -19,6 +19,31 @@
 
   <section class="sheet-body">
     <div class="tab attributes" data-tab="attributes">
+      {{#with attributes.ocv}}
+        <p>
+          {{field type}}
+          {{#if (eq type.value "plus/minus")}}
+            {{field value}}
+          {{/if}}
+          {{#if (eq type.value "special")}}
+            {{field label}}
+          {{/if}}
+        </p>
+      {{/with}}
+      {{#with attributes.dcv}}
+        <p>
+          {{field type}}
+          {{#if (eq type.value "plus/minus")}}
+            {{field value}}
+          {{/if}}
+          {{#if (eq type.value "special")}}
+            {{field label}}
+          {{/if}}
+        </p>
+      {{/with}}
+      <p>
+        {{field attributes.time}}
+      </p>
       <p>
         {{field attributes.summary}}
       </p>

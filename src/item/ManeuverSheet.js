@@ -21,7 +21,27 @@ export default class ManeuverSheet extends ItemSheet {
     const context = super.getData(options);
     const fields = new FieldBuilder(this.item);
 
+    const cvFields = (cv) => ({
+      type: fields.selection(cv.toUpperCase(), `system.${cv}.type`, {
+        "plus/minus": "+/-",
+        half: "½",
+        "n/a": "—",
+        special: "Special",
+      }),
+      label: fields.text("", `system.${cv}.label`),
+      value: fields.number("", `system.${cv}.value`),
+    });
+
     context.attributes = {
+      ocv: cvFields("ocv"),
+      dcv: cvFields("dcv"),
+      time: fields.selection("Time", "system.time", {
+        HALF_PHASE: "½",
+        HALF_PHASE_BUT: "½*",
+        FULL_PHASE: "1",
+        ZERO_PHASE: "0",
+        NO_TIME: "—",
+      }),
       summary: fields.text("Summary", "system.summary"),
     };
 

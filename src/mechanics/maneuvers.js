@@ -84,7 +84,10 @@ export class Maneuver {
 
     assert.precondition(dcv !== undefined, "missing DCV modifier");
     assert.precondition(
-      Number.isInteger(dcv) || dcv === HALVED,
+      Number.isInteger(dcv) ||
+        dcv === HALVED ||
+        dcv === NOT_APPLICABLE ||
+        dcv instanceof SpecialModifier,
       "invalid DCV modifier, must be an integer or HALVED"
     );
     this.dcv = dcv;
