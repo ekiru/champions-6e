@@ -111,6 +111,22 @@ export class Maneuver {
       summary: summary,
     });
   }
+
+  calculateOcv(ocv) {
+    if (Number.isInteger(this.ocv)) {
+      return ocv + this.ocv;
+    } else if (this.ocv === HALVED) {
+      return Math.round(ocv / 2);
+    } else if (this.ocv instanceof SpecialModifier) {
+      return ocv;
+    } else {
+      assert.that(
+        this.ocv !== NOT_APPLICABLE,
+        `OCV is not applicable to ${this.name}`
+      );
+      assert.notYetImplemented();
+    }
+  }
 }
 
 /**

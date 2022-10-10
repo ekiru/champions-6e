@@ -1,7 +1,10 @@
 /* eslint-env jest */
 
 import {
+  HALVED,
   Maneuver,
+  NOT_APPLICABLE,
+  SpecialModifier,
   standardManeuvers,
   TIME,
 } from "../../../src/mechanics/maneuvers.js";
@@ -65,6 +68,36 @@ describe("The Maneuver class", function () {
 
     it("should expose the summary", function () {
       expect(maneuver.summary).toBe("A short description");
+    });
+  });
+
+  describe("calculateOcv", function () {
+    const maneuver = (ocv) =>
+      new Maneuver("Kick", {
+        ocv,
+        dcv: +0,
+        time: TIME.HALF_PHASE,
+        summary: "A kick",
+      });
+
+    it("should add the OCV modifier if it's a Number", function () {
+      expect(maneuver(+2).calculateOcv(8)).toBe(10);
+    });
+
+    it("should halve the OCV for a ½ modifier", function () {
+      expect(maneuver(HALVED).calculateOcv(9)).toBe(5);
+    });
+
+    it("should throw for a — modifier", function () {
+      expect(() => maneuver(NOT_APPLICABLE).calculateOcv(5)).toThrow(
+        "OCV is not applicable to"
+      );
+    });
+
+    it("should pass the OCV through unchanged for special modifiers", function () {
+      expect(
+        maneuver(new SpecialModifier("randomize it")).calculateOcv(9)
+      ).toBe(9);
     });
   });
 });
