@@ -351,7 +351,7 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     context.combat.maneuvers = [];
-    const addManeuver = (maneuver, id = null) => {
+    const addManeuver = (maneuver, id) => {
       const data = {
         name: maneuver.name,
         ocv: formatManeuverModifier(maneuver.ocv),
@@ -366,7 +366,9 @@ export default class CharacterSheet extends ActorSheet {
       addManeuver(maneuver.asManeuver, maneuver.id);
     }
     context.combat.maneuvers.sort(compareBy((m) => m.name)); // sort martial maneuvers
-    standardManeuvers.forEach(addManeuver);
+    for (let maneuver of standardManeuvers) {
+      addManeuver(maneuver, false);
+    }
 
     return context;
   }
