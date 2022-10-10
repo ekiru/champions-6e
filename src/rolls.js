@@ -185,17 +185,24 @@ const attackRollTemplate =
  *  @param {object} options Options to customize the dialog or chat message.
  * @param {Actor} options.actor The actor for whom the roll is being performed.
  * @param {string} options.dcvLabel A label for which of DCV/DMCV is being targeted.
+ * @param {string} options.maneuverModifierLabel A label for a maneuver modifier field.
  */
 export async function attackRollDialog(
   label,
   ocv,
-  { actor, dcvLabel = "DCV" } = {}
+  { actor, dcvLabel = "DCV", maneuverModifierLabel } = {}
 ) {
   const title = `${label ? label + " " : ""}Attack Roll`;
-  const context = { label, ocv, dcvLabel };
+  const context = { label, ocv, dcvLabel, maneuverModifierLabel };
   await rollDialog(title, attackRollTemplate, context, (html) => {
-    const ocv = html.find("input[name='ocv']").get(0).value;
+    let ocv = html.find("input[name='ocv']").get(0).value;
     const dcv = html.find("input[name='dcv']").get(0).value;
+    console.log([ocv, dcv]);
+    if (maneuverModifierLabel) {
+      const modifier = html.find("input[name='maneuver-modifier'").get(0).value;
+      ocv = Number(ocv) + Number(modifier);
+    }
+    console.log([ocv, dcv]);
     if (dcv !== "") {
       performAttackRollWithKnownDcv(Number(ocv), Number(dcv), {
         actor,

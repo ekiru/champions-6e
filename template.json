@@ -76,8 +76,8 @@
       "description": "<p></p>"
     },
     "maneuver": {
-      "ocv": { "label": "", "value": 0, "type": "plus/minus" },
-      "dcv": { "label": "", "value": 0, "type": "plus/minus" },
+      "ocv": { "label": "", "helpText": "", "value": 0, "type": "plus/minus" },
+      "dcv": { "label": "", "helpText": "", "value": 0, "type": "plus/minus" },
       "time": "HALF_PHASE",
       "summary": "",
       "description": "<p></p>"

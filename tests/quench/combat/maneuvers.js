@@ -2,7 +2,10 @@ import { TIME } from "../../../src/mechanics/maneuvers.js";
 import * as build from "../helpers/build.js";
 import { nextDialog, openCharacterSheet } from "../helpers/sheets.js";
 import { waitOneMoment } from "../helpers/timers.js";
-import { expectTextContent } from "../helpers/webExpectations.js";
+import {
+  expectTextContent,
+  provideExpect,
+} from "../helpers/webExpectations.js";
 
 /**
  * Registers the tests for Maneuvers
@@ -14,6 +17,7 @@ export function register(system, quench) {
   quench.registerBatch(
     `${system}.cucumber.combat.maneuvers`,
     function ({ describe, it, expect }) {
+      provideExpect(expect);
       describe("Maneuvers", function () {
         afterEach(build.afterEach);
 
@@ -104,10 +108,10 @@ export function register(system, quench) {
           }
         });
 
-        it.skip("should have a labelled modifier field for more complex maneuvers", async function () {
+        it("should have a labelled modifier field for more complex maneuvers", async function () {
           const disarm = this.sheet
             .find("table.maneuvers a.attack-roll")
-            .filter((roll) => roll.innerText.trim() === "Disarm");
+            .filter((i, roll) => roll.innerText.trim() === "Move Through");
           expect(disarm).to.have.lengthOf(1);
 
           const dialogP = nextDialog();

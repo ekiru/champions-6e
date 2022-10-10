@@ -4,6 +4,12 @@
     <label>OCV</label>
     <input type="text" name="ocv" value="{{ocv}}" />
   </p>
+  {{#if maneuverModifierLabel}}
+    <p>
+      <label>{{maneuverModifierLabel}}</label>
+      <input type="text" name="maneuver-modifier" value="0" />
+    </p>
+  {{/if}}
   <p>
     <label>{{dcvLabel}}</label>
     <input type="text" name="dcv" />

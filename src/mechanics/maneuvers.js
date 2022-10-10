@@ -15,8 +15,9 @@ export const HALVED = Symbol("½");
 export const NOT_APPLICABLE = Symbol("—");
 
 export class SpecialModifier {
-  constructor(label) {
+  constructor(label, helpText) {
     this.label = label;
+    this.helpText = helpText;
   }
 }
 
@@ -39,7 +40,7 @@ function parseModifier(modifier) {
     case "n/a":
       return NOT_APPLICABLE;
     case "special":
-      return new SpecialModifier(modifier.label);
+      return new SpecialModifier(modifier.label, modifier.helpText);
     default:
       assert.notYetImplemented();
   }
@@ -143,7 +144,7 @@ export const standardManeuvers = [
   }),
   new Maneuver("Brace", {
     time: TIME.HALF_PHASE,
-    ocv: new SpecialModifier("+2*"),
+    ocv: new SpecialModifier("+2*", "+2 OCV only to offset the Range Modifier"),
     dcv: HALVED,
     summary: "Only to offset the Range Modifier",
   }),
@@ -185,13 +186,16 @@ export const standardManeuvers = [
   }),
   new Maneuver("Move Through", {
     time: TIME.HALF_PHASE,
-    ocv: new SpecialModifier("-v/10"),
+    ocv: new SpecialModifier("-v/10", "-v/10 where v is my velocity in meters"),
     dcv: -3,
     summary: "STR + (v/6)d6; attacker takes ½ or full damage",
   }),
   new Maneuver("Multiple Attack", {
     time: TIME.FULL_PHASE,
-    ocv: new SpecialModifier("var"),
+    ocv: new SpecialModifier(
+      "var",
+      "see the Multiple Attack rules on CC 151 or 6E2 73"
+    ),
     dcv: HALVED,
     summary: "Attack one or more targets multiple times",
   }),
@@ -235,7 +239,7 @@ export const standardManeuvers = [
   }),
   new Maneuver("Pulling a Punch", {
     time: TIME.HALF_PHASE,
-    ocv: new SpecialModifier("-1/5d6"),
+    ocv: +0, // in some campaigns this is a -1 per 5 DC penalty, but not in ours
     dcv: +0,
     summary: "Strike, normal STUN damage, ½ BODY damage",
   }),

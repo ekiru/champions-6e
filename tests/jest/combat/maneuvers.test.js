@@ -96,7 +96,9 @@ describe("The Maneuver class", function () {
 
     it("should pass the OCV through unchanged for special modifiers", function () {
       expect(
-        maneuver(new SpecialModifier("randomize it")).calculateOcv(9)
+        maneuver(
+          new SpecialModifier("randomize it", "random number")
+        ).calculateOcv(9)
       ).toBe(9);
     });
   });

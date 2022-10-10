@@ -363,13 +363,15 @@ export default class CharacterSheet extends ActorSheet {
         time: maneuver.time.description,
         effects: maneuver.summary,
         id,
+        roll: {},
       };
       if (maneuver.ocv !== NOT_APPLICABLE) {
-        data.roll = {
-          ocv: maneuver.calculateOcv(
-            this.actor.system.characteristics.ocv.total
-          ),
-        };
+        data.roll.ocv = maneuver.calculateOcv(
+          this.actor.system.characteristics.ocv.total
+        );
+        if (maneuver.ocv instanceof SpecialModifier) {
+          data.roll.modifierLabel = maneuver.ocv.helpText;
+        }
       }
       context.combat.maneuvers.push(data);
     };
@@ -435,6 +437,9 @@ export default class CharacterSheet extends ActorSheet {
       const options = { actor };
       if ("dcvLabel" in this.dataset) {
         options.dcvLabel = this.dataset.dcvLabel;
+      }
+      if (this.dataset.maneuverModifierLabel) {
+        options.maneuverModifierLabel = this.dataset.maneuverModifierLabel;
       }
       attackRollDialog(label, ocv, options);
     });
