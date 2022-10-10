@@ -364,6 +364,7 @@ export default class CharacterSheet extends ActorSheet {
     for (let maneuver of this.actor.itemTypes.maneuver) {
       addManeuver(maneuver.asManeuver, maneuver.id);
     }
+    context.combat.maneuvers.sort(compareBy((m) => m.name)); // sort martial maneuvers
     standardManeuvers.forEach(addManeuver);
 
     return context;
