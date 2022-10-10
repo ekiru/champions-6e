@@ -481,7 +481,20 @@
         <tbody>
           {{#each combat.maneuvers}}
             <tr class="actor-item" data-item-id="{{id}}">
-              <td>{{name}}</td>
+              <td>
+                {{#if roll.ocv}}
+                  <a
+                    class="attack-roll"
+                    data-label="{{name}}"
+                    data-ocv="{{roll.ocv}}"
+                  >
+                    <i class="fas fa-dice"></i>
+                    {{name}}
+                  </a>
+                {{else}}
+                  {{name}}
+                {{/if}}
+              </td>
               <td>{{time}}</td>
               <td>{{ocv}}</td>
               <td>{{dcv}}</td>

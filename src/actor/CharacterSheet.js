@@ -1,5 +1,9 @@
 import { DEFENSE_TYPES } from "../mechanics/damage.js";
-import { SpecialModifier, standardManeuvers } from "../mechanics/maneuvers.js";
+import {
+  NOT_APPLICABLE,
+  SpecialModifier,
+  standardManeuvers,
+} from "../mechanics/maneuvers.js";
 import {
   attackRollDialog,
   damageRollDialog,
@@ -360,6 +364,13 @@ export default class CharacterSheet extends ActorSheet {
         effects: maneuver.summary,
         id,
       };
+      if (maneuver.ocv !== NOT_APPLICABLE) {
+        data.roll = {
+          ocv: maneuver.calculateOcv(
+            this.actor.system.characteristics.ocv.total
+          ),
+        };
+      }
       context.combat.maneuvers.push(data);
     };
     for (let maneuver of this.actor.itemTypes.maneuver) {

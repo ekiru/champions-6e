@@ -1,7 +1,8 @@
 import { TIME } from "../../../src/mechanics/maneuvers.js";
 import * as build from "../helpers/build.js";
-import { openCharacterSheet } from "../helpers/sheets.js";
+import { nextDialog, openCharacterSheet } from "../helpers/sheets.js";
 import { waitOneMoment } from "../helpers/timers.js";
+import { expectTextContent } from "../helpers/webExpectations.js";
 
 /**
  * Registers the tests for Maneuvers
@@ -35,7 +36,7 @@ export function register(system, quench) {
             const maneuverNames = maneuverTable
               .find("tr td:first-child")
               .get()
-              .map((elem) => elem.textContent);
+              .map((elem) => elem.textContent.trim());
             expect(maneuverNames).to.include.members([
               "Brace",
               "Set",
@@ -71,6 +72,60 @@ export function register(system, quench) {
             const [maneuver] = Object.values(this.character.itemTypes.maneuver);
             expect(maneuver.sheet?.rendered).to.equal(true);
           });
+        });
+      });
+
+      describe("Rolling Maneuvers", function () {
+        afterEach(build.afterEach);
+
+        beforeEach(async function () {
+          await build
+            .at(this)
+            .character()
+            .withCharacteristic("ocv", 10)
+            .build();
+          this.sheet = await openCharacterSheet(this.character);
+        });
+
+        it("should pre-apply the OCV modifier for simple maneuvers", async function () {
+          const disarm = this.sheet
+            .find("table.maneuvers a.attack-roll")
+            .filter((i, roll) => roll.innerText.trim() === "Disarm");
+          expect(disarm).to.have.lengthOf(1);
+
+          const dialogP = nextDialog();
+          disarm.click();
+          const dialog = await dialogP;
+          try {
+            const ocv = dialog.element.find('input[name="ocv"]');
+            expect(ocv.val()).to.equal("8");
+          } finally {
+            await dialog.close();
+          }
+        });
+
+        it.skip("should have a labelled modifier field for more complex maneuvers", async function () {
+          const disarm = this.sheet
+            .find("table.maneuvers a.attack-roll")
+            .filter((roll) => roll.innerText.trim() === "Disarm");
+          expect(disarm).to.have.lengthOf(1);
+
+          const dialogP = nextDialog();
+          disarm.click();
+          const dialog = await dialogP;
+          try {
+            expect(dialog.element.find('input[name="ocv"]').val()).to.equal(
+              "10"
+            );
+            expectTextContent(
+              dialog.element
+                .find('input[name="maneuver-modifier"]')
+                .prev()
+                .get(0)
+            ).to.equal("-v/10 where v is my velocity in meters");
+          } finally {
+            await dialog.close();
+          }
         });
       });
     },
