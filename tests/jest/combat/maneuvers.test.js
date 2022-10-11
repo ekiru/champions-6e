@@ -1,5 +1,6 @@
 /* eslint-env jest */
 
+import { SystemActiveEffectModes } from "../../../src/constants.js";
 import {
   HALVED,
   Maneuver,
@@ -146,8 +147,7 @@ describe("The Maneuver class", function () {
         // TODO use custom
         expect.objectContaining({
           key: dcvTotal,
-          value: "0.5",
-          mode: globalThis.CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+          mode: SystemActiveEffectModes.HALVED,
         }),
       ]);
     });

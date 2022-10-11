@@ -1,3 +1,4 @@
+import { SystemActiveEffectModes } from "../constants.js";
 import * as assert from "../util/assert.js";
 
 /**
@@ -144,8 +145,8 @@ export class Maneuver {
     } else if (this.dcv === HALVED) {
       changes.push({
         key: DCV_TOTAL_KEY,
-        value: "0.5",
-        mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+        value: "2",
+        mode: SystemActiveEffectModes.HALVED,
       });
     } else if (this.dcv instanceof SpecialModifier) {
       // do nothing for now
