@@ -1,5 +1,6 @@
 import * as hooks from "../hooks.js";
 import { byName as characteristicByName } from "../mechanics/characteristics.js";
+import { Maneuver } from "../mechanics/maneuvers.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
 
@@ -53,6 +54,10 @@ const CHARACTER_SCHEMA = {
   ],
 };
 
+const FLAGS = {
+  expireAtStartOfPhase: "expireAtStartOfPhase",
+};
+
 const everypersonSkillData = [
   { name: "Acting", characteristic: "pre" },
   { name: "Climbing", characteristic: "dex" },
@@ -102,6 +107,26 @@ const MODIFIABLE_TRAITS = [].concat(
 export default class ChampionsActor extends Actor {
   #oldPhases;
   #oldSpeed;
+
+  /**
+   * Activates a maneuver, applying its defensive modifiers temporarily.
+   *
+   * @param {Maneuver} maneuver The maneuver to activate.
+   */
+  async activateManeuver(maneuver) {
+    assert.precondition(maneuver instanceof Maneuver);
+    const changes = maneuver.getEffectChanges();
+    if (changes.length > 0) {
+      await getDocumentClass("ActiveEffect").create(
+        {
+          label: maneuver.name,
+          changes,
+          [`flags.champions-6e.${[FLAGS.expireAtStartOfPhase]}`]: true,
+        },
+        { parent: this }
+      );
+    }
+  }
 
   async _onCreate(data, options, userId) {
     await super._onCreate(data, options, userId);

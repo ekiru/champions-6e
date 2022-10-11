@@ -1,6 +1,10 @@
-import { TIME } from "../../../src/mechanics/maneuvers.js";
+import { standardManeuvers, TIME } from "../../../src/mechanics/maneuvers.js";
 import * as build from "../helpers/build.js";
-import { nextDialog, openCharacterSheet } from "../helpers/sheets.js";
+import {
+  nextDialog,
+  nextMessage,
+  openCharacterSheet,
+} from "../helpers/sheets.js";
 import { waitOneMoment } from "../helpers/timers.js";
 import {
   expectTextContent,
@@ -16,7 +20,7 @@ import {
 export function register(system, quench) {
   quench.registerBatch(
     `${system}.cucumber.combat.maneuvers`,
-    function ({ describe, it, expect }) {
+    function ({ describe, it, expect, before, afterEach, beforeEach }) {
       provideExpect(expect);
       describe("Maneuvers", function () {
         afterEach(build.afterEach);
@@ -130,6 +134,47 @@ export function register(system, quench) {
           } finally {
             await dialog.close();
           }
+        });
+      });
+
+      describe("Maneuver ActiveEffects", function () {
+        afterEach(build.afterEach);
+
+        describe("Non-attack maneuvers", function () {
+          before(function () {
+            this.maneuvers = new Map();
+            for (const maneuver of standardManeuvers) {
+              this.maneuvers.set(maneuver.name, maneuver);
+            }
+          });
+          beforeEach(async function () {
+            await build
+              .at(this)
+              .character()
+              .withCharacteristic("dcv", 8)
+              .build();
+          });
+
+          it.skip("activating them should send a message to chat", async function () {
+            const sheet = await openCharacterSheet(this.character);
+            const brace = sheet.find('a.activate-maneuver[data-name="Brace"]');
+            expect(brace).to.have.lengthOf(1);
+            const messageP = nextMessage();
+            brace.click();
+
+            const message = await messageP;
+            expect(message.flavor).to.include("Brace");
+          });
+
+          it("Brace should temporarily reduce DCV to 4", async function () {
+            this.character.activateManeuver(this.maneuvers.get("Brace"));
+            await waitOneMoment();
+
+            expect(this.character.system.characteristics.dcv.total).to.equal(4);
+          });
+
+          it.skip("Dodge should temporarily increase DCV to 11");
+          it.skip("Set should indefinitely increase OCV by +1");
         });
       });
     },

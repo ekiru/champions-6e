@@ -8,6 +8,8 @@ import ChampionsCombat from "./documents/ChampionsCombat.js";
 import EuclideanRuler from "./documents/EuclideanRuler.js";
 import ChampionsCombatTracker from "./sheets/ChampionsCombatTracker.js";
 
+import "./activeEffects.js"; // for Hooks
+
 // Register Quench tests if it's available.
 Hooks.on("quenchReady", async function (quench) {
   const { registerTests } = await import("../tests/quench/init.js");

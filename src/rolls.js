@@ -197,12 +197,10 @@ export async function attackRollDialog(
   await rollDialog(title, attackRollTemplate, context, (html) => {
     let ocv = html.find("input[name='ocv']").get(0).value;
     const dcv = html.find("input[name='dcv']").get(0).value;
-    console.log([ocv, dcv]);
     if (maneuverModifierLabel) {
       const modifier = html.find("input[name='maneuver-modifier'").get(0).value;
       ocv = Number(ocv) + Number(modifier);
     }
-    console.log([ocv, dcv]);
     if (dcv !== "") {
       performAttackRollWithKnownDcv(Number(ocv), Number(dcv), {
         actor,

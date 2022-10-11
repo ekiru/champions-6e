@@ -131,11 +131,11 @@ describe("The Maneuver class", function () {
       expect(maneuver(+0, +0).getEffectChanges()).toHaveLength(0);
     });
 
-    const dcvTotal = "system.characteristics.dcv.total";
+    const dcvValue = "system.characteristics.dcv.value";
     it("should add or subtract for ±N to DCV", function () {
       expect(maneuver(+0, +2).getEffectChanges()).toEqual([
         expect.objectContaining({
-          key: dcvTotal,
+          key: dcvValue,
           value: "2",
           mode: globalThis.CONST.ACTIVE_EFFECT_MODES.ADD,
         }),
@@ -146,7 +146,7 @@ describe("The Maneuver class", function () {
       expect(maneuver(+0, HALVED).getEffectChanges()).toEqual([
         // TODO use custom
         expect.objectContaining({
-          key: dcvTotal,
+          key: dcvValue,
           mode: SystemActiveEffectModes.HALVED,
         }),
       ]);
