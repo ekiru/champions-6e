@@ -9,6 +9,20 @@ import {
   TIME,
 } from "../../../src/mechanics/maneuvers.js";
 
+// Faking active effect modes
+if (!("CONST" in globalThis)) {
+  globalThis.CONST = {
+    ACTIVE_EFFECT_MODES: {
+      CUSTOM: 0,
+      MULTIPLY: 1,
+      ADD: 2,
+      DOWNGRADE: 3,
+      UPGRADE: 4,
+      OVERRIDE: 5,
+    },
+  };
+}
+
 describe("The Maneuver class", function () {
   describe("constructor", function () {
     const summary = "Whatever";
@@ -100,6 +114,42 @@ describe("The Maneuver class", function () {
           new SpecialModifier("randomize it", "random number")
         ).calculateOcv(9)
       ).toBe(9);
+    });
+  });
+
+  describe("getEffectChanges", function () {
+    const maneuver = (ocv, dcv) =>
+      new Maneuver("Flip Kick", {
+        ocv,
+        dcv,
+        time: TIME.HALF_PHASE,
+        summary: "A kick",
+      });
+
+    it("should be empty for +0/+0", function () {
+      expect(maneuver(+0, +0).getEffectChanges()).toHaveLength(0);
+    });
+
+    const dcvTotal = "system.characteristics.dcv.total";
+    it("should add or subtract for ±N to DCV", function () {
+      expect(maneuver(+0, +2).getEffectChanges()).toEqual([
+        expect.objectContaining({
+          key: dcvTotal,
+          value: "2",
+          mode: globalThis.CONST.ACTIVE_EFFECT_MODES.ADD,
+        }),
+      ]);
+    });
+
+    it("should divide by 2 for ½ DCV", function () {
+      expect(maneuver(+0, HALVED).getEffectChanges()).toEqual([
+        // TODO use custom
+        expect.objectContaining({
+          key: dcvTotal,
+          value: "0.5",
+          mode: globalThis.CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+        }),
+      ]);
     });
   });
 });

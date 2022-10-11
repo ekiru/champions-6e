@@ -69,6 +69,8 @@ function parseTime(time) {
   return TIME[time];
 }
 
+const DCV_TOTAL_KEY = "system.characteristics.dcv.total";
+
 export class Maneuver {
   constructor(name, { ocv, dcv, time, summary }) {
     this.name = name;
@@ -127,6 +129,28 @@ export class Maneuver {
       );
       assert.notYetImplemented();
     }
+  }
+
+  getEffectChanges() {
+    const changes = [];
+    if (Number.isInteger(this.dcv)) {
+      if (this.dcv !== 0) {
+        changes.push({
+          key: DCV_TOTAL_KEY,
+          value: "2",
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        });
+      }
+    } else if (this.dcv === HALVED) {
+      changes.push({
+        key: DCV_TOTAL_KEY,
+        value: "0.5",
+        mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+      });
+    } else {
+      assert.notYetImplemented();
+    }
+    return changes;
   }
 }
 

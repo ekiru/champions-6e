@@ -25,6 +25,7 @@
     "loadTemplates": "readonly",
     "renderTemplate": "readonly",
     "CONFIG": "writable",
+    "CONST": "readonly",
     "Actor": "readonly",
     "ActorSheet": "readonly",
     "Actors": "readonly",
