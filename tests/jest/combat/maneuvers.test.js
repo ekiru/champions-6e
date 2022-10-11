@@ -151,6 +151,16 @@ describe("The Maneuver class", function () {
         }),
       ]);
     });
+
+    it("should do no changes for now for special DCV modifiers", function () {
+      expect(
+        maneuver(+0, new SpecialModifier("var", "var")).getEffectChanges()
+      ).toHaveLength(0);
+    });
+
+    it("should add no changes for N/A DCV modifiers", function () {
+      expect(maneuver(+0, NOT_APPLICABLE).getEffectChanges()).toHaveLength(0);
+    });
   });
 });
 

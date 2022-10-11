@@ -147,6 +147,10 @@ export class Maneuver {
         value: "0.5",
         mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
       });
+    } else if (this.dcv instanceof SpecialModifier) {
+      // do nothing for now
+    } else if (this.dcv === NOT_APPLICABLE) {
+      // no changes.
     } else {
       assert.notYetImplemented();
     }
