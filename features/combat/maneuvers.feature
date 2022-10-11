@@ -27,7 +27,7 @@ Feature: Combat and Martial Maneuvers
     And the prompted OCV should be 10
     But the dialog should have a modifier field labeled "-v/10 where v is my velocity in meters"
 
-  Scenario: Activating Brace, Dodge, or Set
+  Scenario Outline: Activating Brace, Dodge, or Set
     Given I have a total DCV of 8
     When I activate the <maneuver> maneuver
     Then I should send a chat message saying I used <maneuver>
