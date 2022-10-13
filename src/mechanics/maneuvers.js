@@ -73,7 +73,9 @@ function parseTime(time) {
 const DCV_TOTAL_KEY = "system.characteristics.dcv.total";
 
 export class Maneuver {
-  constructor(name, { ocv, dcv, time, summary }) {
+  #isRolledOverride;
+
+  constructor(name, { ocv, dcv, time, summary, roll }) {
     this.name = name;
 
     assert.precondition(ocv !== undefined, "missing OCV modifier");
@@ -105,6 +107,14 @@ export class Maneuver {
       "missing or invalid summary"
     );
     this.summary = summary;
+
+    if (roll !== undefined) {
+      assert.that(
+        roll === false || this.ocv !== NOT_APPLICABLE,
+        "maneuvers with N/A OCV modifiers cannot be rolled"
+      );
+      this.#isRolledOverride = roll;
+    }
   }
 
   static fromItem(name, { ocv, dcv, time, summary }) {
@@ -114,6 +124,10 @@ export class Maneuver {
       time: parseTime(time),
       summary: summary,
     });
+  }
+
+  get isRolled() {
+    return this.#isRolledOverride ?? this.ocv !== NOT_APPLICABLE;
   }
 
   calculateOcv(ocv) {

@@ -86,6 +86,58 @@ describe("The Maneuver class", function () {
     });
   });
 
+  describe("isRolled", function () {
+    it("should normally be true for most OCV modifiers", function () {
+      const maneuver = (ocv) =>
+        new Maneuver("Strike", {
+          ocv,
+          dcv: +0,
+          time: TIME.HALF_PHASE,
+          summary: "",
+        });
+
+      expect(maneuver(+0).isRolled).toBe(true);
+      expect(maneuver(HALVED).isRolled).toBe(true);
+      expect(maneuver(new SpecialModifier("var", "")).isRolled).toBe(true);
+    });
+
+    it("should be false for N/A OCV modifiers", function () {
+      expect(
+        new Maneuver("Dodge", {
+          ocv: NOT_APPLICABLE,
+          dcv: +3,
+          time: TIME.FULL_PHASE,
+          summary: "dodge",
+        }).isRolled
+      ).toBe(false);
+    });
+
+    it("should be false if explicitly specified as such", function () {
+      const maneuver = new Maneuver("Block", {
+        ocv: +0,
+        dcv: +0,
+        time: TIME.HALF_PHASE,
+        summary: "",
+        roll: false,
+      });
+
+      expect(maneuver.isRolled).toBe(false);
+    });
+
+    it("cannot be explicitly specified as true for maneuvers with N/A OCV modifiers", function () {
+      expect(
+        () =>
+          new Maneuver("Dodge", {
+            ocv: NOT_APPLICABLE,
+            dcv: +3,
+            time: TIME.HALF_PHASE,
+            summary: "",
+            roll: true,
+          })
+      ).toThrow("cannot be rolled");
+    });
+  });
+
   describe("calculateOcv", function () {
     const maneuver = (ocv) =>
       new Maneuver("Kick", {
