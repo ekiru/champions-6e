@@ -128,6 +128,24 @@ export default class ChampionsActor extends Actor {
     }
   }
 
+  /**
+   * Called when a new Phase begins in combat for this character.
+   *
+   * Currently, this just handles removing DCV effects from maneuvers.
+   *
+   * @returns {Promise<void>} A Promise that resolves after anything that happens at the start of a phase for this
+   * character have happened.
+   */
+  async onNewPhase() {
+    await Promise.all(
+      this.effects
+        .filter((effect) =>
+          effect.getFlag("champions-6e", FLAGS.expireAtStartOfPhase)
+        )
+        .map((effect) => effect.delete())
+    );
+  }
+
   async _onCreate(data, options, userId) {
     await super._onCreate(data, options, userId);
     if (userId === game.user.id) {

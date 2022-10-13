@@ -140,13 +140,14 @@ export function register(system, quench) {
       describe("Maneuver ActiveEffects", function () {
         afterEach(build.afterEach);
 
+        before(function () {
+          this.maneuvers = new Map();
+          for (const maneuver of standardManeuvers) {
+            this.maneuvers.set(maneuver.name, maneuver);
+          }
+        });
+
         describe("Non-attack maneuvers", function () {
-          before(function () {
-            this.maneuvers = new Map();
-            for (const maneuver of standardManeuvers) {
-              this.maneuvers.set(maneuver.name, maneuver);
-            }
-          });
           beforeEach(async function () {
             await build
               .at(this)
@@ -175,6 +176,28 @@ export function register(system, quench) {
 
           it.skip("Dodge should temporarily increase DCV to 11");
           it.skip("Set should indefinitely increase OCV by +1");
+        });
+
+        describe("Ending maneuver effects", function () {
+          beforeEach(
+            "given I have a temporary DCV penalty from the Shove maneuver",
+            async function () {
+              await build.at(this).character().build();
+              await build.combat(this, [this.character]);
+              await this.combat.startCombat();
+              await waitOneMoment();
+              await this.character.activateManeuver(
+                this.maneuvers.get("Shove")
+              );
+            }
+          );
+
+          it("when my next Phase starts, I should no longer have a temporary DCV penalty", async function () {
+            await this.combat.nextTurn();
+            await waitOneMoment();
+
+            expect(this.character.effects.contents).to.have.lengthOf(0);
+          });
         });
       });
     },

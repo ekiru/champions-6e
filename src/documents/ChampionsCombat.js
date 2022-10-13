@@ -262,6 +262,15 @@ export default class ChampionsCombat extends Combat {
       this.setupTurns();
     }
 
+    if (
+      Object.prototype.hasOwnProperty.call(data, "turn") ||
+      Object.prototype.hasOwnProperty.call(data, "round")
+    ) {
+      if (this.combatant) {
+        await this.combatant.actor?.onNewPhase();
+      }
+    }
+
     if (!("segment" in this.current)) {
       this.current.segment =
         this.turn !== null ? this.#phaseForTurn(this.turn) : null;
