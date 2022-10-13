@@ -152,7 +152,7 @@ export function register(system, quench) {
             await build
               .at(this)
               .character()
-              .withCharacteristic("dcv", 8)
+              .withCharacteristic("dcv", 9)
               .build();
           });
 
@@ -169,19 +169,19 @@ export function register(system, quench) {
             expect(message.content).to.include("Brace");
           });
 
-          it("Brace should temporarily reduce DCV to 4", async function () {
+          it("Brace should temporarily reduce DCV to 55", async function () {
             this.character.activateManeuver(this.maneuvers.get("Brace"));
             await waitOneMoment();
 
-            expect(this.character.system.characteristics.dcv.total).to.equal(4);
+            expect(this.character.system.characteristics.dcv.total).to.equal(5);
           });
 
-          it("Dodge should temporarily increase DCV to 11", async function () {
+          it("Dodge should temporarily increase DCV to 12", async function () {
             this.character.activateManeuver(this.maneuvers.get("Dodge"));
             await waitOneMoment();
 
             expect(this.character.system.characteristics.dcv.total).to.equal(
-              11
+              12
             );
           });
 
