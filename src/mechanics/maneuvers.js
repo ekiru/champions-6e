@@ -171,6 +171,35 @@ export class Maneuver {
     }
     return changes;
   }
+
+  getAdditionalEffects() {
+    return null;
+  }
+}
+
+class SetManeuver extends Maneuver {
+  constructor() {
+    super("Set", {
+      time: TIME.FULL_PHASE,
+      ocv: +1,
+      dcv: +0,
+      summary: "Take extra time to aim a Ranged attack",
+      roll: false,
+    });
+  }
+
+  getAdditionalEffects() {
+    return {
+      label: this.name,
+      changes: [
+        {
+          key: "system.characteristics.ocv.total",
+          value: "1",
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        },
+      ],
+    };
+  }
 }
 
 /**
@@ -244,13 +273,7 @@ export const standardManeuvers = [
     dcv: HALVED,
     summary: "Attack one or more targets multiple times",
   }),
-  new Maneuver("Set", {
-    time: TIME.FULL_PHASE,
-    ocv: +1,
-    dcv: +0,
-    summary: "Take extra time to aim a Ranged attack",
-    roll: false,
-  }),
+  new SetManeuver(),
   new Maneuver("Shove", {
     time: TIME.HALF_PHASE,
     ocv: -1,

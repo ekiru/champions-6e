@@ -176,8 +176,29 @@ export function register(system, quench) {
             expect(this.character.system.characteristics.dcv.total).to.equal(4);
           });
 
-          it.skip("Dodge should temporarily increase DCV to 11");
-          it.skip("Set should indefinitely increase OCV by +1");
+          it("Dodge should temporarily increase DCV to 11", async function () {
+            this.character.activateManeuver(this.maneuvers.get("Dodge"));
+            await waitOneMoment();
+
+            expect(this.character.system.characteristics.dcv.total).to.equal(
+              11
+            );
+          });
+
+          it("Set should indefinitely increase OCV by +1", async function () {
+            this.character.activateManeuver(this.maneuvers.get("Set"));
+            await waitOneMoment();
+
+            expect(this.character.effects.contents).to.have.lengthOf(1);
+            const effect = this.character.effects.contents[0];
+            expect(effect.changes).to.have.lengthOf(1);
+            const change = effect.changes[0];
+            expect(change.key).to.equal("system.characteristics.ocv.total");
+            expect(change.value).to.equal("1");
+            expect(change.mode).to.equal(CONST.ACTIVE_EFFECT_MODES.ADD);
+            expect(effect.getFlag("champions-6e", "expireAtStartOfPhase")).to
+              .not.be.true;
+          });
         });
 
         describe("Ending maneuver effects", function () {

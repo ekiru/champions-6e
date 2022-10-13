@@ -126,6 +126,12 @@ export default class ChampionsActor extends Actor {
         { parent: this }
       );
     }
+    const additionalEffects = maneuver.getAdditionalEffects();
+    if (additionalEffects !== null) {
+      await getDocumentClass("ActiveEffect").create(additionalEffects, {
+        parent: this,
+      });
+    }
   }
 
   /**
