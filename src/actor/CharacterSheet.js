@@ -401,6 +401,9 @@ export default class CharacterSheet extends ActorSheet {
           data.roll.modifierLabel = maneuver.ocv.helpText;
         }
       }
+      if (maneuver.ocv instanceof SpecialModifier) {
+        data.ocvTooltip = maneuver.ocv.helpText;
+      }
       context.combat.maneuvers.push(data);
     };
     for (let maneuver of this.actor.itemTypes.maneuver) {

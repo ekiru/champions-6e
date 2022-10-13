@@ -507,7 +507,11 @@
                 {{/if}}
               </td>
               <td>{{time}}</td>
-              <td>{{ocv}}</td>
+              {{#if ocvTooltip}}
+                <td title="{{ocvTooltip}}">{{ocv}}</td>
+              {{else}}
+                <td>{{ocv}}</td>
+              {{/if}}
               <td>{{dcv}}</td>
               <td>{{effects}}</td>
               {{#if id}}
