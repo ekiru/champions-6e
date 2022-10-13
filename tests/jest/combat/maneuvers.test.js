@@ -185,10 +185,10 @@ describe("The Maneuver class", function () {
 
     const dcvTotal = "system.characteristics.dcv.total";
     it("should add or subtract for ±N to DCV", function () {
-      expect(maneuver(+0, +2).getEffectChanges()).toEqual([
+      expect(maneuver(+0, +3).getEffectChanges()).toEqual([
         expect.objectContaining({
           key: dcvTotal,
-          value: "2",
+          value: "3",
           mode: globalThis.CONST.ACTIVE_EFFECT_MODES.ADD,
         }),
       ]);

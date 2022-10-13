@@ -152,7 +152,7 @@ export class Maneuver {
       if (this.dcv !== 0) {
         changes.push({
           key: DCV_TOTAL_KEY,
-          value: "2",
+          value: String(this.dcv),
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         });
       }

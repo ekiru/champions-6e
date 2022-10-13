@@ -156,15 +156,17 @@ export function register(system, quench) {
               .build();
           });
 
-          it.skip("activating them should send a message to chat", async function () {
+          it("activating them should send a message to chat", async function () {
             const sheet = await openCharacterSheet(this.character);
-            const brace = sheet.find('a.activate-maneuver[data-name="Brace"]');
+            const brace = sheet.find(
+              'a.activate-maneuver[data-maneuver-name="Brace"]'
+            );
             expect(brace).to.have.lengthOf(1);
             const messageP = nextMessage();
             brace.click();
 
             const message = await messageP;
-            expect(message.flavor).to.include("Brace");
+            expect(message.content).to.include("Brace");
           });
 
           it("Brace should temporarily reduce DCV to 4", async function () {

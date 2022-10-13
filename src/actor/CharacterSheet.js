@@ -1,6 +1,6 @@
 import { DEFENSE_TYPES } from "../mechanics/damage.js";
 import {
-  NOT_APPLICABLE,
+  Maneuver,
   SpecialModifier,
   standardManeuvers,
 } from "../mechanics/maneuvers.js";
@@ -11,6 +11,7 @@ import {
   performHapRoll,
   successRollDialog,
 } from "../rolls.js";
+import * as assert from "../util/assert.js";
 import { compareBy } from "../util/sort.js";
 
 const BACKGROUND_SKILL_TYPES = {
@@ -80,6 +81,32 @@ function formatManeuverModifier(modifier) {
   } else {
     return modifier.toString();
   }
+}
+
+/**
+ * Finds the maneuver for a link element.
+ *
+ * @param {*} dataset The dataset of the HTML element.
+ * @param {Actor} actor The actor to search for custom maneuvers.
+ * @returns {Maneuver} The maneuver for the element.
+ */
+function getManeuver(dataset, actor) {
+  let maneuver;
+  if (dataset.maneuverId) {
+    const maneuverItem = actor.itemTypes.maneuver[dataset.maneuverId];
+    console.log(dataset.maneuverId, maneuverItem, actor.items);
+    assert.that(maneuverItem?.type === "maneuver");
+    maneuver = maneuverItem.asManeuver;
+  } else {
+    maneuver = standardManeuvers.find(
+      (maneuver) => maneuver.name === dataset.maneuverName
+    );
+  }
+  assert.that(
+    maneuver !== undefined,
+    "Maneuver has neither valid id nor valid name"
+  );
+  return maneuver;
 }
 
 export default class CharacterSheet extends ActorSheet {
@@ -363,12 +390,13 @@ export default class CharacterSheet extends ActorSheet {
         time: maneuver.time.description,
         effects: maneuver.summary,
         id,
-        roll: {},
       };
-      if (maneuver.ocv !== NOT_APPLICABLE) {
-        data.roll.ocv = maneuver.calculateOcv(
-          this.actor.system.characteristics.ocv.total
-        );
+      if (maneuver.isRolled) {
+        data.roll = {
+          ocv: maneuver.calculateOcv(
+            this.actor.system.characteristics.ocv.total
+          ),
+        };
         if (maneuver.ocv instanceof SpecialModifier) {
           data.roll.modifierLabel = maneuver.ocv.helpText;
         }
@@ -380,7 +408,7 @@ export default class CharacterSheet extends ActorSheet {
     }
     context.combat.maneuvers.sort(compareBy((m) => m.name)); // sort martial maneuvers
     for (let maneuver of standardManeuvers) {
-      addManeuver(maneuver, false);
+      addManeuver(maneuver, null);
     }
 
     return context;
@@ -441,7 +469,21 @@ export default class CharacterSheet extends ActorSheet {
       if (this.dataset.maneuverModifierLabel) {
         options.maneuverModifierLabel = this.dataset.maneuverModifierLabel;
       }
+      if (this.classList.contains("maneuver")) {
+        const maneuver = getManeuver(this.dataset, actor);
+        actor.activateManeuver(maneuver);
+      }
       attackRollDialog(label, ocv, options);
+    });
+    html.find(".activate-maneuver").click(function () {
+      const maneuver = getManeuver(this.dataset, actor);
+      ChatMessage.create({
+        type: CONST.CHAT_MESSAGE_TYPES.EMOTE,
+        content: `Activates ${maneuver.name}`,
+        emote: true,
+        speaker: { actor: actor.id },
+      });
+      actor.activateManeuver(maneuver);
     });
     html.find(".damage-roll").click(function () {
       const apPerDie = Number(this.dataset.apPerDie);

@@ -482,18 +482,28 @@
           {{#each combat.maneuvers}}
             <tr class="actor-item" data-item-id="{{id}}">
               <td>
-                {{#if roll.ocv}}
+                {{#if roll}}
                   <a
-                    class="attack-roll"
+                    class="attack-roll maneuver"
                     data-label="{{name}}"
                     data-ocv="{{roll.ocv}}"
                     data-maneuver-modifier-label="{{roll.modifierLabel}}"
+                    data-maneuver-id="{{id}}"
+                    data-maneuver-name="{{name}}"
                   >
                     <i class="fas fa-dice"></i>
                     {{name}}
                   </a>
+                {{else if id}}
+                  <a
+                    class="activate-maneuver"
+                    data-maneuver-id="{{id}}"
+                  >{{name}}</a>
                 {{else}}
-                  {{name}}
+                  <a
+                    class="activate-maneuver"
+                    data-maneuver-name="{{name}}"
+                  >{{name}}</a>
                 {{/if}}
               </td>
               <td>{{time}}</td>
