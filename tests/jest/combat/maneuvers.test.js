@@ -219,9 +219,11 @@ describe("The Maneuver class", function () {
 describe("Combat Maneuvers", function () {
   describe("maneuvers.standardManeuvers", function () {
     const maneuverNames = new Set();
+    const maneuversByName = new Map();
     beforeAll(function () {
       for (const maneuver of standardManeuvers) {
         maneuverNames.add(maneuver.name);
+        maneuversByName.set(maneuver.name, maneuver);
       }
     });
 
@@ -246,6 +248,14 @@ describe("Combat Maneuvers", function () {
     it("should contain the supported optional combat maneuvers", function () {
       expect(maneuverNames).toContain("Dive for Cover");
       expect(maneuverNames).toContain("Pulling a Punch");
+    });
+
+    it("should disallow rolling for appropriate maneuvers", function () {
+      expect(maneuversByName.get("Block").isRolled).toBe(false);
+      expect(maneuversByName.get("Brace").isRolled).toBe(false);
+      expect(maneuversByName.get("Dodge").isRolled).toBe(false);
+      expect(maneuversByName.get("Set").isRolled).toBe(false);
+      expect(maneuversByName.get("Dive for Cover").isRolled).toBe(false);
     });
   });
 });

@@ -184,12 +184,14 @@ export const standardManeuvers = [
     ocv: +0,
     dcv: +0,
     summary: "Block attacks, Abort",
+    roll: false, // should this be true?
   }),
   new Maneuver("Brace", {
     time: TIME.HALF_PHASE,
     ocv: new SpecialModifier("+2*", "+2 OCV only to offset the Range Modifier"),
     dcv: HALVED,
     summary: "Only to offset the Range Modifier",
+    roll: false,
   }),
   new Maneuver("Disarm", {
     time: TIME.HALF_PHASE,
@@ -247,6 +249,7 @@ export const standardManeuvers = [
     ocv: +1,
     dcv: +0,
     summary: "Take extra time to aim a Ranged attack",
+    roll: false,
   }),
   new Maneuver("Shove", {
     time: TIME.HALF_PHASE,
@@ -279,6 +282,7 @@ export const standardManeuvers = [
     ocv: +0,
     dcv: +0,
     summary: "Character avoids attack; Abort",
+    roll: false,
   }),
   new Maneuver("Pulling a Punch", {
     time: TIME.HALF_PHASE,
