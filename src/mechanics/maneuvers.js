@@ -70,7 +70,7 @@ function parseTime(time) {
   return TIME[time];
 }
 
-const DCV_VALUE_KEY = "system.characteristics.dcv.value";
+const DCV_TOTAL_KEY = "system.characteristics.dcv.total";
 
 export class Maneuver {
   constructor(name, { ocv, dcv, time, summary }) {
@@ -137,14 +137,14 @@ export class Maneuver {
     if (Number.isInteger(this.dcv)) {
       if (this.dcv !== 0) {
         changes.push({
-          key: DCV_VALUE_KEY,
+          key: DCV_TOTAL_KEY,
           value: "2",
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         });
       }
     } else if (this.dcv === HALVED) {
       changes.push({
-        key: DCV_VALUE_KEY,
+        key: DCV_TOTAL_KEY,
         value: "2",
         mode: SystemActiveEffectModes.HALVED,
       });

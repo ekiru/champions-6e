@@ -166,8 +166,11 @@ export default class ChampionsActor extends Actor {
     }
   }
 
-  prepareDerivedData() {
+  prepareBaseData() {
     this._applyModifiers();
+  }
+
+  prepareDerivedData() {
     this._calculateTargetNumbers();
 
     for (const [name, data] of Object.entries(this.system.characteristics)) {
