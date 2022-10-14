@@ -111,6 +111,17 @@ export default class ChampionsCombat extends Combat {
     assert.precondition(segment >= 1 && segment < 12);
     assert.precondition(character instanceof Actor);
 
+    if (this.current.segment <= segment) {
+      await this.#moveForwardToPhase(segment, character);
+    } else {
+      await this.#moveBackwardToPhase(segment, character);
+    }
+
+    assert.that(this.current.segment === segment);
+    assert.that(this.combatant.actorId === character.id);
+  }
+
+  async #moveForwardToPhase(segment, character) {
     while (this.current.segment <= segment) {
       if (
         this.current.segment === segment &&
@@ -120,8 +131,18 @@ export default class ChampionsCombat extends Combat {
       }
       await this.nextTurn();
     }
-    assert.that(this.current.segment === segment);
-    assert.that(this.combatant.actorId === character.id);
+  }
+
+  async #moveBackwardToPhase(segment, character) {
+    while (this.current.segment >= segment) {
+      if (
+        this.current.segment === segment &&
+        this.combatant.actorId === character.id
+      ) {
+        break;
+      }
+      await this.previousTurn();
+    }
   }
 
   async updatePhases() {

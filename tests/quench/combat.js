@@ -63,7 +63,15 @@ export function register(system, quench) {
           expect(error).to.be.an.instanceof(AssertionError);
         });
 
-        it.skip("should move backwards if we're past that segment");
+        it("should move backwards if we're past that segment", async function () {
+          await this.combat.moveToPhase(8, this.speedy);
+
+          await this.combat.moveToPhase(3, this.speedy);
+          expect(this.combat.round).to.equal(2);
+          expect(this.combat.current.segment).to.equal(3);
+          expect(this.combat.combatant.actorId).to.equal(this.speedy.id);
+        });
+
         it.skip(
           "should throw an error if trying to move before segment 12 in round 1"
         );
