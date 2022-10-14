@@ -110,6 +110,9 @@ export default class ChampionsCombat extends Combat {
   async moveToPhase(segment, character) {
     assert.precondition(segment >= 1 && segment < 12);
     assert.precondition(character instanceof Actor);
+    if (this.round === 1) {
+      assert.precondition(segment === 12, "Turn 1 only has segment 12.");
+    }
 
     if (this.current.segment <= segment) {
       await this.#moveForwardToPhase(segment, character);

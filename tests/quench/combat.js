@@ -72,9 +72,19 @@ export function register(system, quench) {
           expect(this.combat.combatant.actorId).to.equal(this.speedy.id);
         });
 
-        it.skip(
-          "should throw an error if trying to move before segment 12 in round 1"
-        );
+        it("should throw an error if trying to move before segment 12 in round 1", async function () {
+          await this.combat.previousRound();
+
+          let error;
+          try {
+            await this.combat.moveToPhase(11, this.speedy);
+          } catch (e) {
+            error = e;
+          }
+          expect(error)
+            .to.be.an.instanceof(AssertionError)
+            .and.to.have.property("message", "Turn 1 only has segment 12.");
+        });
       });
     },
     { displayName: `${system}: Combat class` }
