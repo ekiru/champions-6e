@@ -126,6 +126,38 @@ export class Maneuver {
     });
   }
 
+  static summarizeEffect(changes) {
+    assert.that(
+      changes.length === 1,
+      "Maneuvers currently generate only 0 or 1 changes and the former should never produce an effect"
+    );
+    const change = changes[0];
+
+    let stat;
+    switch (change.key) {
+      case DCV_TOTAL_KEY:
+        stat = "DCV";
+        break;
+      default:
+        assert.notYetImplemented();
+    }
+
+    let modifier;
+    switch (change.mode) {
+      case CONST.ACTIVE_EFFECT_MODES.ADD:
+        modifier =
+          change.value >= 0 ? `+${change.value} to` : `${change.value} to`;
+        break;
+      case SystemActiveEffectModes.HALVED:
+        modifier = "½";
+        break;
+      default:
+        assert.notYetImplemented();
+    }
+
+    return `${modifier} ${stat}`;
+  }
+
   get isRolled() {
     return this.#isRolledOverride ?? this.ocv !== NOT_APPLICABLE;
   }

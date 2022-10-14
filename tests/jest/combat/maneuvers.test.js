@@ -57,6 +57,33 @@ describe("The Maneuver class", function () {
     });
   });
 
+  describe("Maneuver.summarizeEffect", function () {
+    const dcvTotal = "system.characteristics.dcv.total";
+
+    it("should note DCV ±", function () {
+      expect(
+        Maneuver.summarizeEffect([
+          {
+            key: dcvTotal,
+            value: +5,
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          },
+        ])
+      ).toBe("+5 to DCV");
+    });
+
+    it("should note ½ DCV", function () {
+      expect(
+        Maneuver.summarizeEffect([
+          {
+            key: dcvTotal,
+            mode: SystemActiveEffectModes.HALVED,
+          },
+        ])
+      ).toBe("½ DCV");
+    });
+  });
+
   describe("accessors", function () {
     let maneuver;
     beforeEach(function () {

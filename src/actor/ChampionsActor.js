@@ -1,3 +1,4 @@
+import { EffectFlags } from "../constants.js";
 import * as hooks from "../hooks.js";
 import { byName as characteristicByName } from "../mechanics/characteristics.js";
 import { Maneuver } from "../mechanics/maneuvers.js";
@@ -122,6 +123,8 @@ export default class ChampionsActor extends Actor {
           label: maneuver.name,
           changes,
           [`flags.champions-6e.${[FLAGS.expireAtStartOfPhase]}`]: true,
+          [`flags.champions-6e.${EffectFlags.SUMMARY}`]:
+            Maneuver.summarizeEffect(changes),
         },
         { parent: this }
       );
