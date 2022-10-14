@@ -1,6 +1,9 @@
 /* eslint-env jest */
 
-import { SystemActiveEffectModes } from "../../../src/constants.js";
+import {
+  EffectFlags,
+  SystemActiveEffectModes,
+} from "../../../src/constants.js";
 import {
   HALVED,
   Maneuver,
@@ -256,6 +259,21 @@ describe("Combat Maneuvers", function () {
       expect(maneuversByName.get("Dodge").isRolled).toBe(false);
       expect(maneuversByName.get("Set").isRolled).toBe(false);
       expect(maneuversByName.get("Dive for Cover").isRolled).toBe(false);
+    });
+  });
+
+  describe("Set", function () {
+    const set = standardManeuvers.find((maneuver) => maneuver.name === "Set");
+
+    it("should exist", function () {
+      expect(set).toBeDefined();
+    });
+
+    it("should return a summary with its effect", function () {
+      const effect = set.getAdditionalEffects();
+      expect(effect.flags["champions-6e"][EffectFlags.SUMMARY]).toContain(
+        "+1 to OCV"
+      );
     });
   });
 });

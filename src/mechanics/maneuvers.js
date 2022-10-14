@@ -1,4 +1,4 @@
-import { SystemActiveEffectModes } from "../constants.js";
+import { EffectFlags, SystemActiveEffectModes } from "../constants.js";
 import * as assert from "../util/assert.js";
 
 /**
@@ -198,6 +198,12 @@ class SetManeuver extends Maneuver {
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
+      flags: {
+        "champions-6e": {
+          [EffectFlags.SUMMARY]:
+            "+1 to OCV against a specific target. You lose your Set bonus if you don't aim at or attack the target, or if you are forced to stop aiming at the target for any reason, or if the target moves out of sight.",
+        },
+      },
     };
   }
 }

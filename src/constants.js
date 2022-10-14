@@ -4,3 +4,7 @@
 export const SystemActiveEffectModes = {
   HALVED: 60,
 };
+
+export const EffectFlags = {
+  SUMMARY: "effect•summary",
+};
