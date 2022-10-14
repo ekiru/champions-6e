@@ -501,10 +501,11 @@
                     data-maneuver-id="{{id}}"
                   >{{name}}</a>
                 {{else}}
-                  <a
-                    class="activate-maneuver"
-                    data-maneuver-name="{{name}}"
-                  >{{name}}</a>
+                  <a class="activate-maneuver" data-maneuver-name="{{name}}">
+                    {{#if icon}}
+                      <i class="fas fa-{{icon}}"></i>
+                    {{/if}}
+                    {{name}}</a>
                 {{/if}}
               </td>
               <td>{{time}}</td>

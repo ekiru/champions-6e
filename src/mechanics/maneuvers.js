@@ -75,7 +75,7 @@ const DCV_TOTAL_KEY = "system.characteristics.dcv.total";
 export class Maneuver {
   #isRolledOverride;
 
-  constructor(name, { ocv, dcv, time, summary, roll }) {
+  constructor(name, { ocv, dcv, time, icon, summary, roll }) {
     this.name = name;
 
     assert.precondition(ocv !== undefined, "missing OCV modifier");
@@ -106,6 +106,7 @@ export class Maneuver {
       typeof summary === "string",
       "missing or invalid summary"
     );
+    this.icon = icon;
     this.summary = summary;
 
     if (roll !== undefined) {
@@ -215,6 +216,7 @@ class SetManeuver extends Maneuver {
       time: TIME.FULL_PHASE,
       ocv: +1,
       dcv: +0,
+      icon: "crosshairs",
       summary: "Take extra time to aim a Ranged attack",
       roll: false,
     });
@@ -250,6 +252,7 @@ export const standardManeuvers = [
     time: TIME.HALF_PHASE,
     ocv: +0,
     dcv: +0,
+    icon: "shield",
     summary: "Block attacks, Abort",
     roll: false, // should this be true?
   }),
@@ -257,6 +260,7 @@ export const standardManeuvers = [
     time: TIME.HALF_PHASE,
     ocv: new SpecialModifier("+2*", "+2 OCV only to offset the Range Modifier"),
     dcv: HALVED,
+    icon: "gun",
     summary: "Only to offset the Range Modifier",
     roll: false,
   }),
@@ -270,6 +274,7 @@ export const standardManeuvers = [
     time: TIME.HALF_PHASE,
     ocv: NOT_APPLICABLE,
     dcv: +3,
+    icon: "person-running",
     summary: "Dodge all attacks, Abort",
   }),
   new Maneuver("Grab", {
@@ -342,6 +347,7 @@ export const standardManeuvers = [
     time: TIME.HALF_PHASE,
     ocv: +0,
     dcv: +0,
+    icon: "person-falling",
     summary: "Character avoids attack; Abort",
     roll: false,
   }),

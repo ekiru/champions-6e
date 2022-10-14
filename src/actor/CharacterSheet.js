@@ -384,6 +384,7 @@ export default class CharacterSheet extends ActorSheet {
     context.combat.maneuvers = [];
     const addManeuver = (maneuver, id) => {
       const data = {
+        icon: maneuver.icon,
         name: maneuver.name,
         ocv: formatManeuverModifier(maneuver.ocv),
         dcv: formatManeuverModifier(maneuver.dcv),

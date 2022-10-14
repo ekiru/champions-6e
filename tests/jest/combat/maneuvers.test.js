@@ -92,6 +92,7 @@ describe("The Maneuver class", function () {
         dcv: +2,
         time: TIME.NO_TIME,
         summary: "A short description",
+        icon: "person-walking",
       });
     });
 
@@ -113,6 +114,10 @@ describe("The Maneuver class", function () {
 
     it("should expose the summary", function () {
       expect(maneuver.summary).toBe("A short description");
+    });
+
+    it("should expose the icon", function () {
+      expect(maneuver.icon).toBe("person-walking");
     });
   });
 
