@@ -1,3 +1,4 @@
+import { EffectFlags } from "../constants.js";
 import { DEFENSE_TYPES } from "../mechanics/damage.js";
 import {
   Maneuver,
@@ -93,8 +94,7 @@ function formatManeuverModifier(modifier) {
 function getManeuver(dataset, actor) {
   let maneuver;
   if (dataset.maneuverId) {
-    const maneuverItem = actor.itemTypes.maneuver[dataset.maneuverId];
-    console.log(dataset.maneuverId, maneuverItem, actor.items);
+    const maneuverItem = actor.items.get(dataset.maneuverId);
     assert.that(maneuverItem?.type === "maneuver");
     maneuver = maneuverItem.asManeuver;
   } else {
@@ -414,6 +414,15 @@ export default class CharacterSheet extends ActorSheet {
       addManeuver(maneuver, null);
     }
 
+    context.effects = [];
+    for (const effect of this.actor.effects) {
+      context.effects.push({
+        id: effect.id,
+        name: effect.label,
+        summary: effect.getFlag("champions-6e", EffectFlags.SUMMARY),
+      });
+    }
+
     return context;
   }
 
@@ -446,6 +455,14 @@ export default class CharacterSheet extends ActorSheet {
           .find(".item-delete")
           .click(() => {
             actor.deleteEmbeddedDocuments("Item", [itemId]);
+          });
+      });
+      html.find("[data-effect-id]").each(function () {
+        const { effectId } = this.dataset;
+        $(this)
+          .find(".item-delete")
+          .click(() => {
+            actor.deleteEmbeddedDocuments("ActiveEffect", [effectId]);
           });
       });
     }

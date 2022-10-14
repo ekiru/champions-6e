@@ -51,6 +51,7 @@
     <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="combat">Combat</a>
     <a class="item" data-tab="notes">Notes</a>
+    <a class="item" data-tab="effects">Effects</a>
   </nav>
 
   <section class="sheet-body">
@@ -538,6 +539,27 @@
         button=true
         editable=editable
       }}
+    </div>
+
+    <div class="tab effect" data-tab="effects">
+      <table>
+        <thead>
+          <tr><th>Name</th> <th>Description</th> <th></th></tr>
+        </thead>
+        <tbody>
+          {{#each effects}}
+            <tr data-effect-id="{{id}}">
+              <td>{{name}}</td>
+              <td>{{summary}}</td>
+              <td class="item-controls">
+                <a class="item-control item-delete" title="Cancel Effect">
+                  <i class="fas fa-xmark"></i>
+                </a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
     </div>
   </section>
 </form>
