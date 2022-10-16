@@ -35,3 +35,14 @@ Feature: Damage Class adder
     Given my character has an attack
     When I change the attack to do Killing Damage
     Then the attack should cost 15 AP per d6
+
+  Scenario: Adding STR to a Normal Damage attack
+    Given I have 20 STR
+    When I do a 2d6 Normal Damage roll with my STR added
+    Then I should roll 6d6 Normal Damage
+
+  Scenario: Adding STR to an HKA
+    Given I have 30 STR
+    And I have a 2d6 Killing Attack named "Powerful Bite"
+    When I roll damage for "Powerful Bite" with my STR added
+    Then I should roll 4d6 Killing Damage
