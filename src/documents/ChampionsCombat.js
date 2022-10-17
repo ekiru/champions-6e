@@ -1,7 +1,7 @@
 import * as hooks from "../hooks.js";
 import { CombatOrder } from "../mechanics/combat-order.js";
 import * as assert from "../util/assert.js";
-import { compareBy, compareByLexically } from "../util/sort.js";
+import { compareBy } from "../util/sort.js";
 
 const supersuper = function (self) {
   // 1 = ChampionsCombat, 2 = Combat, 3 = ClientDocumentMixin(Combat)
@@ -175,52 +175,14 @@ export default class ChampionsCombat extends Combat {
    * ordered list of Combatants with phases in that segment.
    */
   calculatePhaseChart(spdChanged) {
-    const phases = {};
-    for (let i = 1; i <= 12; i++) {
-      phases[i] = [];
-    }
-
-    const addPhase = (combatant, phase) => {
-      const priorCount = phases[phase].length;
-      phases[phase].push(combatant);
-      if (priorCount > 0) {
-        const dex = combatant.actor.system.characteristics.dex.total;
-        const prior = phases[phase][priorCount - 1];
-        if (prior.actor.system.characteristics.dex.total === dex) {
-          this.#ties.add(combatant).add(prior);
-        }
-      }
-    };
-
-    const combatants = this.combatants.contents.sort(
-      compareByLexically(
-        (combatant) => -combatant.actor.system.characteristics.dex.total,
-        (combatant) => -combatant.initiative
-      )
-    );
     this.#ties = new Set();
-    for (const combatant of combatants) {
-      const oldPhases = this.#spdChanges.get(combatant.actorId)?.old?.phases;
-      let nextOldPhase;
-      if (spdChanged && oldPhases) {
-        for (const phase of oldPhases) {
-          if (this.current.segment == null || phase > this.current.segment) {
-            nextOldPhase = phase;
-            break;
-          }
-          addPhase(combatant, phase);
-        }
-      }
-      for (const phase of combatant.actor.system.phases) {
-        if (spdChanged && oldPhases && this.current.segment) {
-          if (phase <= this.current.segment || phase < nextOldPhase) {
-            continue;
-          }
-        }
-        addPhase(combatant, phase);
-      }
-    }
-    return phases;
+    return this.combatOrder.calculatePhaseChart({
+      combatants: this.combatants.contents,
+      ties: this.#ties,
+      currentSegment: this.current.segment,
+      spdChanges: this.#spdChanges,
+      spdChanged,
+    });
   }
 
   #phaseForTurn(turn) {
