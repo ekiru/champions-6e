@@ -1,5 +1,32 @@
 import { compareByLexically } from "../util/sort.js";
 
+/**
+ * @typedef {object} CombatantData
+ * @property {Combatant} asDocument The original combatant Document
+ * @property {string} actorId The actor ID for the combatant
+ * @property {number} dex The dexterity of the combatant
+ * @property {number?} initiative The tie-break roll for the combatant
+ * @property {number[]} phases The phases on which the combatant can act
+ */
+
+/**
+ * Wraps a combatant for use in {@link CombatOrder}
+ *
+ * @private
+ * @param {Combatant} combatant The combatant to wrap
+ * @returns {CombatantData} The wrapped combatant
+ */
+function wrapCombatant(combatant) {
+  const result = {};
+  result.asDocument = combatant;
+
+  result.actorId = combatant.actorId;
+  result.dex = combatant.actor.system.characteristics.dex.total;
+  result.initiative = combatant.initiative;
+  result.phases = combatant.actor.system.phases;
+  return result;
+}
+
 export class CombatOrder {
   calculatePhaseChart({
     combatants,
@@ -14,21 +41,23 @@ export class CombatOrder {
       phases[i] = [];
     }
 
+    combatants = combatants.map(wrapCombatant);
+
     const addPhase = (combatant, phase) => {
       const priorCount = phases[phase].length;
       phases[phase].push(combatant);
       if (priorCount > 0) {
-        const dex = combatant.actor.system.characteristics.dex.total;
+        const dex = combatant.dex;
         const prior = phases[phase][priorCount - 1];
-        if (prior.actor.system.characteristics.dex.total === dex) {
-          ties.add(combatant).add(prior);
+        if (prior.dex === dex) {
+          ties.add(combatant.asDocument).add(prior.asDocument);
         }
       }
     };
 
     combatants.sort(
       compareByLexically(
-        (combatant) => -combatant.actor.system.characteristics.dex.total,
+        (combatant) => -combatant.dex,
         (combatant) => -combatant.initiative
       )
     );
@@ -44,7 +73,7 @@ export class CombatOrder {
           addPhase(combatant, phase);
         }
       }
-      for (const phase of combatant.actor.system.phases) {
+      for (const phase of combatant.phases) {
         if (spdChanged && oldPhases && currentSegment) {
           if (phase <= currentSegment || phase < nextOldPhase) {
             continue;
@@ -52,6 +81,10 @@ export class CombatOrder {
         }
         addPhase(combatant, phase);
       }
+    }
+
+    for (let i = 1; i <= 12; i++) {
+      phases[i] = phases[i].map((c) => c.asDocument);
     }
     return phases;
   }
