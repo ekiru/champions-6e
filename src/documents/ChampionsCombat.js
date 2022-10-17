@@ -91,16 +91,11 @@ export default class ChampionsCombat extends Combat {
     const phases = this.calculatePhaseChart(spdChanged);
     this.#phaseChart = phases;
 
-    const turns = [];
-    const startingSegment = this.round === 1 ? 12 : 1;
-    for (let i = startingSegment; i <= 12; i++) {
-      turns.push(...phases[i]);
-    }
-    if (this.turn !== null) {
-      // in case the number of turns shrunk
-      this.turn = Math.min(this.turn, turns.length - 1);
-      this.update({ turn: this.turn });
-    }
+    const turns = this.combatOrder.linearizePhases({
+      phases,
+      round: this.round,
+    });
+    this.#clampTurn(turns);
 
     const current = turns[this.turn];
     this.current = {
@@ -121,6 +116,14 @@ export default class ChampionsCombat extends Combat {
     }
     this.#resolveTies();
     return (this.turns = turns);
+  }
+
+  #clampTurn(turns) {
+    if (this.turn !== null) {
+      // in case the number of turns shrunk
+      this.turn = Math.min(this.turn, turns.length - 1);
+      this.update({ turn: this.turn });
+    }
   }
 
   async moveToPhase(segment, character) {

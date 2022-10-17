@@ -121,4 +121,14 @@ export class CombatOrder {
     }
     return phases;
   }
+
+  linearizePhases({ phases, round }) {
+    const turns = [];
+    const startingSegment = round === 1 ? 12 : 1;
+    for (let i = startingSegment; i <= 12; i++) {
+      turns.push(...phases[i]);
+    }
+
+    return turns;
+  }
 }
