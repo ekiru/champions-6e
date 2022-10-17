@@ -1,4 +1,5 @@
 import * as hooks from "../hooks.js";
+import { CombatOrder } from "../mechanics/combat-order.js";
 import * as assert from "../util/assert.js";
 import { compareBy, compareByLexically } from "../util/sort.js";
 
@@ -23,11 +24,22 @@ Hooks.on(hooks.SPD_CHANGE, (...args) => {
 });
 
 export default class ChampionsCombat extends Combat {
+  #combatOrder;
+
   #phaseChart;
   #ties;
 
   #spdChanges = new Map();
   #spdChangesPending;
+
+  constructor(...args) {
+    super(...args);
+    this.#combatOrder = new CombatOrder();
+  }
+
+  get combatOrder() {
+    return this.#combatOrder;
+  }
 
   get hasSpdChanges() {
     return this.#spdChanges.size > 0;
@@ -278,6 +290,8 @@ export default class ChampionsCombat extends Combat {
   async _onUpdate(data, options, userId) {
     await super._onUpdate(data, options, userId);
 
+    await this.#updateCombatOrder(data);
+
     if (
       Object.prototype.hasOwnProperty.call(data, "round") &&
       !Object.prototype.hasOwnProperty.call(data, "combatants")
@@ -320,4 +334,6 @@ export default class ChampionsCombat extends Combat {
       this.#ties.clear();
     }
   }
+
+  #updateCombatOrder() {}
 }
