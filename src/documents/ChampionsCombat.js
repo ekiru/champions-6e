@@ -10,6 +10,10 @@ const supersuper = function (self) {
   );
 };
 
+const hasOwnProperty = function (object, property) {
+  return Object.prototype.hasOwnProperty.call(object, property);
+};
+
 Hooks.on(hooks.SPD_CHANGE, (...args) => {
   let renderNeeded = false;
   for (const combat of game.combats) {
@@ -34,7 +38,7 @@ export default class ChampionsCombat extends Combat {
 
   constructor(...args) {
     super(...args);
-    this.#combatOrder = new CombatOrder();
+    this.#combatOrder = new CombatOrder(this.combatants);
   }
 
   get combatOrder() {
@@ -177,7 +181,6 @@ export default class ChampionsCombat extends Combat {
   calculatePhaseChart(spdChanged) {
     this.#ties = new Set();
     return this.combatOrder.calculatePhaseChart({
-      combatants: this.combatants.contents,
       ties: this.#ties,
       currentSegment: this.current.segment,
       spdChanges: this.#spdChanges,
@@ -230,6 +233,36 @@ export default class ChampionsCombat extends Combat {
   }
 
   /** @override */
+  _onCreateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
+    super._onCreateEmbeddedDocuments(
+      embeddedName,
+      documents,
+      result,
+      options,
+      userId
+    );
+
+    for (const doc of documents) {
+      this.combatOrder.addCombatant(doc);
+    }
+  }
+
+  /** @override */
+  _onDeleteEmbeddedDocuments(embeddedName, documents, result, options, userId) {
+    super._onDeleteEmbeddedDocuments(
+      embeddedName,
+      documents,
+      result,
+      options,
+      userId
+    );
+
+    for (const doc of documents) {
+      this.combatOrder.removeCombatant(doc.id);
+    }
+  }
+
+  /** @override */
   _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
     const ss = supersuper(this);
     ss._onUpdateEmbeddedDocuments.call(
@@ -240,6 +273,12 @@ export default class ChampionsCombat extends Combat {
       options,
       userId
     );
+
+    for (const change of result) {
+      if (hasOwnProperty(change, "initiative")) {
+        this.combatOrder.updateInitiative(change._id, change.initiative);
+      }
+    }
 
     this.setupTurns();
 
@@ -297,5 +336,9 @@ export default class ChampionsCombat extends Combat {
     }
   }
 
-  #updateCombatOrder() {}
+  #updateCombatOrder(data) {
+    if (Object.prototype.hasOwnProperty.call(data, "combatants")) {
+      console.log("combatants change", data.combatants);
+    }
+  }
 }
