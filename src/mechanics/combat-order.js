@@ -44,6 +44,7 @@ export class CombatOrder {
 
   #phaseChart;
   #pendingChanges;
+  #changesArePending = false;
   #ties = new Set();
 
   constructor(turn, combatants, { breakTies }) {
@@ -102,7 +103,10 @@ export class CombatOrder {
     this.#pendingChanges.set(combatantId, newPhases);
   }
 
-  calculatePhaseChart({ currentSegment, spdChanges, spdChanged }) {
+  calculatePhaseChart({ currentSegment, spdChanged }) {
+    if (this.#changesArePending) {
+      spdChanged = true;
+    }
     if (this.#phaseChart) {
       return this.#phaseChart;
     }
@@ -133,10 +137,10 @@ export class CombatOrder {
       )
     );
     for (const combatant of this.#combatants) {
-      const oldPhases = spdChanges.get(combatant.actorId)?.old?.phases;
+      const phases = this.#phasesFor(combatant);
       let nextOldPhase;
-      if (spdChanged && oldPhases) {
-        for (const phase of oldPhases) {
+      if (spdChanged && phases.old) {
+        for (const phase of phases.old) {
           if (currentSegment == null || phase > currentSegment) {
             nextOldPhase = phase;
             break;
@@ -144,8 +148,8 @@ export class CombatOrder {
           addPhase(combatant, phase);
         }
       }
-      for (const phase of combatant.phases) {
-        if (spdChanged && oldPhases && currentSegment) {
+      for (const phase of phases.new) {
+        if (spdChanged && phases.old && currentSegment) {
           if (phase <= currentSegment || phase < nextOldPhase) {
             continue;
           }
@@ -158,6 +162,15 @@ export class CombatOrder {
       phases[i] = phases[i].map((c) => c.asDocument);
     }
     this.#phaseChart = phases;
+
+    if (spdChanged) {
+      if (this.#ties.size) {
+        this.#changesArePending = true;
+      } else {
+        this.#pendingChanges.clear();
+        this.#changesArePending = false;
+      }
+    }
     return phases;
   }
 
@@ -186,5 +199,14 @@ export class CombatOrder {
 
   #changed() {
     this.#phaseChart = null;
+  }
+
+  #phasesFor(combatant) {
+    const changed = this.#pendingChanges.get(combatant);
+    if (changed) {
+      return { old: combatant.phases, new: changed };
+    } else {
+      return { old: null, new: combatant.phases };
+    }
   }
 }

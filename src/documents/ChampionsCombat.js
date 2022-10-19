@@ -93,9 +93,6 @@ export default class ChampionsCombat extends Combat {
    * @param {boolean?} spdChanged whether or not to apply the rules for SPD changes.
    */
   setupTurns(spdChanged = false) {
-    if (this.#spdChangesPending) {
-      spdChanged = true;
-    }
     const phases = this.calculatePhaseChart(spdChanged);
     this.#phaseChart = phases;
 
@@ -114,7 +111,7 @@ export default class ChampionsCombat extends Combat {
       segment: this.turn !== null ? this.#phaseForTurn(this.turn) : null,
     };
 
-    if (spdChanged) {
+    if (spdChanged || this.#spdChangesPending) {
       if (this.ties.size) {
         this.#spdChangesPending = true;
       } else {
