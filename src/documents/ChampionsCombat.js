@@ -28,8 +28,6 @@ Hooks.on(hooks.SPD_CHANGE, (...args) => {
 });
 
 export default class ChampionsCombat extends Combat {
-  #combatOrder;
-
   #phaseChart;
   #ties;
 
@@ -38,11 +36,16 @@ export default class ChampionsCombat extends Combat {
 
   constructor(...args) {
     super(...args);
-    this.#combatOrder = new CombatOrder(this.combatants);
   }
 
-  get combatOrder() {
-    return this.#combatOrder;
+  /** @override */
+  prepareDerivedData() {
+    if (game._documentsReady && !this.combatOrder) {
+      this.combatOrder = new CombatOrder(this.combatants);
+    }
+    if (this.combatants.length > 0 && !this.turns) {
+      this.setupTurns();
+    }
   }
 
   get hasSpdChanges() {
