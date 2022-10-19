@@ -41,7 +41,16 @@ export default class ChampionsCombat extends Combat {
   /** @override */
   prepareDerivedData() {
     if (game._documentsReady && !this.combatOrder) {
-      this.combatOrder = new CombatOrder(this.round, this.combatants);
+      this.combatOrder = new CombatOrder(this.round, this.combatants, {
+        breakTies: (tiedCombatants) =>
+          this.rollInitiative(
+            tiedCombatants.map((c) => c.id),
+            {
+              updateTurn: false,
+              messageOptions: { flavor: "Breaking initiative ties" },
+            }
+          ),
+      });
     }
     if (this.combatants.length > 0 && !this.turns) {
       this.setupTurns();
@@ -327,19 +336,7 @@ export default class ChampionsCombat extends Combat {
   }
 
   async #resolveTies() {
-    const tiedCombatants = this.combatants.contents
-      .filter(
-        (combatant) =>
-          this.ties && this.ties.has(combatant) && combatant.initiative === null
-      )
-      .map((combatant) => combatant.id);
-    if (tiedCombatants.length > 0) {
-      await this.rollInitiative(tiedCombatants, {
-        updateTurn: false,
-        messageOptions: { flavor: "Breaking initiative ties" },
-      });
-      this.ties.clear();
-    }
+    await this.combatOrder.resolveTies();
   }
 
   #updateCombatOrder(data) {

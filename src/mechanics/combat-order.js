@@ -35,6 +35,8 @@ function wrapCombatant(combatant) {
 }
 
 export class CombatOrder {
+  #breakTies;
+
   #combatants;
   #combatantMap;
 
@@ -44,7 +46,8 @@ export class CombatOrder {
   #pendingChanges;
   #ties = new Set();
 
-  constructor(turn, combatants) {
+  constructor(turn, combatants, { breakTies }) {
+    this.#breakTies = breakTies;
     this.#turn = turn;
     this.#combatants = combatants.map(wrapCombatant);
     this.#combatantMap = new Map();
@@ -118,7 +121,7 @@ export class CombatOrder {
         const dex = combatant.dex;
         const prior = phases[phase][priorCount - 1];
         if (prior.dex === dex) {
-          this.#ties.add(combatant.asDocument).add(prior.asDocument);
+          this.#ties.add(combatant).add(prior);
         }
       }
     };
@@ -156,6 +159,19 @@ export class CombatOrder {
     }
     this.#phaseChart = phases;
     return phases;
+  }
+
+  async resolveTies() {
+    const tiedCombatants = [];
+    for (const combatant of this.#ties) {
+      if (combatant.initiative === null) {
+        tiedCombatants.push(combatant.asDocument);
+      }
+    }
+    if (tiedCombatants.length) {
+      await this.#breakTies.call(null, tiedCombatants);
+      this.ties.clear();
+    }
   }
 
   linearizePhases({ phases }) {
