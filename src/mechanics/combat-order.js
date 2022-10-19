@@ -42,6 +42,7 @@ export class CombatOrder {
 
   #phaseChart;
   #pendingChanges;
+  #ties = new Set();
 
   constructor(turn, combatants) {
     this.#turn = turn;
@@ -51,6 +52,10 @@ export class CombatOrder {
       this.#combatantMap.set(combatant.id, combatant);
     }
     this.#pendingChanges = new Map();
+  }
+
+  get ties() {
+    return this.#ties;
   }
 
   get turn() {
@@ -94,11 +99,12 @@ export class CombatOrder {
     this.#pendingChanges.set(combatantId, newPhases);
   }
 
-  calculatePhaseChart({ ties, currentSegment, spdChanges, spdChanged }) {
+  calculatePhaseChart({ currentSegment, spdChanges, spdChanged }) {
     if (this.#phaseChart) {
       return this.#phaseChart;
     }
 
+    this.#ties = new Set();
     // TODO refactor further for cleaner code and not being foundry dependent
     const phases = {};
     for (let i = 1; i <= 12; i++) {
@@ -112,7 +118,7 @@ export class CombatOrder {
         const dex = combatant.dex;
         const prior = phases[phase][priorCount - 1];
         if (prior.dex === dex) {
-          ties.add(combatant.asDocument).add(prior.asDocument);
+          this.#ties.add(combatant.asDocument).add(prior.asDocument);
         }
       }
     };

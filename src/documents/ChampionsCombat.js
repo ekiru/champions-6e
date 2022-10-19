@@ -110,7 +110,7 @@ export default class ChampionsCombat extends Combat {
     };
 
     if (spdChanged) {
-      if (this.#ties.size) {
+      if (this.ties.size) {
         this.#spdChangesPending = true;
       } else {
         this.#spdChanges.clear();
@@ -185,13 +185,15 @@ export default class ChampionsCombat extends Combat {
    * ordered list of Combatants with phases in that segment.
    */
   calculatePhaseChart(spdChanged) {
-    this.#ties = new Set();
     return this.combatOrder.calculatePhaseChart({
-      ties: this.#ties,
       currentSegment: this.current.segment,
       spdChanges: this.#spdChanges,
       spdChanged,
     });
+  }
+
+  get ties() {
+    return this.combatOrder.ties;
   }
 
   #phaseForTurn(turn) {
@@ -328,9 +330,7 @@ export default class ChampionsCombat extends Combat {
     const tiedCombatants = this.combatants.contents
       .filter(
         (combatant) =>
-          this.#ties &&
-          this.#ties.has(combatant) &&
-          combatant.initiative === null
+          this.ties && this.ties.has(combatant) && combatant.initiative === null
       )
       .map((combatant) => combatant.id);
     if (tiedCombatants.length > 0) {
@@ -338,7 +338,7 @@ export default class ChampionsCombat extends Combat {
         updateTurn: false,
         messageOptions: { flavor: "Breaking initiative ties" },
       });
-      this.#ties.clear();
+      this.ties.clear();
     }
   }
 
