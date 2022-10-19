@@ -38,12 +38,30 @@ export class CombatOrder {
   #combatants;
   #combatantMap;
 
-  constructor(combatants) {
+  #turn;
+
+  #phaseChart;
+  #pendingChanges;
+
+  constructor(turn, combatants) {
+    this.#turn = turn;
     this.#combatants = combatants.map(wrapCombatant);
     this.#combatantMap = new Map();
     for (const combatant of this.#combatants) {
       this.#combatantMap.set(combatant.id, combatant);
     }
+    this.#pendingChanges = new Map();
+  }
+
+  get turn() {
+    return this.#turn;
+  }
+  set turn(newTurn) {
+    if (newTurn === this.#turn) {
+      return;
+    }
+    // eventually we will need to check for going to/from turn 1.
+    this.#turn = newTurn;
   }
 
   addCombatant(document) {
@@ -67,6 +85,10 @@ export class CombatOrder {
     assert.precondition(this.#combatantMap.has(combatantId));
     const combatant = this.#combatantMap.get(combatantId);
     combatant.initiative = initiative;
+  }
+
+  changeSpeed(combatantId, newSpeed, newPhases) {
+    this.#pendingChanges.set(combatantId, newPhases);
   }
 
   calculatePhaseChart({ ties, currentSegment, spdChanges, spdChanged }) {
@@ -122,9 +144,9 @@ export class CombatOrder {
     return phases;
   }
 
-  linearizePhases({ phases, round }) {
+  linearizePhases({ phases }) {
     const turns = [];
-    const startingSegment = round === 1 ? 12 : 1;
+    const startingSegment = this.turn === 1 ? 12 : 1;
     for (let i = startingSegment; i <= 12; i++) {
       turns.push(...phases[i]);
     }

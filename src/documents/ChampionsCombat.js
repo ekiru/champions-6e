@@ -41,7 +41,7 @@ export default class ChampionsCombat extends Combat {
   /** @override */
   prepareDerivedData() {
     if (game._documentsReady && !this.combatOrder) {
-      this.combatOrder = new CombatOrder(this.combatants);
+      this.combatOrder = new CombatOrder(this.round, this.combatants);
     }
     if (this.combatants.length > 0 && !this.turns) {
       this.setupTurns();
@@ -217,7 +217,9 @@ export default class ChampionsCombat extends Combat {
   }
 
   onSpdChange(actor, oldSpeed, oldPhases, newSpeed, newPhases) {
-    if (this.getCombatantByActor(actor.id)) {
+    const combatant = this.getCombatantByActor(actor.id);
+    if (combatant) {
+      this.combatOrder.changeSpeed(combatant.id, newSpeed, newPhases);
       const change = {
         old: { spd: oldSpeed, phases: new Set(oldPhases) },
         new: { spd: newSpeed, phases: newPhases },
@@ -299,10 +301,8 @@ export default class ChampionsCombat extends Combat {
 
     await this.#updateCombatOrder(data);
 
-    if (
-      Object.prototype.hasOwnProperty.call(data, "round") &&
-      !Object.prototype.hasOwnProperty.call(data, "combatants")
-    ) {
+    if (Object.prototype.hasOwnProperty.call(data, "round")) {
+      this.combatOrder.turn = data.round;
       // in this case, the base Combat class won't update turns, but we need to in order to handle Turn 1 correctly
       this.setupTurns();
     }
