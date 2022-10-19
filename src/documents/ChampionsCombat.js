@@ -34,10 +34,6 @@ export default class ChampionsCombat extends Combat {
   #spdChanges = new Map();
   #spdChangesPending;
 
-  constructor(...args) {
-    super(...args);
-  }
-
   /** @override */
   prepareDerivedData() {
     if (game._documentsReady && !this.combatOrder) {
