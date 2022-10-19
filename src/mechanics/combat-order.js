@@ -69,6 +69,7 @@ export class CombatOrder {
     const combatant = wrapCombatant(document);
     this.#combatants.push(combatant);
     this.#combatantMap.set(combatant.id, combatant);
+    this.#changed();
   }
 
   removeCombatant(combatantId) {
@@ -79,12 +80,14 @@ export class CombatOrder {
     assert.that(index >= 0);
     this.#combatants.splice(index, 1);
     this.#combatantMap.delete(combatantId);
+    this.#changed();
   }
 
   updateInitiative(combatantId, initiative) {
     assert.precondition(this.#combatantMap.has(combatantId));
     const combatant = this.#combatantMap.get(combatantId);
     combatant.initiative = initiative;
+    this.#changed();
   }
 
   changeSpeed(combatantId, newSpeed, newPhases) {
@@ -92,6 +95,10 @@ export class CombatOrder {
   }
 
   calculatePhaseChart({ ties, currentSegment, spdChanges, spdChanged }) {
+    if (this.#phaseChart) {
+      return this.#phaseChart;
+    }
+
     // TODO refactor further for cleaner code and not being foundry dependent
     const phases = {};
     for (let i = 1; i <= 12; i++) {
@@ -141,6 +148,7 @@ export class CombatOrder {
     for (let i = 1; i <= 12; i++) {
       phases[i] = phases[i].map((c) => c.asDocument);
     }
+    this.#phaseChart = phases;
     return phases;
   }
 
@@ -152,5 +160,9 @@ export class CombatOrder {
     }
 
     return turns;
+  }
+
+  #changed() {
+    this.#phaseChart = null;
   }
 }
