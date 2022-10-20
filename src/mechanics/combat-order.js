@@ -191,13 +191,19 @@ export class CombatOrder {
   }
 
   linearizePhases({ phases }) {
-    const turns = [];
+    const phaseOrder = [];
     const startingSegment = this.turn === 1 ? 12 : 1;
-    for (let i = startingSegment; i <= 12; i++) {
-      turns.push(...phases[i]);
+    for (let segment = startingSegment; segment <= 12; segment++) {
+      for (const combatant of phases[segment]) {
+        phaseOrder.push({
+          combatant,
+          segment,
+          dex: combatant.dex,
+        });
+      }
     }
 
-    return turns;
+    return phaseOrder;
   }
 
   #changed() {

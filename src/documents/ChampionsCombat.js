@@ -29,7 +29,7 @@ Hooks.on(hooks.SPD_CHANGE, (...args) => {
 
 export default class ChampionsCombat extends Combat {
   #phaseChart;
-  #ties;
+  #phaseOrder;
 
   #spdChanges = new Map();
   #spdChangesPending;
@@ -96,20 +96,14 @@ export default class ChampionsCombat extends Combat {
     const phases = this.calculatePhaseChart(spdChanged);
     this.#phaseChart = phases;
 
-    const turns = this.combatOrder.linearizePhases({
+    this.#phaseOrder = this.combatOrder.linearizePhases({
       phases,
       round: this.round,
     });
+    const turns = this.#phaseOrder.map((phase) => phase.combatant);
     this.#clampTurn(turns);
 
-    const current = turns[this.turn];
-    this.current = {
-      round: this.round,
-      turn: this.turn,
-      combatantId: current?.id,
-      tokenId: current?.tokenId,
-      segment: this.turn !== null ? this.#phaseForTurn(this.turn) : null,
-    };
+    this.#setCurrent(turns);
 
     if (spdChanged || this.#spdChangesPending) {
       if (this.ties.size) {
@@ -121,6 +115,22 @@ export default class ChampionsCombat extends Combat {
     }
     this.#resolveTies();
     return (this.turns = turns);
+  }
+
+  #setCurrent(turns) {
+    const current = turns[this.turn];
+    this.current = {
+      round: this.round,
+      turn: this.turn,
+      combatantId: current?.id,
+      tokenId: current?.tokenId,
+    };
+    if (this.#phaseOrder && this.turn !== null) {
+      this.current.segment = this.#phaseOrder[this.turn].segment;
+      this.current.dex = this.#phaseOrder[this.turn].dex;
+    } else {
+      this.current.segment = this.current.dex = null;
+    }
   }
 
   #clampTurn(turns) {
@@ -196,28 +206,6 @@ export default class ChampionsCombat extends Combat {
 
   get ties() {
     return this.combatOrder.ties;
-  }
-
-  #phaseForTurn(turn) {
-    assert.precondition(
-      this.#phaseChart !== undefined,
-      "#phaseForTurn needs #phaseChart to be initialized"
-    );
-    if (this.round === 1) {
-      // Turn 1 is only segment 12.
-      return 12;
-    }
-    let i = 0;
-    for (const [segment, combatants] of Object.entries(this.#phaseChart)) {
-      for (const combatant of combatants) {
-        combatant;
-        if (i === turn) {
-          return Number(segment);
-        }
-        i++;
-      }
-    }
-    assert.that(false, `${turn} is bigger than the phase chart`);
   }
 
   onSpdChange(actor, oldSpeed, oldPhases, newSpeed, newPhases) {
@@ -320,10 +308,7 @@ export default class ChampionsCombat extends Combat {
       }
     }
 
-    if (!("segment" in this.current)) {
-      this.current.segment =
-        this.turn !== null ? this.#phaseForTurn(this.turn) : null;
-    }
+    this.#setCurrent(this.turns);
 
     await this.#resolveTies();
   }
