@@ -50,9 +50,10 @@ export class CombatOrder {
 
   #turn;
 
+  #hasDexChanges = false;
   #hasChanged = false;
   #phaseChart;
-  #pendingChanges;
+  #pendingSpeedChanges;
   #changesArePending = false;
   #ties = new Set();
 
@@ -64,7 +65,11 @@ export class CombatOrder {
     for (const combatant of this.#combatants) {
       this.#combatantMap.set(combatant.id, combatant);
     }
-    this.#pendingChanges = new Map();
+    this.#pendingSpeedChanges = new Map();
+  }
+
+  get hasDexChanges() {
+    return this.#hasDexChanges;
   }
 
   get phaseChart() {
@@ -116,8 +121,17 @@ export class CombatOrder {
     this.#markChanged();
   }
 
+  changeDex(combatantId, newDex) {
+    assert.precondition(this.#combatantMap.has(combatantId));
+    const combatant = this.#combatantMap.get(combatantId);
+    combatant.dex = newDex;
+    this.#hasDexChanges = true;
+    this.#markChanged();
+  }
+
   changeSpeed(combatantId, newSpeed, newPhases) {
-    this.#pendingChanges.set(combatantId, newPhases);
+    assert.precondition(this.#combatantMap.has(combatantId));
+    this.#pendingSpeedChanges.set(combatantId, newPhases);
   }
 
   calculatePhaseChart({ currentSegment, spdChanged }) {
@@ -170,7 +184,7 @@ export class CombatOrder {
       if (this.#ties.size) {
         this.#changesArePending = true;
       } else {
-        this.#pendingChanges.clear();
+        this.#pendingSpeedChanges.clear();
         this.#changesArePending = false;
       }
     }
@@ -232,7 +246,7 @@ export class CombatOrder {
   }
 
   #phasesFor(combatant) {
-    const changed = this.#pendingChanges.get(combatant.id);
+    const changed = this.#pendingSpeedChanges.get(combatant.id);
     if (changed) {
       return { old: combatant.phases, new: changed };
     } else {

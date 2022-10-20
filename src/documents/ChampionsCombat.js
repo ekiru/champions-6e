@@ -14,10 +14,16 @@ const hasOwnProperty = function (object, property) {
   return Object.prototype.hasOwnProperty.call(object, property);
 };
 
-Hooks.on(hooks.SPD_CHANGE, (...args) => {
+/**
+ * Calls an onBlaChange method on every combat and re-renders things as needed.
+ *
+ * @param {Function} method The method to call on each combat.
+ * @param {any[]} args The hook arguments
+ */
+function changeHook(method, args) {
   let renderNeeded = false;
   for (const combat of game.combats) {
-    const changed = combat.onSpdChange(...args);
+    const changed = method.call(combat, ...args);
     if (changed && combat.collection.viewed === combat) {
       renderNeeded = renderNeeded || true;
     }
@@ -25,6 +31,14 @@ Hooks.on(hooks.SPD_CHANGE, (...args) => {
   if (renderNeeded) {
     game.combats.render();
   }
+}
+
+Hooks.on(hooks.DEX_CHANGE, (...args) => {
+  changeHook(ChampionsCombat.prototype.onDexChange, args);
+});
+
+Hooks.on(hooks.SPD_CHANGE, (...args) => {
+  changeHook(ChampionsCombat.prototype.onSpdChange, args);
 });
 
 export default class ChampionsCombat extends Combat {
@@ -206,6 +220,13 @@ export default class ChampionsCombat extends Combat {
     return this.combatOrder.ties;
   }
 
+  onDexChange(actor, oldDex, newDex) {
+    const combatant = this.getCombatantByActor(actor.id);
+    if (combatant) {
+      this.combatOrder.changeDex(combatant.id, newDex);
+    }
+  }
+
   onSpdChange(actor, oldSpeed, oldPhases, newSpeed, newPhases) {
     const combatant = this.getCombatantByActor(actor.id);
     if (combatant) {
@@ -302,10 +323,24 @@ export default class ChampionsCombat extends Combat {
 
     await this.#updateCombatOrder(data);
 
+    let alreadyRecalculated = false;
+
     if (Object.prototype.hasOwnProperty.call(data, "round")) {
       this.combatOrder.turn = data.round;
       // in this case, the base Combat class won't update turns, but we need to in order to handle Turn 1 correctly
       await this.#recalculatePhaseOrder();
+      alreadyRecalculated = true;
+    }
+
+    const segment = this.current.segment;
+    this.#setCurrent(this.turns);
+    if (
+      !alreadyRecalculated &&
+      this.combatOrder.hasDexChanges &&
+      segment !== this.current.segment
+    ) {
+      await this.#recalculatePhaseOrder();
+      this.#setCurrent(this.turns);
     }
 
     if (
@@ -316,10 +351,6 @@ export default class ChampionsCombat extends Combat {
         await this.combatant.actor?.onNewPhase();
       }
     }
-
-    this.#setCurrent(this.turns);
-
-    await this.#resolveTies();
   }
 
   async #recalculatePhaseOrder(spdChanged = false) {

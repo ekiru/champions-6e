@@ -106,6 +106,7 @@ const MODIFIABLE_TRAITS = [].concat(
 );
 
 export default class ChampionsActor extends Actor {
+  #oldDex;
   #oldPhases;
   #oldSpeed;
 
@@ -173,6 +174,12 @@ export default class ChampionsActor extends Actor {
     } else {
       this.#oldSpeed = undefined;
     }
+
+    if (foundry.utils.hasProperty(changes, "system.characteristics.dex")) {
+      this.#oldDex = this.system.characteristics.dex.total;
+    } else {
+      this.#oldDex = undefined;
+    }
   }
 
   /** @override*/
@@ -190,6 +197,10 @@ export default class ChampionsActor extends Actor {
           this.system.phases
         );
       }
+    }
+    if (game.userId === userId && this.#oldDex !== undefined) {
+      const newDex = this.system.characteristics.dex.total;
+      Hooks.callAll(hooks.DEX_CHANGE, this, this.#oldDex, newDex);
     }
   }
 

@@ -375,6 +375,104 @@ export function register(system, quench) {
             expect(this.combat.current.segment).to.equal(9);
           });
         });
+
+        describe("Changing DEX in the middle of a segment", function () {
+          beforeEach(async function () {
+            await Promise.all([
+              build
+                .at(this, "hare")
+                .character()
+                .withCharacteristic("dex", 15)
+                .build(),
+              build
+                .at(this, "tortoise")
+                .character()
+                .withCharacteristic("dex", 8)
+                .build(),
+            ]);
+            await build.combat(this, [this.hare, this.tortoise]);
+            await this.combat.startCombat();
+          });
+
+          it("Hare lowering her DEX shouldn't change the initiative order this segment", async function () {
+            await this.hare.update({ "system.characteristics.dex.value": 6 });
+            await waitOneMoment();
+
+            expect(
+              this.combat.turns.map((c) => c.actorId)
+            ).to.have.ordered.members([this.hare.id, this.tortoise.id]);
+          });
+        });
+
+        describe("Changing DEX impacts on the next segment", function () {
+          beforeEach(async function () {
+            await Promise.all([
+              build
+                .at(this, "millie")
+                .character()
+                .withCharacteristic("spd", 3)
+                .withCharacteristic("dex", 10)
+                .build(),
+              build
+                .at(this, "connie")
+                .character()
+                .withCharacteristic("spd", 3)
+                .withCharacteristic("dex", 12)
+                .build(),
+            ]);
+            await build.combat(this, [this.millie, this.connie]);
+            await this.combat.startCombat();
+            await this.combat.nextRound();
+            await this.combat.moveToPhase(4, this.millie);
+          });
+
+          it("after increasing her DEX and moving to the next segment, Millie should come before Connie", async function () {
+            await this.millie.update({
+              "system.characteristics.dex.value": 13,
+            });
+            while (this.combat.current.segment < 8) {
+              await this.combat.nextTurn();
+            }
+
+            expect(this.combat.combatant.actor).to.equal(this.millie);
+          });
+        });
+
+        describe("DEX collision", function () {
+          beforeEach(async function () {
+            await Promise.all([
+              build
+                .at(this, "carl")
+                .character()
+                .withCharacteristic("spd", 2)
+                .withCharacteristic("dex", 10)
+                .build(),
+              build
+                .at(this, "connie")
+                .character()
+                .withCharacteristic("spd", 3)
+                .withCharacteristic("dex", 12)
+                .build(),
+            ]);
+            await build.combat(this, [this.carl, this.connie]);
+            await this.combat.startCombat();
+            await this.combat.nextRound();
+            await this.combat.moveToPhase(8, this.connie);
+          });
+
+          it("should roll tie-breaks after Connie's DEX changes to 10", async function () {
+            await this.connie.update({
+              "system.characteristics.dex.modifier": -2,
+            });
+            await this.combat.nextTurn();
+            await this.combat.nextTurn();
+            await waitOneMoment();
+
+            for (const combatant of this.combat.combatants) {
+              expect(combatant.initiative).to.exist;
+            }
+          });
+        });
       });
     },
     { displayName: `${system}: Changes to Initiative Order` }
