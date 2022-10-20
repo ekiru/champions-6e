@@ -104,6 +104,9 @@ export class CombatOrder {
   }
 
   calculatePhaseChart({ currentSegment, spdChanged }) {
+    if (spdChanged) {
+      this.#changed();
+    }
     if (this.#changesArePending) {
       spdChanged = true;
     }
@@ -113,22 +116,10 @@ export class CombatOrder {
 
     this.#ties = new Set();
     // TODO refactor further for cleaner code and not being foundry dependent
-    const phases = {};
+    const phaseChart = {};
     for (let i = 1; i <= 12; i++) {
-      phases[i] = [];
+      phaseChart[i] = [];
     }
-
-    const addPhase = (combatant, phase) => {
-      const priorCount = phases[phase].length;
-      phases[phase].push(combatant);
-      if (priorCount > 0) {
-        const dex = combatant.dex;
-        const prior = phases[phase][priorCount - 1];
-        if (prior.dex === dex) {
-          this.#ties.add(combatant).add(prior);
-        }
-      }
-    };
 
     this.#combatants.sort(
       compareByLexically(
@@ -145,7 +136,7 @@ export class CombatOrder {
             nextOldPhase = phase;
             break;
           }
-          addPhase(combatant, phase);
+          this.#addPhase(phases, combatant, phase);
         }
       }
       for (const phase of phases.new) {
@@ -154,14 +145,14 @@ export class CombatOrder {
             continue;
           }
         }
-        addPhase(combatant, phase);
+        this.#addPhase(phaseChart, combatant, phase);
       }
     }
 
     for (let i = 1; i <= 12; i++) {
-      phases[i] = phases[i].map((c) => c.asDocument);
+      phaseChart[i] = phaseChart[i].map((c) => c.asDocument);
     }
-    this.#phaseChart = phases;
+    this.#phaseChart = phaseChart;
 
     if (spdChanged) {
       if (this.#ties.size) {
@@ -171,7 +162,19 @@ export class CombatOrder {
         this.#changesArePending = false;
       }
     }
-    return phases;
+    return phaseChart;
+  }
+
+  #addPhase(phases, combatant, phase) {
+    const priorCount = phases[phase].length;
+    phases[phase].push(combatant);
+    if (priorCount > 0) {
+      const dex = combatant.dex;
+      const prior = phases[phase][priorCount - 1];
+      if (prior.dex === dex) {
+        this.#ties.add(combatant).add(prior);
+      }
+    }
   }
 
   async resolveTies() {
@@ -202,7 +205,7 @@ export class CombatOrder {
   }
 
   #phasesFor(combatant) {
-    const changed = this.#pendingChanges.get(combatant);
+    const changed = this.#pendingChanges.get(combatant.id);
     if (changed) {
       return { old: combatant.phases, new: changed };
     } else {

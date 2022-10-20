@@ -187,7 +187,7 @@ export default class ChampionsActor extends Actor {
           this.#oldSpeed,
           this.#oldPhases,
           newSpeed,
-          this.system.phase
+          this.system.phases
         );
       }
     }
