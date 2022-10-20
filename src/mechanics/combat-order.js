@@ -136,7 +136,7 @@ export class CombatOrder {
             nextOldPhase = phase;
             break;
           }
-          this.#addPhase(phases, combatant, phase);
+          this.#addPhase(phaseChart, combatant, phase);
         }
       }
       for (const phase of phases.new) {
