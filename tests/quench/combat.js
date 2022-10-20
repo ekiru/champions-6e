@@ -317,7 +317,6 @@ export function register(system, quench) {
               "system.characteristics.spd.modifier": +2,
             });
             await this.combat.updatePhases();
-            await waitOneMoment();
           });
 
           it("Number Man's next Phase should be in segment 6", async function () {
@@ -358,7 +357,7 @@ export function register(system, quench) {
             await this.numberMan.update({
               "system.characteristics.spd.value": 6,
             });
-            this.combat.updatePhases();
+            await this.combat.updatePhases();
           });
 
           it("Number Man's next Phase should be in Segment 10", async function () {

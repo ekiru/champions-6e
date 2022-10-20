@@ -48,8 +48,13 @@ export default class ChampionsCombat extends Combat {
       });
     }
     if (this.combatants.length > 0 && !this.turns) {
-      this.setupTurns();
+      this.#initializePhaseOrder();
     }
+  }
+
+  #initializePhaseOrder() {
+    this.combatOrder.calculatePhaseChart({});
+    this.setupTurns();
   }
 
   get hasSpdChanges() {
@@ -89,10 +94,8 @@ export default class ChampionsCombat extends Combat {
    * @param {boolean?} spdChanged whether or not to apply the rules for SPD changes.
    */
   setupTurns(spdChanged = false) {
-    const phases = this.calculatePhaseChart(spdChanged);
-
     this.#phaseOrder = this.combatOrder.linearizePhases({
-      phases,
+      phases: this.combatOrder.phaseChart,
       round: this.round,
     });
     const turns = this.#phaseOrder.map((phase) => phase.combatant);
@@ -178,9 +181,9 @@ export default class ChampionsCombat extends Combat {
   }
 
   async updatePhases() {
-    this.setupTurns(true);
+    await this.#recalculatePhaseOrder(true);
     if (this.active) {
-      this.collection.render();
+      await this.collection.render();
     }
   }
 
@@ -229,7 +232,8 @@ export default class ChampionsCombat extends Combat {
 
   /** @override */
   _onCreateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
-    super._onCreateEmbeddedDocuments(
+    supersuper(this)._onCreateEmbeddedDocuments.call(
+      this,
       embeddedName,
       documents,
       result,
@@ -240,11 +244,18 @@ export default class ChampionsCombat extends Combat {
     for (const doc of documents) {
       this.combatOrder.addCombatant(doc);
     }
+
+    this.#recalculatePhaseOrder();
+
+    if (this.collection.viewed === this && options.render !== false) {
+      this.collection.render();
+    }
   }
 
   /** @override */
   _onDeleteEmbeddedDocuments(embeddedName, documents, result, options, userId) {
-    super._onDeleteEmbeddedDocuments(
+    supersuper(this)._onDeleteEmbeddedDocuments.call(
+      this,
       embeddedName,
       documents,
       result,
@@ -255,6 +266,8 @@ export default class ChampionsCombat extends Combat {
     for (const doc of documents) {
       this.combatOrder.removeCombatant(doc.id);
     }
+
+    this.#recalculatePhaseOrder();
   }
 
   /** @override */
@@ -275,7 +288,8 @@ export default class ChampionsCombat extends Combat {
       }
     }
 
-    this.setupTurns();
+    // Do we need this?
+    //this.setupTurns();
 
     if (this.collection.viewed === this && options.render !== false) {
       this.collection.render();
@@ -291,7 +305,7 @@ export default class ChampionsCombat extends Combat {
     if (Object.prototype.hasOwnProperty.call(data, "round")) {
       this.combatOrder.turn = data.round;
       // in this case, the base Combat class won't update turns, but we need to in order to handle Turn 1 correctly
-      this.setupTurns();
+      await this.#recalculatePhaseOrder();
     }
 
     if (
@@ -306,6 +320,15 @@ export default class ChampionsCombat extends Combat {
     this.#setCurrent(this.turns);
 
     await this.#resolveTies();
+  }
+
+  async #recalculatePhaseOrder(spdChanged = false) {
+    await this.combatOrder.calculatePhaseOrder({
+      currentSegment: this.current.segment,
+      spdChanged,
+    });
+
+    this.setupTurns();
   }
 
   async #resolveTies() {

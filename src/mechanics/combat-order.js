@@ -34,6 +34,14 @@ function wrapCombatant(combatant) {
   return result;
 }
 
+const compareByDexAndInitiative = compareByLexically(
+  (combatant) => -combatant.dex,
+  (combatant) => -combatant.initiative
+);
+
+const wrapAndCompare = (a, b) =>
+  compareByDexAndInitiative(wrapCombatant(a), wrapCombatant(b));
+
 export class CombatOrder {
   #breakTies;
 
@@ -42,6 +50,7 @@ export class CombatOrder {
 
   #turn;
 
+  #hasChanged = false;
   #phaseChart;
   #pendingChanges;
   #changesArePending = false;
@@ -56,6 +65,14 @@ export class CombatOrder {
       this.#combatantMap.set(combatant.id, combatant);
     }
     this.#pendingChanges = new Map();
+  }
+
+  get phaseChart() {
+    assert.precondition(
+      this.#phaseChart,
+      "Can't get phaseChart before it's been initialized"
+    );
+    return this.#phaseChart;
   }
 
   get ties() {
@@ -78,7 +95,7 @@ export class CombatOrder {
     const combatant = wrapCombatant(document);
     this.#combatants.push(combatant);
     this.#combatantMap.set(combatant.id, combatant);
-    this.#changed();
+    this.#markChanged();
   }
 
   removeCombatant(combatantId) {
@@ -89,14 +106,14 @@ export class CombatOrder {
     assert.that(index >= 0);
     this.#combatants.splice(index, 1);
     this.#combatantMap.delete(combatantId);
-    this.#changed();
+    this.#markChanged();
   }
 
   updateInitiative(combatantId, initiative) {
     assert.precondition(this.#combatantMap.has(combatantId));
     const combatant = this.#combatantMap.get(combatantId);
     combatant.initiative = initiative;
-    this.#changed();
+    this.#markChanged();
   }
 
   changeSpeed(combatantId, newSpeed, newPhases) {
@@ -105,28 +122,23 @@ export class CombatOrder {
 
   calculatePhaseChart({ currentSegment, spdChanged }) {
     if (spdChanged) {
-      this.#changed();
+      this.#markChanged();
     }
     if (this.#changesArePending) {
       spdChanged = true;
     }
-    if (this.#phaseChart) {
+    if (this.#phaseChart && !this.#hasChanged) {
       return this.#phaseChart;
     }
+    this.#hasChanged = false;
 
     this.#ties = new Set();
-    // TODO refactor further for cleaner code and not being foundry dependent
     const phaseChart = {};
     for (let i = 1; i <= 12; i++) {
       phaseChart[i] = [];
     }
 
-    this.#combatants.sort(
-      compareByLexically(
-        (combatant) => -combatant.dex,
-        (combatant) => -combatant.initiative
-      )
-    );
+    this.#combatants.sort(compareByDexAndInitiative);
     for (const combatant of this.#combatants) {
       const phases = this.#phasesFor(combatant);
       let nextOldPhase;
@@ -163,6 +175,15 @@ export class CombatOrder {
       }
     }
     return phaseChart;
+  }
+
+  async calculatePhaseOrder({ currentSegment, spdChanged }) {
+    this.calculatePhaseChart({ currentSegment, spdChanged });
+
+    await this.resolveTies();
+    for (let i = 1; i <= 12; i++) {
+      this.#phaseChart[i].sort(wrapAndCompare);
+    }
   }
 
   #addPhase(phases, combatant, phase) {
@@ -206,8 +227,8 @@ export class CombatOrder {
     return phaseOrder;
   }
 
-  #changed() {
-    this.#phaseChart = null;
+  #markChanged() {
+    this.#hasChanged = true;
   }
 
   #phasesFor(combatant) {
