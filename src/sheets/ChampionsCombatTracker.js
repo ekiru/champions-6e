@@ -46,7 +46,12 @@ export default class ChampionsCombatTracker extends CombatTracker {
             body: combatant.actor.system.characteristics.body.value,
             stun: combatant.actor.system.characteristics.stun.value,
             end: combatant.actor.system.characteristics.end.value,
-            css: i++ === context.combat.turn ? "active" : "",
+            css: [
+              i++ === context.combat.turn ? "active" : "",
+              combatant.hidden && !context.user.isGM ? "hidden" : "",
+            ]
+              .join(" ")
+              .trim(),
           }));
           context.segments.push(segment);
         }
