@@ -34,25 +34,33 @@ export default class ChampionsCombatTracker extends CombatTracker {
           number: segmentNumber,
         };
         if (phases[segmentNumber].length > 0) {
-          segment.combatants = phases[segmentNumber].map((combatant) => ({
-            id: combatant.id,
-            dex: combatant.actor.system.characteristics.dex.total,
-            initiative:
-              combatant.initiative !== null
-                ? String(combatant.initiative)
-                : null,
-            img: combatant.img,
-            name: combatant.name,
-            body: combatant.actor.system.characteristics.body.value,
-            stun: combatant.actor.system.characteristics.stun.value,
-            end: combatant.actor.system.characteristics.end.value,
-            css: [
-              i++ === context.combat.turn ? "active" : "",
-              combatant.hidden && !context.user.isGM ? "hidden" : "",
-            ]
-              .join(" ")
-              .trim(),
-          }));
+          segment.combatants = phases[segmentNumber].map((combatant) => {
+            const data = {
+              id: combatant.id,
+              dex: combatant.actor.system.characteristics.dex.total,
+              initiative:
+                combatant.initiative !== null
+                  ? String(combatant.initiative)
+                  : null,
+              img: combatant.img,
+              name: combatant.name,
+              body: combatant.actor.system.characteristics.body.value,
+              stun: combatant.actor.system.characteristics.stun.value,
+              end: combatant.actor.system.characteristics.end.value,
+              active: i++ === context.combat.turn,
+              hidden: combatant.hidden,
+              visible: !combatant.hidden || context.user.isGM,
+            };
+            const classes = [];
+            if (data.active) {
+              classes.push("active");
+            }
+            if (data.hidden) {
+              classes.push("hidden");
+            }
+            data.css = classes.join(" ");
+            return data;
+          });
           context.segments.push(segment);
         }
       }

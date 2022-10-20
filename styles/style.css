@@ -103,12 +103,17 @@ form.item .tab.notes {
   border-top: 1px solid var(--color-border-highlight);
 }
 
-#combat-tracker td.body {
+#combat-tracker tr.hidden {
+  color: var(--color-text-light-7);
+  display: table-row;
+}
+
+#combat-tracker tr td.body {
   color: red;
 }
-#combat-tracker td.stun {
+#combat-tracker tr td.stun {
   color: green;
 }
-#combat-tracker td.end {
+#combat-tracker tr td.end {
   color: cornflowerblue;
 }

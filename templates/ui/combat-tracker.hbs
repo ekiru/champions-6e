@@ -151,17 +151,19 @@
             <td colspan="6">Segment {{segment.number}}</td>
           </tr>
           {{#each segment.combatants}}
-            <tr
-              class="combatant actor directory-item {{css}}"
-              data-combatant-id="{{id}}"
-            >
-              <td>{{dex}}{{#if initiative}}/{{initiative}}{{/if}}</td>
-              <td><img src="{{img}}" height="64" width="64" /></td>
-              <td>{{name}}</td>
-              <td class="body">{{body}}</td>
-              <td class="stun">{{stun}}</td>
-              <td class="end">{{end}}</td>
-            </tr>
+            {{#if visible}}
+              <tr
+                class="combatant actor directory-item {{css}}"
+                data-combatant-id="{{id}}"
+              >
+                <td>{{dex}}{{#if initiative}}/{{initiative}}{{/if}}</td>
+                <td><img src="{{img}}" height="64" width="64" /></td>
+                <td>{{name}}</td>
+                <td class="body">{{body}}</td>
+                <td class="stun">{{stun}}</td>
+                <td class="end">{{end}}</td>
+              </tr>
+            {{/if}}
           {{/each}}
         </tbody>
       {{/each}}
