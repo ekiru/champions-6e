@@ -28,7 +28,6 @@ Hooks.on(hooks.SPD_CHANGE, (...args) => {
 });
 
 export default class ChampionsCombat extends Combat {
-  #phaseChart;
   #phaseOrder;
 
   #spdChanges = new Map();
@@ -58,10 +57,7 @@ export default class ChampionsCombat extends Combat {
   }
 
   get phaseChart() {
-    if (!this.#phaseChart) {
-      this.#phaseChart = this.calculatePhaseChart();
-    }
-    return this.#phaseChart;
+    return this.calculatePhaseChart();
   }
 
   get pendingChanges() {
@@ -94,7 +90,6 @@ export default class ChampionsCombat extends Combat {
    */
   setupTurns(spdChanged = false) {
     const phases = this.calculatePhaseChart(spdChanged);
-    this.#phaseChart = phases;
 
     this.#phaseOrder = this.combatOrder.linearizePhases({
       phases,
