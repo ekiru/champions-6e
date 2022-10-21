@@ -222,6 +222,7 @@ class SetManeuver extends Maneuver {
       time: TIME.FULL_PHASE,
       ocv: +1,
       dcv: +0,
+      category: "Set",
       icon: "crosshairs",
       summary: "Take extra time to aim a Ranged attack",
       roll: false,

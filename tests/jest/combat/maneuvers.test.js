@@ -336,6 +336,10 @@ describe("Combat Maneuvers", function () {
       expect(set).toBeDefined();
     });
 
+    it("should be in its own category", function () {
+      expect(set.category).toBe("Set");
+    });
+
     it("should return a summary with its effect", function () {
       const effect = set.getAdditionalEffects();
       expect(effect.flags["champions-6e"][EffectFlags.SUMMARY]).toContain(
