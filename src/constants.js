@@ -6,5 +6,6 @@ export const SystemActiveEffectModes = {
 };
 
 export const EffectFlags = {
+  UNIQUE_CATEGORY: "effect•unique",
   SUMMARY: "effect•summary",
 };

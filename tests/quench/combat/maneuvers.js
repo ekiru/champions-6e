@@ -221,6 +221,23 @@ export function register(system, quench) {
 
             expect(this.character.effects.contents).to.have.lengthOf(0);
           });
+
+          it("if I activate another maneuver, the Shove effect should end", async function () {
+            await this.character.activateManeuver(
+              this.maneuvers.get("Haymaker")
+            );
+
+            expect(this.character.effects.contents).to.have.lengthOf(1);
+            expect(this.character.effects.contents[0]).to.have.property(
+              "label",
+              "Haymaker"
+            );
+          });
+
+          it("if I activate Brace, the Shove effect should remain", async function () {
+            await this.character.activateManeuver(this.maneuvers.get("Brace"));
+            expect(this.character.effects.contents).to.have.lengthOf(2);
+          });
         });
       });
     },

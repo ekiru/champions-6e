@@ -117,12 +117,16 @@ export default class ChampionsActor extends Actor {
    */
   async activateManeuver(maneuver) {
     assert.precondition(maneuver instanceof Maneuver);
+    await this.clearManeuverEffects(maneuver.category);
+
     const changes = maneuver.getEffectChanges();
     if (changes.length > 0) {
       await getDocumentClass("ActiveEffect").create(
         {
           label: maneuver.name,
           changes,
+          [`flags.champions-6e.${EffectFlags.UNIQUE_CATEGORY}`]:
+            maneuver.category,
           [`flags.champions-6e.${[FLAGS.expireAtStartOfPhase]}`]: true,
           [`flags.champions-6e.${EffectFlags.SUMMARY}`]:
             Maneuver.summarizeEffect(changes),
@@ -132,10 +136,29 @@ export default class ChampionsActor extends Actor {
     }
     const additionalEffects = maneuver.getAdditionalEffects();
     if (additionalEffects !== null) {
-      await getDocumentClass("ActiveEffect").create(additionalEffects, {
-        parent: this,
-      });
+      await getDocumentClass("ActiveEffect").create(
+        foundry.utils.mergeObject(
+          {
+            [`flags.champions-6e.${EffectFlags.UNIQUE_CATEGORY}`]:
+              maneuver.category,
+          },
+          additionalEffects
+        ),
+        { parent: this }
+      );
     }
+  }
+
+  async clearManeuverEffects(category) {
+    await Promise.all(
+      this.effects
+        .filter(
+          (effect) =>
+            effect.getFlag("champions-6e", EffectFlags.UNIQUE_CATEGORY) ===
+            category
+        )
+        .map((effect) => effect.delete())
+    );
   }
 
   /**
