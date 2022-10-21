@@ -75,7 +75,7 @@ const DCV_TOTAL_KEY = "system.characteristics.dcv.total";
 export class Maneuver {
   #isRolledOverride;
 
-  constructor(name, { ocv, dcv, time, icon, summary, roll }) {
+  constructor(name, { ocv, dcv, time, category, icon, summary, roll }) {
     this.name = name;
 
     assert.precondition(ocv !== undefined, "missing OCV modifier");
@@ -101,6 +101,12 @@ export class Maneuver {
     assert.precondition(time !== undefined, "missing time");
     assert.precondition(TIME_SET.has(time), "invalid time");
     this.time = time;
+
+    assert.precondition(
+      category === undefined || typeof category === "string",
+      "category must be a string, if supplied"
+    );
+    this.category = category ?? "maneuver";
 
     assert.precondition(
       typeof summary === "string",
@@ -260,6 +266,7 @@ export const standardManeuvers = [
     time: TIME.HALF_PHASE,
     ocv: new SpecialModifier("+2*", "+2 OCV only to offset the Range Modifier"),
     dcv: HALVED,
+    category: "Brace",
     icon: "gun",
     summary: "Only to offset the Range Modifier",
     roll: false,

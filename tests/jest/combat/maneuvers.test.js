@@ -121,6 +121,31 @@ describe("The Maneuver class", function () {
     });
   });
 
+  describe("category", function () {
+    it("should default to 'maneuver'", function () {
+      const maneuver = new Maneuver("Punch", {
+        ocv: +0,
+        dcv: +0,
+        time: TIME.HALF_PHASE,
+        summary: "",
+      });
+
+      expect(maneuver.category).toBe("maneuver");
+    });
+
+    it("should be able to be specified in the constructor", function () {
+      const maneuver = new Maneuver("Punch", {
+        ocv: +0,
+        dcv: +0,
+        time: TIME.HALF_PHASE,
+        summary: "",
+        category: "strike",
+      });
+
+      expect(maneuver.category).toBe("strike");
+    });
+  });
+
   describe("isRolled", function () {
     it("should normally be true for most OCV modifiers", function () {
       const maneuver = (ocv) =>
@@ -291,6 +316,16 @@ describe("Combat Maneuvers", function () {
       expect(maneuversByName.get("Dodge").isRolled).toBe(false);
       expect(maneuversByName.get("Set").isRolled).toBe(false);
       expect(maneuversByName.get("Dive for Cover").isRolled).toBe(false);
+    });
+  });
+
+  describe("Brace", function () {
+    const brace = standardManeuvers.find(
+      (maneuver) => maneuver.name === "Brace"
+    );
+
+    it("should be in its own category", function () {
+      expect(brace.category).toBe("Brace");
     });
   });
 
