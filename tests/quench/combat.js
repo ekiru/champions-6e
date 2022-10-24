@@ -556,7 +556,7 @@ export function register(system, quench) {
           });
         });
 
-        describe("Adding STR to a HKA", function () {
+        describe("Adding DCs to a HKA", function () {
           beforeEach(
             "given my character has a HKA with 2d6",
             async function () {
@@ -650,6 +650,35 @@ export function register(system, quench) {
           it("when I change the attack to do Normal Damage, then the attack should cost 5 AP per d6", async function () {
             await this.attack.update({ "system.damage.type": "normal" });
             expect(this.attack.system.damage.apPerDie).to.equal(5);
+          });
+        });
+
+        describe("Adding STR", function () {
+          describe("to a 2d6 Normal Damage attack", function () {
+            beforeEach("given my character's STR is 20", async function () {
+              await build.character(this, {
+                characteristics: {
+                  str: { value: 15, modifier: +5 },
+                },
+              });
+              this.sheet = await openCharacterSheet(this.character);
+            });
+
+            it("should do 6d6 when I add my STR", async function () {
+              const dialogP = nextDialog();
+              this.sheet.find("button.damage-roll").click();
+              const dialog = await dialogP;
+              dialog.element.find('input[name="addStr"]').click();
+
+              const messageP = nextMessage();
+              dialog.element.find('button[data-button="roll"]').click();
+              const message = await messageP;
+              try {
+                expect(message.rolls[0].formula).to.equal("6d6");
+              } finally {
+                await message.delete();
+              }
+            });
           });
         });
       });

@@ -1,5 +1,5 @@
 import { EffectFlags } from "../constants.js";
-import { DEFENSE_TYPES } from "../mechanics/damage.js";
+import { DEFENSE_TYPES, Damage } from "../mechanics/damage.js";
 import {
   Maneuver,
   SpecialModifier,
@@ -511,7 +511,11 @@ export default class CharacterSheet extends ActorSheet {
       const dice = Number(this.dataset.dice);
       const damageType = this.dataset.damageType;
       const label = this.dataset.label;
-      damageRollDialog(label, dice, damageType, apPerDie, { actor });
+      const strDcs = Damage.fromDice(
+        actor.system.characteristics.str.hthDamage,
+        5
+      ).dc;
+      damageRollDialog(label, dice, damageType, apPerDie, { actor, strDcs });
     });
     html.find(".knockback-roll").click(function () {
       const body = Number(this.dataset.body);

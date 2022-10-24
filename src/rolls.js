@@ -351,19 +351,23 @@ const damageRollTemplate =
  * @param {number} apPerDie The number of AP per 1d6 of the attack.
  * @param {object} options Options to customize the dialog or chat message.
  * @param {Actor} options.actor The actor for whom the roll is being performed.
+ * @param {number} options.strDcs Damage Classes potentially added by STR.
  */
 export async function damageRollDialog(
   label,
   dice,
   type,
   apPerDie,
-  { actor } = {}
+  { actor, strDcs } = {}
 ) {
   const title = `${label ? label + " " : ""}Damage Roll`;
-  const context = { label, dice, type };
+  const context = { label, dice, type, strDcs };
   rollDialog(title, damageRollTemplate, context, (html) => {
     const dice = Number(html.find("input[name='dice']").get(0).value);
-    const dcs = Number(html.find("input[name='dcs']").get(0).value);
+    const addedDcs = Number(html.find("input[name='dcs']").get(0).value);
+    const addedStr =
+      strDcs && html.find("input[name='addStr']").get(0).checked ? strDcs : 0;
+    const dcs = addedDcs + addedStr;
     const type = html.find("select[name='type']").get(0).value;
     const damage = Damage.fromDice(dice, apPerDie);
     if (type === "normal") {
