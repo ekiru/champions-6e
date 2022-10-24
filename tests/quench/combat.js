@@ -680,6 +680,43 @@ export function register(system, quench) {
               }
             });
           });
+
+          describe("to a 2d6 Killing Attack", function () {
+            beforeEach(
+              "given my character's STR is 30 and I have a 2d6 HKA",
+              async function () {
+                await build.character(this, {
+                  characteristics: {
+                    str: { value: 30, modifier: +0 },
+                  },
+                });
+
+                await build.ownedAttack(this, this.character, "Powerful Bite", {
+                  damage: {
+                    apPerDie: 15,
+                    dice: 2,
+                    type: "killing",
+                  },
+                });
+              }
+            );
+
+            it("should do 4d6 when I add my STR", async function () {
+              const attack = await findAttack(this.character, "Powerful Bite");
+              const dialogP = nextDialog();
+              attack.click();
+              const dialog = await dialogP;
+              dialog.element.find('input[name="addStr"]').click();
+              const messageP = nextMessage();
+              dialog.element.find('button[data-button="roll"]').click();
+              const message = await messageP;
+              try {
+                expect(message.rolls[0].formula).to.equal("4d6 * 1d3");
+              } finally {
+                await message.delete();
+              }
+            });
+          });
         });
       });
     },
