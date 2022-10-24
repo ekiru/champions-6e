@@ -31,6 +31,10 @@ export class Character {
   #characteristics = new Map();
 
   constructor(name, { characteristics = {} } = {}) {
+    assert.precondition(
+      typeof name === "string",
+      "A character's name must be a string"
+    );
     this.name = name;
     for (const [charName, data] of Object.entries(characteristics)) {
       const char = characteristicByName(charName);
@@ -40,6 +44,15 @@ export class Character {
       );
       this.#characteristics.set(char, data);
     }
+  }
+
+  static fromActor({ name, type, system }) {
+    assert.precondition(type === "character", "The actor is not a character");
+    const characteristics = {};
+    for (const [charName, data] of Object.entries(system.characteristics)) {
+      characteristics[charName] = data;
+    }
+    return new Character(name, { characteristics });
   }
 
   /**
