@@ -1,5 +1,6 @@
 import { EffectFlags } from "../constants.js";
 import * as hooks from "../hooks.js";
+import { Character } from "../mechanics/character.js";
 import { byName as characteristicByName } from "../mechanics/characteristics.js";
 import { Maneuver } from "../mechanics/maneuvers.js";
 import * as assert from "../util/assert.js";
@@ -109,6 +110,10 @@ export default class ChampionsActor extends Actor {
   #oldDex;
   #oldPhases;
   #oldSpeed;
+
+  get asCharacter() {
+    return Character.fromActor(this);
+  }
 
   /**
    * Activates a maneuver, applying its defensive modifiers temporarily.

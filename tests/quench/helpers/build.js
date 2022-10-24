@@ -127,6 +127,17 @@ class DocumentBuilder {
   }
 
   /**
+   * Sets a name for the Document.
+   *
+   * @param {string} name The document's name.
+   * @returns {Builder} `this` for chaining.
+   */
+  named(name) {
+    this.setProperty("name", name);
+    return this;
+  }
+
+  /**
    * Sets a parent for the Document.
    *
    * @param {Document} owner The parent.

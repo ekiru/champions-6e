@@ -1,3 +1,5 @@
+import { OCV } from "../../src/mechanics/characteristics.js";
+import * as build from "./helpers/build.js";
 import { openCharacterSheet } from "./helpers/sheets.js";
 import { waitOneMoment } from "./helpers/timers.js";
 
@@ -227,6 +229,29 @@ export function register(system, quench) {
           expect(
             character.system.characteristics.pre.presenceAttackDice
           ).to.equal(6);
+        });
+      });
+
+      describe("Conversion to a Character object", function () {
+        afterEach(build.afterEach);
+
+        beforeEach(async function () {
+          await build
+            .at(this)
+            .character()
+            .named("Mary")
+            .withCharacteristic("ocv", 8)
+            .build();
+        });
+
+        it("should have the name of the character", function () {
+          expect(this.character.asCharacter.name).to.equal("Mary");
+        });
+
+        it("should have the characteristics of the character", function () {
+          expect(
+            this.character.asCharacter.characteristic(OCV)
+          ).to.exist.and.have.property("value", 8);
         });
       });
     },
