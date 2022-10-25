@@ -27,10 +27,10 @@ export function precondition(condition, message = undefined) {
  * Asserts that a condition is true.
  *
  * @param {boolean} condition The condition to be asserted
- * @param {string} message A message to be include in the error if the condition is false
+ * @param {string?} message A message to be include in the error if the condition is false
  */
-export function that(condition, message) {
+export function that(condition, message = undefined) {
   if (!condition) {
-    throw new AssertionError(message);
+    throw new AssertionError(message ?? "Assertion failed.");
   }
 }
