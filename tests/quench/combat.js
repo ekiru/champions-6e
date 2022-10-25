@@ -1,6 +1,7 @@
 import { AssertionError } from "../../src/util/assert.js";
 import * as build from "./helpers/build.js";
 import {
+  findDamageRollForAttack,
   nextDialog,
   nextMessage,
   openAttackSheet,
@@ -486,19 +487,6 @@ export function register(system, quench) {
           await build.afterEach();
         });
 
-        const findAttack = async function (character, attackName) {
-          const sheet = await openCharacterSheet(character);
-          const attackRoll = sheet
-            .find("a.attack-roll")
-            .filter((i, elem) => elem.textContent.includes(attackName));
-          expect(attackRoll).to.have.lengthOf(1);
-          const row = attackRoll.parent("td").parent("tr");
-          expect(row).to.have.lengthOf(1);
-          const damage = row.find("a.damage-roll");
-          expect(damage).to.have.lengthOf(1);
-          return damage;
-        };
-
         describe("Haymaker", function () {
           beforeEach("given my character's STR is 23", async function () {
             await build.character(this, {
@@ -509,7 +497,10 @@ export function register(system, quench) {
           });
 
           it("when they haymaker a HTH attack for +4 DC, it should roll 8½d6", async function () {
-            const attack = await findAttack(this.character, "Basic HTH Attack");
+            const attack = await findDamageRollForAttack(
+              this.character,
+              "Basic HTH Attack"
+            );
             const dialogP = nextDialog();
             attack.click();
             const dialog = await dialogP;
@@ -540,7 +531,10 @@ export function register(system, quench) {
           );
 
           it("when they add 3 DC to it, it should roll 7½ d6", async function () {
-            const attack = await findAttack(this.character, "Drain");
+            const attack = await findDamageRollForAttack(
+              this.character,
+              "Drain"
+            );
             const dialogP = nextDialog();
             attack.click();
             const dialog = await dialogP;
@@ -572,7 +566,7 @@ export function register(system, quench) {
           );
 
           it("when they add 4 DC to it, it should roll 3d6+1", async function () {
-            const attack = await findAttack(this.character, "HKA");
+            const attack = await findDamageRollForAttack(this.character, "HKA");
             const dialogP = nextDialog();
             attack.click();
             const dialog = await dialogP;
@@ -598,7 +592,10 @@ export function register(system, quench) {
           });
 
           it("when they subtract 3 DC from their HTH attack, it should roll 0d6", async function () {
-            const attack = await findAttack(this.character, "Basic HTH Attack");
+            const attack = await findDamageRollForAttack(
+              this.character,
+              "Basic HTH Attack"
+            );
             const dialogP = nextDialog();
             attack.click();
             const dialog = await dialogP;
@@ -702,7 +699,10 @@ export function register(system, quench) {
             );
 
             it("should do 4d6 when I add my STR", async function () {
-              const attack = await findAttack(this.character, "Powerful Bite");
+              const attack = await findDamageRollForAttack(
+                this.character,
+                "Powerful Bite"
+              );
               const dialogP = nextDialog();
               attack.click();
               const dialog = await dialogP;
