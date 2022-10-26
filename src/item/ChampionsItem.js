@@ -1,3 +1,4 @@
+import { Attack } from "../mechanics/attack.js";
 import { Maneuver } from "../mechanics/maneuvers.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
@@ -19,6 +20,16 @@ const SKILL_SCHEMA = {
 };
 
 export default class ChampionsItem extends Item {
+  /**
+   * Converts an attack item to the Attack domain class.
+   *
+   * @type {Attack}
+   */
+  get asAttack() {
+    assert.precondition(this.type === "attack");
+    return Attack.fromItem(this);
+  }
+
   get asManeuver() {
     assert.precondition(this.type === "maneuver");
     return Maneuver.fromItem(this.name, {
