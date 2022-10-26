@@ -11,7 +11,16 @@
   </p>
   <p>
     <label>Dice</label>
-    <input type="text" name="dice" value="{{dice}}" />
+    <input type="text" name="dice" value="{{dice.full}}" />
+    <select name="diceSuffix">
+      {{#select dice.suffix}}
+        <option value="0">d6</option>
+        <option value="1">d6+1</option>
+        <option value="0.5">½d6</option>
+        <option value="-1">d6-1</option>
+        <option value="-0.5">½d6-1</option>
+      {{/select}}
+    </select>
   </p>
   <p>
     <label>Add DCs</label>

@@ -361,15 +361,24 @@ export async function damageRollDialog(
   { actor, strDcs } = {}
 ) {
   const title = `${label ? label + " " : ""}Damage Roll`;
-  const context = { label, dice, type, strDcs };
+  const damageDice = Damage.fromDice(dice, apPerDie);
+  const context = {
+    label,
+    dice: { full: damageDice.baseDice, suffix: damageDice.adjustment },
+    type,
+    strDcs,
+  };
   rollDialog(title, damageRollTemplate, context, (html) => {
-    const dice = Number(html.find("input[name='dice']").get(0).value);
+    const fullDice = Number(html.find("input[name='dice']").get(0).value);
+    const diceAdjustment = Number(
+      html.find("select[name='diceSuffix']").get(0).value
+    );
     const addedDcs = Number(html.find("input[name='dcs']").get(0).value);
     const addedStr =
       strDcs && html.find("input[name='addStr']").get(0).checked ? strDcs : 0;
     const dcs = addedDcs + addedStr;
     const type = html.find("select[name='type']").get(0).value;
-    const damage = Damage.fromDice(dice, apPerDie);
+    const damage = new Damage(fullDice, apPerDie, diceAdjustment);
     if (type === "normal") {
       performNormalDamageRoll(damage, { actor, label, dcs, apPerDie });
     } else if (type === "killing") {

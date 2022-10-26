@@ -96,6 +96,10 @@ export class Damage {
     }, apPerDie: ${this.#apPerDie} }`;
   }
 
+  get adjustment() {
+    return this.#adjustment;
+  }
+
   get baseDice() {
     return this.#dice;
   }

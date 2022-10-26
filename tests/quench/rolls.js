@@ -1,5 +1,12 @@
 import { Damage } from "../../src/mechanics/damage.js";
 import * as rolls from "../../src/rolls.js";
+import * as build from "./helpers/build.js";
+import {
+  findDamageRollForAttack,
+  nextDialog,
+  nextMessage,
+  openCharacterSheet,
+} from "./helpers/sheets.js";
 
 /**
  * Creates a mock subclass of the Roll class.
@@ -649,5 +656,82 @@ export function register(system, quench) {
       });
     },
     { displayName: `${system}: Test rolls` }
+  );
+
+  quench.registerBatch(
+    `${system}.cucumber.rolls.advanced`,
+    function ({ describe, it, expect, afterEach, beforeEach }) {
+      describe("Advanced Dice Roller", function () {
+        afterEach(build.afterEach);
+
+        describe("Rolling a half-die", function () {
+          beforeEach(async function () {
+            await build.at(this).character().build();
+            await build.ownedAttack(this, this.character, "Lightning Bolt", {
+              damage: { dice: 2.5 },
+            });
+          });
+
+          it("when I click the damage button it should prepopulate the dice fields", async function () {
+            const damageRoll = await findDamageRollForAttack(
+              this.character,
+              "Lightning Bolt"
+            );
+            const dialogP = nextDialog();
+            damageRoll.click();
+            const dialog = await dialogP;
+
+            try {
+              expect(dialog.element.find("input[name='dice']").val()).to.equal(
+                "2"
+              );
+              expect(
+                dialog.element
+                  .find("select[name='diceSuffix'] > option")
+                  .filter(":selected")
+                  .text()
+              ).to.equal("½d6");
+            } finally {
+              await dialog.close();
+            }
+          });
+        });
+
+        describe("Rolling dice +1", function () {
+          beforeEach(async function () {
+            await build.at(this).character().build();
+          });
+
+          it("when I enter 1d6+1 on the damage roll dialog, it should roll 1d6+1", async function () {
+            const sheet = await openCharacterSheet(this.character);
+
+            const dialogP = nextDialog();
+            sheet.find("button.damage-roll").click();
+            const dialog = await dialogP;
+
+            const diceField = dialog.element.find("input[name='dice']");
+            expect(diceField).to.have.lengthOf(1);
+            diceField.val("1");
+
+            const d6PlusOne = dialog.element.find(
+              "select[name='diceSuffix'] > option:contains('d6+1')"
+            );
+            expect(d6PlusOne).to.have.lengthOf(1);
+            d6PlusOne.prop("selected", true);
+
+            const messageP = nextMessage();
+            dialog.element.find('button[data-button="roll"]').click();
+            const message = await messageP;
+
+            try {
+              expect(message.rolls[0].formula).to.equal("1d6 + 1");
+            } finally {
+              await message.delete();
+            }
+          });
+        });
+      });
+    },
+    { displayName: `${system}: Advanced Die Roller` }
   );
 }
