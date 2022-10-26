@@ -360,7 +360,6 @@ export default class CharacterSheet extends ActorSheet {
     this.actor.itemTypes.attack.forEach((attack) => {
       const id = attack.id;
       attack = attack.asAttack;
-      console.log(attack);
       const dice = attack.damage.dice;
       const ocv = attack.ocv.abbreviation;
       const dcv = attack.dcv.abbreviation;
@@ -381,7 +380,6 @@ export default class CharacterSheet extends ActorSheet {
         apPerDie: attack.damage.apPerDie,
       });
     });
-    console.log(context.combat.attacks);
 
     context.combat.maneuvers = [];
     const addManeuver = (maneuver, id) => {

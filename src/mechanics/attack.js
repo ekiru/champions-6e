@@ -143,9 +143,6 @@ export class Attack {
     const ocv = characteristicByName(system.cv.offensive);
     const dcv = characteristicByName(system.cv.defensive);
     const damage = Damage.fromDice(system.damage.dice, system.damage.apPerDie);
-    console.log(system.damage.type.toUpperCase());
-    console.log(DamageType);
-    console.log(DamageType.NORMAL);
     const damageType = DamageType[system.damage.type.toUpperCase()];
     const defense = system.defense.value;
     const description = system.description;
