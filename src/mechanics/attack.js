@@ -1,4 +1,11 @@
-import { Characteristic, DCV, DMCV, OCV, OMCV } from "./characteristics.js";
+import {
+  byName as characteristicByName,
+  Characteristic,
+  DCV,
+  DMCV,
+  OCV,
+  OMCV,
+} from "./characteristics.js";
 import { Damage } from "./damage.js";
 import * as assert from "../util/assert.js";
 
@@ -106,6 +113,22 @@ export class Attack {
 
   /**
    * A HTML description of the attack.
+   *
+   * @type {string}
    */
   description;
+
+  static fromItem({ name, type, system }) {
+    assert.precondition(
+      type === "attack",
+      "Attack items must have type=attack."
+    );
+
+    const ocv = characteristicByName(system.cv.offensive);
+    const dcv = characteristicByName(system.cv.defensive);
+    const damage = Damage.fromDice(system.damage.dice, system.damage.apPerDie);
+    const defense = system.defense.value;
+    const description = system.description;
+    return new Attack(name, { ocv, dcv, damage, defense, description });
+  }
 }

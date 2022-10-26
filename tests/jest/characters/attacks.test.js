@@ -45,4 +45,31 @@ describe("Attacks", function () {
       ).toThrow(new Error("Damage must be a Damage instance"));
     });
   });
+
+  describe("fromItem", function () {
+    const item = {
+      name: "Jab",
+      type: "attack",
+      system: {
+        cv: {
+          defensive: "dmcv",
+          offensive: "ocv",
+        },
+        damage: {
+          apPerDie: 22.5,
+          dice: 2.4,
+          type: "normal",
+        },
+        defense: {
+          value: "Physical",
+        },
+        description: "<p></p>",
+      },
+    };
+
+    it("parses dice", function () {
+      const attack = Attack.fromItem(item);
+      expect(attack.damage.diceString).toBe("2½d6-1");
+    });
+  });
 });
