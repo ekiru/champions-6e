@@ -1,3 +1,7 @@
+import { Characteristic, DCV, DMCV, OCV, OMCV } from "./characteristics.js";
+import { Damage } from "./damage.js";
+import * as assert from "../util/assert.js";
+
 /**
  * Calculates the highest DCV that an attacker can hit with a particular roll.
  *
@@ -32,4 +36,76 @@ export function targetNumberToHit(ocv, dcv) {
     return 17;
   }
   return tn;
+}
+
+export class Attack {
+  constructor(name, { ocv, dcv, damage, defense, description }) {
+    assert.precondition(typeof name === "string", "Name must be a string");
+    assert.precondition(
+      ocv === OCV || ocv === OMCV,
+      "Invalid OCV, must be either OCV or OMCV"
+    );
+    assert.precondition(
+      dcv === DCV || dcv === DMCV,
+      "Invalid DCV, must be either DCV or DMCV"
+    );
+    assert.precondition(
+      damage instanceof Damage,
+      "Damage must be a Damage instance"
+    );
+    assert.precondition(
+      typeof defense === "string",
+      "Defense must be a string"
+    );
+    assert.precondition(
+      typeof description === "string",
+      "Description must be a string"
+    );
+
+    this.name = name;
+    this.ocv = ocv;
+    this.dcv = dcv;
+    this.damage = damage;
+    this.defense = defense;
+    this.description = description;
+  }
+
+  /**
+   * The name of the attack.
+   *
+   * @type {string}
+   */
+  name;
+
+  /**
+   * The offensive combat value used for the attack roll. Must be either OCV or OMCV
+   *
+   * @type {Characteristic}
+   */
+  ocv;
+  /**
+   * The defensive combat value used for the attack roll. Must be either DCV or DMCV
+   *
+   * @type {Characteristic}
+   */
+  dcv;
+
+  /**
+   * The damage inflicted by the attack.
+   *
+   * @type {Damage}
+   */
+  damage;
+
+  /**
+   * The defense the attack targets.
+   *
+   * @type {string}
+   */
+  defense;
+
+  /**
+   * A HTML description of the attack.
+   */
+  description;
 }
