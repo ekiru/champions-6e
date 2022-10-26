@@ -8,6 +8,7 @@ import {
 } from "./characteristics.js";
 import { Damage } from "./damage.js";
 import * as assert from "../util/assert.js";
+import { Enum } from "../util/enum.js";
 
 /**
  * Calculates the highest DCV that an attacker can hit with a particular roll.
@@ -45,8 +46,18 @@ export function targetNumberToHit(ocv, dcv) {
   return tn;
 }
 
+/**
+ * Identities the damage type of an attack or other source of damage.
+ *
+ * @constant {object}
+ * @property {symbol} NORMAL Normal Damage
+ * @property {symbol} KILLING Killing Damage
+ * @property {symbol} EFFECT Effect-only
+ */
+export const DamageType = new Enum(["NORMAL", "KILLING", "EFFECT"]);
+
 export class Attack {
-  constructor(name, { ocv, dcv, damage, defense, description }) {
+  constructor(name, { ocv, dcv, damage, damageType, defense, description }) {
     assert.precondition(typeof name === "string", "Name must be a string");
     assert.precondition(
       ocv === OCV || ocv === OMCV,
@@ -59,6 +70,10 @@ export class Attack {
     assert.precondition(
       damage instanceof Damage,
       "Damage must be a Damage instance"
+    );
+    assert.precondition(
+      DamageType.has(damageType),
+      `Invalid damage type ${damageType.toString()}`
     );
     assert.precondition(
       typeof defense === "string",
@@ -127,8 +142,19 @@ export class Attack {
     const ocv = characteristicByName(system.cv.offensive);
     const dcv = characteristicByName(system.cv.defensive);
     const damage = Damage.fromDice(system.damage.dice, system.damage.apPerDie);
+    console.log(system.damage.type.toUpperCase());
+    console.log(DamageType);
+    console.log(DamageType.NORMAL);
+    const damageType = DamageType[system.damage.type.toUpperCase()];
     const defense = system.defense.value;
     const description = system.description;
-    return new Attack(name, { ocv, dcv, damage, defense, description });
+    return new Attack(name, {
+      ocv,
+      dcv,
+      damage,
+      damageType,
+      defense,
+      description,
+    });
   }
 }

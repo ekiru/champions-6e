@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { Attack } from "../../../src/mechanics/attack.js";
+import { Attack, DamageType } from "../../../src/mechanics/attack.js";
 import { DCV, DMCV, OCV } from "../../../src/mechanics/characteristics.js";
 import { Damage } from "../../../src/mechanics/damage.js";
 
@@ -13,6 +13,7 @@ describe("Attacks", function () {
             ocv: DCV,
             dcv: DMCV,
             damage: new Damage(1, 5, 0),
+            damageType: DamageType.NORMAL,
             defense: "Physical",
             description: "",
           })
@@ -26,6 +27,7 @@ describe("Attacks", function () {
             ocv: OCV,
             dcv: OCV,
             damage: new Damage(1, 5, 0),
+            damageType: DamageType.NORMAL,
             defense: "Physical",
             description: "",
           })
@@ -39,6 +41,7 @@ describe("Attacks", function () {
             ocv: OCV,
             dcv: DCV,
             damage: 1,
+            damageType: DamageType.NORMAL,
             defense: "Physical",
             description: "",
           })
