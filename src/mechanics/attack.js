@@ -57,8 +57,15 @@ export function targetNumberToHit(ocv, dcv) {
 export const DamageType = new Enum(["NORMAL", "KILLING", "EFFECT"]);
 
 export class Attack {
-  constructor(name, { ocv, dcv, damage, damageType, defense, description }) {
+  constructor(
+    name,
+    { id, ocv, dcv, damage, damageType, defense, description }
+  ) {
     assert.precondition(typeof name === "string", "Name must be a string");
+    assert.precondition(
+      id === undefined || typeof id === "string",
+      "ID must be a string if present"
+    );
     assert.precondition(
       ocv === OCV || ocv === OMCV,
       "Invalid OCV, must be either OCV or OMCV"
@@ -92,6 +99,13 @@ export class Attack {
     this.defense = defense;
     this.description = description;
   }
+
+  /**
+   * The ID of the attack. Only defined for attack Items.
+   *
+   * @type {string?}
+   */
+  id;
 
   /**
    * The name of the attack.
@@ -134,11 +148,12 @@ export class Attack {
    */
   description;
 
-  static fromItem({ name, type, system }) {
+  static fromItem({ id, name, type, system }) {
     assert.precondition(
       type === "attack",
       "Attack items must have type=attack."
     );
+    assert.precondition(id !== undefined, "Item without an id.");
 
     const ocv = characteristicByName(system.cv.offensive);
     const dcv = characteristicByName(system.cv.defensive);
@@ -147,6 +162,7 @@ export class Attack {
     const defense = system.defense.value;
     const description = system.description;
     return new Attack(name, {
+      id,
       ocv,
       dcv,
       damage,

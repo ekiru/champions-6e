@@ -51,6 +51,7 @@ describe("Attacks", function () {
 
   describe("fromItem", function () {
     const item = {
+      id: "12123143433",
       name: "Jab",
       type: "attack",
       system: {
