@@ -88,6 +88,7 @@ export class Attack {
     this.ocv = ocv;
     this.dcv = dcv;
     this.damage = damage;
+    this.damageType = damageType;
     this.defense = defense;
     this.description = description;
   }

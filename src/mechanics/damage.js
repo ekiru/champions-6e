@@ -100,6 +100,10 @@ export class Damage {
     return this.#adjustment;
   }
 
+  get apPerDie() {
+    return this.#apPerDie;
+  }
+
   get baseDice() {
     return this.#dice;
   }

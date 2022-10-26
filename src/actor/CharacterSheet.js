@@ -358,28 +358,30 @@ export default class CharacterSheet extends ActorSheet {
     };
 
     this.actor.itemTypes.attack.forEach((attack) => {
-      const dice = attack.system.damage.dice;
-      const ocv = attack.system.cv.offensive;
-      const dcv = attack.system.cv.defensive;
+      const id = attack.id;
+      attack = attack.asAttack;
+      console.log(attack);
+      const dice = attack.damage.dice;
+      const ocv = attack.ocv.abbreviation;
+      const dcv = attack.dcv.abbreviation;
       context.combat.attacks.push({
-        id: attack.id,
+        id: id,
         label: attack.name,
         ocv: {
           label: ocv.toUpperCase(),
-          value: context.characteristics.cvs[ocv].total,
+          value: context.characteristics.cvs[ocv.toLowerCase()].total,
         },
         dcv: {
           label: dcv.toUpperCase(),
         },
-        damageType: attack.system.damage.type,
-        defense:
-          attack.system.defense.value &&
-          DEFENSE_TYPES[attack.system.defense.value],
+        damageType: attack.damageType.description.toLowerCase(),
+        defense: attack.defense && DEFENSE_TYPES[attack.defense],
         dice,
-        diceString: formatDice(dice),
-        apPerDie: attack.system.damage.apPerDie,
+        diceString: attack.damage.diceString,
+        apPerDie: attack.damage.apPerDie,
       });
     });
+    console.log(context.combat.attacks);
 
     context.combat.maneuvers = [];
     const addManeuver = (maneuver, id) => {
