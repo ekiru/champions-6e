@@ -127,5 +127,11 @@ export class Power {
       typeof description === "string",
       "description must be a string"
     );
+
+    this.name = name;
+    this.type = type;
+    this.id = id;
+    this.summary = summary;
+    this.description = description;
   }
 }
