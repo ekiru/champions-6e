@@ -1,6 +1,10 @@
 /* eslint-env jest */
 
-import { PowerType, StandardPowerType } from "../../../src/mechanics/power.js";
+import {
+  CustomPowerType,
+  PowerType,
+  StandardPowerType,
+} from "../../../src/mechanics/power.js";
 import * as assert from "../../../src/util/assert.js";
 import { Enum } from "../../../src/util/enum.js";
 
@@ -34,15 +38,15 @@ function toImplementPowerType(actual) {
   if (pass) {
     return {
       pass,
-      message: () =>
-        `expected all abstract methods to be implemented, but [${abstract.join(
-          ", "
-        )}] were still abstract`,
+      message: () => `expected some methods to be abstract, but none were`,
     };
   } else {
     return {
       pass,
-      message: () => `expected some methods to be abstract, but none were`,
+      message: () =>
+        `expected all abstract methods to be implemented, but [${abstract.join(
+          ", "
+        )}] were still abstract`,
     };
   }
 }
@@ -164,5 +168,19 @@ describe("StandardPowerType", function () {
         "There is no standard power named"
       );
     });
+  });
+});
+
+describe("CustomPowerType", function () {
+  it("extends PowerType", function () {
+    expect(new CustomPowerType("Poison")).toBeInstanceOf(PowerType);
+  });
+
+  it("implements all abstract methods", function () {
+    expect(new CustomPowerType("Poison")).toImplementPowerType();
+  });
+
+  it("round trips name", function () {
+    expect(new CustomPowerType("Poison").name).toBe("Poison");
   });
 });

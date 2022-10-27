@@ -97,3 +97,16 @@ export class StandardPowerType extends PowerType {
 for (const power of StandardPowerType.Powers) {
   STANDARD_POWER_TYPES.set(power.description, new StandardPowerType(power));
 }
+
+export class CustomPowerType extends PowerType {
+  #name;
+
+  constructor(name) {
+    super();
+    this.#name = name;
+  }
+
+  get name() {
+    return this.#name;
+  }
+}
