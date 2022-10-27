@@ -1,8 +1,13 @@
 export class AssertionError extends Error {}
 
 export class AbstractMethodError extends AssertionError {
+  class;
+  method;
+
   constructor(cls, method) {
     super(`Abstract method ${cls.name}.${method} called`);
+    this.class = cls.name;
+    this.method = method;
   }
 }
 
