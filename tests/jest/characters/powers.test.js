@@ -1,13 +1,58 @@
 /* eslint-env jest */
 
 import { PowerType, StandardPowerType } from "../../../src/mechanics/power.js";
-import { AbstractMethodError } from "../../../src/util/assert.js";
+import * as assert from "../../../src/util/assert.js";
 import { Enum } from "../../../src/util/enum.js";
+
+/**
+ * Verifies that the received object does not throw AbstractMethodErrors for any of
+ * PowerType's methods.
+ *
+ * @param {*} actual The object to test
+ * @returns {object} The test result
+ */
+function toImplementPowerType(actual) {
+  const abstract = [];
+  const otherErrors = [];
+
+  const check = (op) => {
+    try {
+      op();
+    } catch (e) {
+      if (e instanceof assert.AbstractMethodError) {
+        abstract.push(e.method);
+      } else {
+        otherErrors.push(e);
+      }
+    }
+  };
+
+  check(() => actual.name);
+
+  const pass = abstract.length === 0;
+
+  if (pass) {
+    return {
+      pass,
+      message: () =>
+        `expected all abstract methods to be implemented, but [${abstract.join(
+          ", "
+        )}] were still abstract`,
+    };
+  } else {
+    return {
+      pass,
+      message: () => `expected some methods to be abstract, but none were`,
+    };
+  }
+}
+
+expect.extend({ toImplementPowerType });
 
 describe("PowerType", function () {
   describe("abstract properties", function () {
     it(".name is abstract", function () {
-      expect(() => new PowerType().name).toThrow(AbstractMethodError);
+      expect(() => new PowerType().name).toThrow(assert.AbstractMethodError);
     });
   });
 });
@@ -15,6 +60,10 @@ describe("PowerType", function () {
 describe("StandardPowerType", function () {
   it("extends PowerType", function () {
     expect(StandardPowerType.get("Aid")).toBeInstanceOf(PowerType);
+  });
+
+  it("implements all abstract methods", function () {
+    expect(StandardPowerType.get("Blast")).toImplementPowerType();
   });
 
   describe("Powers", function () {
