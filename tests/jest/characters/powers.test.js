@@ -136,6 +136,7 @@ describe("PowerType", function () {
           "Swinging",
           "Takes No STUN",
           "Telekinesis",
+          "Teleportation",
           "Transform",
           "Tunneling",
         ];
@@ -209,6 +210,49 @@ describe("Power", function () {
         new Power(name, { type: StandardPowerType.get("Blast"), ...args });
         new Power(name, { type: new CustomPowerType("Blast"), ...args });
       }).not.toThrow();
+    });
+  });
+
+  describe("fromItem", function () {
+    const item = (type) => {
+      type = type ?? {
+        isStandard: true,
+        name: "Teleportation",
+      };
+      return {
+        id: "1234",
+        name: "Blink",
+        type: "power",
+        system: {
+          power: {
+            type,
+            summary: "Teleport 40m",
+            description: "<p></p>",
+          },
+        },
+      };
+    };
+
+    it("should expose name/id/summary/description as is", function () {
+      const power = Power.fromItem(item());
+      expect(power.id).toBe("1234");
+      expect(power.name).toBe("Blink");
+      expect(power.summary).toBe("Teleport 40m");
+      expect(power.description).toBe("<p></p>");
+    });
+
+    it("parses standard power types as StandardPowerType", function () {
+      const power = Power.fromItem(
+        item({ isStandard: true, name: "Teleportation" })
+      );
+      expect(power.type).toBeInstanceOf(StandardPowerType);
+      expect(power.type.name).toBe("Teleportation");
+    });
+
+    it("parses nonstandard power types as CustomPowerType", function () {
+      const power = Power.fromItem(item({ isStandard: false, name: "Blink" }));
+      expect(power.type).toBeInstanceOf(CustomPowerType);
+      expect(power.type.name).toBe("Blink");
     });
   });
 });

@@ -77,6 +77,7 @@ export class StandardPowerType extends PowerType {
     "Swinging",
     "Takes No STUN",
     "Telekinesis",
+    "Teleportation",
     "Transform",
     "Tunneling",
   ]);
@@ -133,5 +134,21 @@ export class Power {
     this.id = id;
     this.summary = summary;
     this.description = description;
+  }
+
+  static fromItem({ id, name, system, type }) {
+    assert.precondition(
+      type === "power",
+      "Power.fromItem() requires a power Item"
+    );
+    let powerType;
+    if (system.power.type.isStandard) {
+      powerType = StandardPowerType.get(system.power.type.name);
+    } else {
+      powerType = new CustomPowerType(system.power.type.name);
+    }
+    const summary = system.power.summary;
+    const description = system.power.description;
+    return new Power(name, { id, type: powerType, summary, description });
   }
 }
