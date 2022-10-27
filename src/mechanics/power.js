@@ -110,3 +110,22 @@ export class CustomPowerType extends PowerType {
     return this.#name;
   }
 }
+
+export class Power {
+  constructor(name, { id, type, summary, description }) {
+    assert.precondition(typeof name === "string", "name must be a string");
+    assert.precondition(type instanceof PowerType, "type must be a PowerType");
+    assert.precondition(
+      id === undefined || typeof id === "string",
+      "id must be a string if present"
+    );
+    assert.precondition(
+      typeof summary === "string",
+      "summary must be a string"
+    );
+    assert.precondition(
+      typeof description === "string",
+      "description must be a string"
+    );
+  }
+}

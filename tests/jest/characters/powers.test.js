@@ -2,6 +2,7 @@
 
 import {
   CustomPowerType,
+  Power,
   PowerType,
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
@@ -181,6 +182,33 @@ describe("PowerType", function () {
 
     it("round trips name", function () {
       expect(new CustomPowerType("Poison").name).toBe("Poison");
+    });
+  });
+});
+
+describe("Power", function () {
+  describe("constructor", function () {
+    it("requires type to be a PowerType", function () {
+      expect(
+        () =>
+          new Power("Lightbolt", {
+            type: "Blast",
+            description: "",
+            summary: "",
+          })
+      ).toThrow(new Error("type must be a PowerType"));
+    });
+
+    it("allows any PowerType subclass as a type", function () {
+      const name = "Lightbolt";
+      const args = {
+        description: "",
+        summary: "",
+      };
+      expect(() => {
+        new Power(name, { type: StandardPowerType.get("Blast"), ...args });
+        new Power(name, { type: new CustomPowerType("Blast"), ...args });
+      }).not.toThrow();
     });
   });
 });
