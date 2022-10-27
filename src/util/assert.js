@@ -1,5 +1,21 @@
 export class AssertionError extends Error {}
 
+export class AbstractMethodError extends AssertionError {
+  constructor(cls, method) {
+    super(`Abstract method ${cls.name}.${method} called`);
+  }
+}
+
+/**
+ * Throws an AbstractMethodError unless overriden.
+ *
+ * @param {Function} cls The class which defines the abstract method.
+ * @param {string} method The method name
+ */
+export function abstract(cls, method) {
+  throw new AbstractMethodError(cls, method);
+}
+
 /**
  * Throws a warning that some functionality has not yet been implemented.
  *
