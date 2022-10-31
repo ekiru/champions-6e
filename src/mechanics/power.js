@@ -147,8 +147,8 @@ export class Power {
     } else {
       powerType = new CustomPowerType(system.power.type.name);
     }
-    const summary = system.power.summary;
-    const description = system.power.description;
+    const summary = system.summary;
+    const description = system.description;
     return new Power(name, { id, type: powerType, summary, description });
   }
 }

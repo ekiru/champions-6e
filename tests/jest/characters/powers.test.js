@@ -226,9 +226,9 @@ describe("Power", function () {
         system: {
           power: {
             type,
-            summary: "Teleport 40m",
-            description: "<p></p>",
           },
+          summary: "Teleport 40m",
+          description: "<p></p>",
         },
       };
     };
