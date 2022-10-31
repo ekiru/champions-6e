@@ -3,7 +3,23 @@ import {
   Characteristic,
   byName as characteristicByName,
 } from "./characteristics.js";
-import { Power } from "./power.js";
+import { MovementMode } from "./movement-mode.js";
+import { Power, StandardPowerType } from "./power.js";
+
+const DEFAULT_MOVEMENT_MODES = [
+  new MovementMode("Running", {
+    type: StandardPowerType.get("Running"),
+    distance: 12,
+  }),
+  new MovementMode("Leaping", {
+    type: StandardPowerType.get("Leaping"),
+    distance: 4,
+  }),
+  new MovementMode("Swimming", {
+    type: StandardPowerType.get("Swimming"),
+    distance: 4,
+  }),
+];
 
 /**
  * @typedef CharacteristicValue
@@ -64,6 +80,10 @@ export class Character {
       }
     }
     return new Character(name, { characteristics, powers });
+  }
+
+  get movementModes() {
+    return [...DEFAULT_MOVEMENT_MODES];
   }
 
   /**

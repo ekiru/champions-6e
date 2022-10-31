@@ -145,4 +145,28 @@ describe("Characters", function () {
       });
     });
   });
+
+  describe("movementModes", function () {
+    describe("default movementModes", function () {
+      const character = new Character("Mariyat", {});
+      const movementMode = (name) =>
+        character.movementModes.find((c) => c.name === name);
+
+      it("there are three default movement modes", function () {
+        expect(character.movementModes).toHaveLength(3);
+      });
+
+      it("Running defaults to 12m", function () {
+        expect(movementMode("Running")).toHaveProperty("distance", 12);
+      });
+
+      it("Leaping defaults to 4m", function () {
+        expect(movementMode("Leaping")).toHaveProperty("distance", 4);
+      });
+
+      it("Swimming defaults to 4m", function () {
+        expect(movementMode("Swimming")).toHaveProperty("distance", 4);
+      });
+    });
+  });
 });
