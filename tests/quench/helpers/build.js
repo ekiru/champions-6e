@@ -214,8 +214,8 @@ class PowerBuilder extends DocumentBuilder {
    * @returns {PowerBuilder} `this` for chaining
    */
   withCustomType(name) {
-    this.setProperty("power.type.isStandard", false);
-    this.setProperty("power.type.name", name);
+    this.setProperty("system.power.type.isStandard", false);
+    this.setProperty("system.power.type.name", name);
     return this;
   }
 
@@ -226,8 +226,8 @@ class PowerBuilder extends DocumentBuilder {
    * @returns {PowerBuilder} `this` for chaining
    */
   withStandardType(name) {
-    this.setProperty("power.type.isStandard", true);
-    this.setProperty("power.type.name", name);
+    this.setProperty("system.power.type.isStandard", true);
+    this.setProperty("system.power.type.name", name);
     return this;
   }
 }

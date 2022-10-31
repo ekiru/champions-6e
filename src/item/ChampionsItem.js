@@ -1,6 +1,6 @@
 import { Attack } from "../mechanics/attack.js";
 import { Maneuver } from "../mechanics/maneuvers.js";
-import { Power } from "../mechanics/power.js";
+import { Power, StandardPowerType } from "../mechanics/power.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
 
@@ -155,7 +155,12 @@ export default class ChampionsItem extends Item {
     const newType = changes.system?.power?.type;
     if (newType !== undefined) {
       if (newType.isStandard && !oldType.isStandard) {
-        newType.name = newType.name ?? "Absorption";
+        const oldNameIsAStandardPower =
+          oldType.name in StandardPowerType.POWER_NAMES;
+        console.log(oldType, oldNameIsAStandardPower, newType);
+        if (newType.name || !oldNameIsAStandardPower) {
+          newType.name = newType.name ?? "Absorption";
+        }
       }
     }
   }

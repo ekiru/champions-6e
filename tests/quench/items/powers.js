@@ -68,12 +68,24 @@ export function register(system, quench) {
             expect(this.power.system.power.type.name).to.equal("Absorption");
           });
 
-          it.skip(
-            "should leave the type unchanged if there is such a standard type"
-          );
+          it("should leave the type name unchanged if there is such a standard type", async function () {
+            await build.at(this).power().withCustomType("Blast").build();
+
+            await this.power.update({ "system.power.type.isStandard": true });
+
+            expect(this.power.system.power.type.name).to.equal("Blast");
+          });
         });
 
-        describe.skip("going from standard → custom");
+        describe("going from standard → custom", function () {
+          it("should leave the type name unchanged", async function () {
+            await build.at(this).power().withStandardType("Blast").build();
+
+            await this.power.update({ "system.power.type.isStandard": false });
+
+            expect(this.power.system.power.type.name).to.equal("Blast");
+          });
+        });
       });
     },
     { displayName: `${system}: Power items` }
