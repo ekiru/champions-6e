@@ -87,10 +87,10 @@
         "type": {
           "isStandard": false,
           "name": ""
-        },
-        "summary": "",
-        "description": "<p></p>"
-      }
+        }
+      },
+      "summary": "",
+      "description": "<p></p>"
     },
     "skill": {
       "description": "<p></p>",

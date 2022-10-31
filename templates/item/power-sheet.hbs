@@ -1,0 +1,36 @@
+<form class="{{cssClass}} item {{item.type}}" autocomplete="off">
+  <header>
+    <img
+      src="{{item.img}}"
+      data-edit="img"
+      title="{{item.name}}"
+      height="64"
+      width="64"
+    />
+    <div class="name">
+      <input type="text" id="name" name="name" value="{{item.name}}" />
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a class="item" data-tab="attributes">Attributes</a>
+    <a class="item" data-tab="description">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab attributes" data-tab="attributes">
+      <p>
+        {{field attributes.type.isStandard}}
+      </p>
+      <p>
+        {{field attributes.type.name}}
+      </p>
+      <p>
+        {{field attributes.summary}}
+      </p>
+    </div>
+    <div class="tab notes flexcol" data-tab="description">
+      {{field bio.description editable=editable}}
+    </div>
+  </section>
+</form>

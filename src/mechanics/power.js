@@ -82,6 +82,14 @@ export class StandardPowerType extends PowerType {
     "Tunneling",
   ]);
 
+  static POWER_NAMES = (function () {
+    const result = {};
+    for (const power of StandardPowerType.Powers) {
+      result[power.description] = power.description;
+    }
+    return Object.freeze(result);
+  })();
+
   static get(name) {
     assert.precondition(
       STANDARD_POWER_TYPES.has(name),

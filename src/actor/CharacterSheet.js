@@ -127,6 +127,7 @@ export default class CharacterSheet extends ActorSheet {
   /** @override */
   async getData(options = {}) {
     const context = super.getData(options);
+    const character = this.actor.asCharacter;
 
     context.bio = {
       pronouns: {
@@ -414,6 +415,8 @@ export default class CharacterSheet extends ActorSheet {
     for (let maneuver of standardManeuvers) {
       addManeuver(maneuver, null);
     }
+
+    context.powers = character.powers;
 
     context.effects = [];
     for (const effect of this.actor.effects) {

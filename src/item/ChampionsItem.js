@@ -12,6 +12,10 @@ const MANEUVER_SCHEMA = {
   numberFields: [],
 };
 
+const POWER_SCHEMA = {
+  numberFields: [],
+};
+
 const SKILL_SCHEMA = {
   numberFields: [
     { path: "system.bonus.value", default: 0 },
@@ -94,6 +98,9 @@ export default class ChampionsItem extends Item {
       case "maneuver":
         schema = MANEUVER_SCHEMA;
         break;
+      case "power":
+        schema = POWER_SCHEMA;
+        break;
       case "skill":
         schema = SKILL_SCHEMA;
         break;
@@ -107,6 +114,8 @@ export default class ChampionsItem extends Item {
         this.#preUpdateAttack(changes);
         break;
       case "maneuver":
+        break;
+      case "power":
         break;
       case "skill":
         this.#preUpdateSkill(changes);
