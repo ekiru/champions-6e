@@ -1,0 +1,6 @@
+<label>{{label}}</label>
+{{#unless readonly}}
+  <input name="{{path}}" type="checkbox" {{checked value}} />
+{{else}}
+  <span>{{value}}</span>
+{{/unless}}

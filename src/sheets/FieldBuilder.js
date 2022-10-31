@@ -1,5 +1,5 @@
 const TEMPLATE_BASE = "systems/champions-6e/templates/field";
-const FIELD_TYPES = "editor number selection text".split(" ");
+const FIELD_TYPES = "checkbox editor number selection text".split(" ");
 
 // this condition allows this file to be imported in the jest environment.
 if (globalThis.Hooks) {
@@ -32,6 +32,10 @@ export default class FieldBuilder {
   constructor(object, { htmlEnricher = TextEditor } = {}) {
     this.#htmlEnricher = htmlEnricher;
     this.#object = object;
+  }
+
+  checkbox(label, path, data = {}) {
+    return this.#field("checkbox", label, path, data);
   }
 
   async html(label, path, data = {}) {
