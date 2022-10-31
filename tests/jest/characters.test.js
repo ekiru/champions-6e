@@ -20,6 +20,7 @@ describe("Characters", function () {
   describe("Character.fromActor", function () {
     describe("the happy case", function () {
       let character;
+      const LightboltAsPower = Symbol("Lightbolt.asPower");
 
       beforeEach(function () {
         character = Character.fromActor({
@@ -61,6 +62,19 @@ describe("Characters", function () {
               },
             },
           },
+          items: [
+            {
+              name: "Lightbolt",
+              type: "power",
+              system: {
+                power: { type: { isStandard: true, name: "Blast" } },
+                summary: "Blast 12d6",
+                description: "<p>A bolt of light energy</p>",
+              },
+              asPower: LightboltAsPower,
+            },
+            { name: "Linguist", type: "skill" },
+          ],
         });
       });
 
@@ -79,6 +93,11 @@ describe("Characters", function () {
           modifier: -1,
         });
       });
+
+      it("should return the power items in powers, converted using asPower", function () {
+        expect(character.powers).toHaveLength(1);
+        expect(character.powers[0]).toBe(LightboltAsPower);
+      });
     });
 
     it("should require a string name", function () {
@@ -86,6 +105,7 @@ describe("Characters", function () {
         Character.fromActor({
           name: 5,
           type: "character",
+          items: [],
           system: { characteristics: {} },
         })
       ).toThrow("name must be a string");
@@ -96,6 +116,7 @@ describe("Characters", function () {
         Character.fromActor({
           name: "Mary",
           type: "enemy",
+          items: [],
           system: { characteristics: {} },
         })
       ).toThrow("The actor is not a character");

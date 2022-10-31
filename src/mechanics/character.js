@@ -3,6 +3,7 @@ import {
   Characteristic,
   byName as characteristicByName,
 } from "./characteristics.js";
+import { Power } from "./power.js";
 
 /**
  * @typedef CharacteristicValue
@@ -29,8 +30,9 @@ export class Character {
   name;
 
   #characteristics = new Map();
+  #powers = [];
 
-  constructor(name, { characteristics = {} } = {}) {
+  constructor(name, { characteristics = {}, powers = [] } = {}) {
     assert.precondition(
       typeof name === "string",
       "A character's name must be a string"
@@ -44,15 +46,34 @@ export class Character {
       );
       this.#characteristics.set(char, data);
     }
+    console.log(powers);
+    for (const power of powers) {
+      this.#powers.push(power);
+    }
   }
 
-  static fromActor({ name, type, system }) {
+  static fromActor({ name, items, type, system }) {
     assert.precondition(type === "character", "The actor is not a character");
     const characteristics = {};
     for (const [charName, data] of Object.entries(system.characteristics)) {
       characteristics[charName] = data;
     }
-    return new Character(name, { characteristics });
+    const powers = [];
+    for (const item of items) {
+      if (item.type === "power") {
+        powers.push(item.asPower);
+      }
+    }
+    return new Character(name, { characteristics, powers });
+  }
+
+  /**
+   * Retrieves the character's powers.
+   *
+   * @type {Power[]}
+   */
+  get powers() {
+    return this.#powers;
   }
 
   /**
