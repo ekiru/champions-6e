@@ -30,6 +30,11 @@ export default class ChampionsItem extends Item {
     return Attack.fromItem(this);
   }
 
+  /**
+   * Converts a maneuver item to the Maneuver domain class
+   *
+   * @type {Maneuver}
+   */
   get asManeuver() {
     assert.precondition(this.type === "maneuver");
     return Maneuver.fromItem(this.name, {
