@@ -46,7 +46,6 @@ export class Character {
       );
       this.#characteristics.set(char, data);
     }
-    console.log(powers);
     for (const power of powers) {
       this.#powers.push(power);
     }
