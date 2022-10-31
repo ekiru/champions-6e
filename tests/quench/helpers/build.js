@@ -98,6 +98,15 @@ class Builder {
   maneuver() {
     return new ManeuverBuilder(this.#context, this.#path);
   }
+
+  /**
+   * Begins building a power.
+   *
+   * @returns {PowerBuilder} A builder for the power.
+   */
+  power() {
+    return new PowerBuilder(this.#context, this.#path);
+  }
 }
 
 class DocumentBuilder {
@@ -188,5 +197,37 @@ class ManeuverBuilder extends DocumentBuilder {
     super(context, path ?? "maneuver", Item);
     this.setProperty("name", "Punch");
     this.setProperty("type", "maneuver");
+  }
+}
+
+class PowerBuilder extends DocumentBuilder {
+  constructor(context, path) {
+    super(context, path ?? "power", Item);
+    this.setProperty("name", "Blink");
+    this.setProperty("type", "power");
+  }
+
+  /**
+   * Sets the power type to a custom power.
+   *
+   * @param {string} name The name of the power type
+   * @returns {PowerBuilder} `this` for chaining
+   */
+  withCustomType(name) {
+    this.setProperty("power.type.isStandard", false);
+    this.setProperty("power.type.name", name);
+    return this;
+  }
+
+  /**
+   * Sets the power type to a standard power.
+   *
+   * @param {string} name The name of the power type
+   * @returns {PowerBuilder} `this` for chaining
+   */
+  withStandardType(name) {
+    this.setProperty("power.type.isStandard", true);
+    this.setProperty("power.type.name", name);
+    return this;
   }
 }

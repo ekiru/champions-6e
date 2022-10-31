@@ -1,4 +1,5 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
+import * as build from "../helpers/build.js";
 
 /**
  * Registers the tests for Items with type=attack.
@@ -53,6 +54,26 @@ export function register(system, quench) {
             );
           });
         });
+      });
+
+      describe("Changing between custom/standard power types", function () {
+        afterEach(build.afterEach);
+
+        describe("going from custom → standard", function () {
+          it("should usually default the type to Absorption", async function () {
+            await build.at(this).power().withCustomType("Fish").build();
+
+            await this.power.update({ "system.power.type.isStandard": true });
+
+            expect(this.power.system.power.type.name).to.equal("Absorption");
+          });
+
+          it.skip(
+            "should leave the type unchanged if there is such a standard type"
+          );
+        });
+
+        describe.skip("going from standard → custom");
       });
     },
     { displayName: `${system}: Power items` }

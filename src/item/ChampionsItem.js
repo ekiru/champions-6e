@@ -116,6 +116,7 @@ export default class ChampionsItem extends Item {
       case "maneuver":
         break;
       case "power":
+        this.#preUpdatePower(changes);
         break;
       case "skill":
         this.#preUpdateSkill(changes);
@@ -145,6 +146,16 @@ export default class ChampionsItem extends Item {
           break;
         default:
           assert.notYetImplemented();
+      }
+    }
+  }
+
+  #preUpdatePower(changes) {
+    const oldType = this.system.power.type;
+    const newType = changes.system?.power?.type;
+    if (newType !== undefined) {
+      if (newType.isStandard && !oldType.isStandard) {
+        newType.name = newType.name ?? "Absorption";
       }
     }
   }
