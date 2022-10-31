@@ -1,5 +1,6 @@
 import { Attack } from "../mechanics/attack.js";
 import { Maneuver } from "../mechanics/maneuvers.js";
+import { Power } from "../mechanics/power.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
 
@@ -43,6 +44,16 @@ export default class ChampionsItem extends Item {
       time: this.system.time,
       summary: this.system.summary,
     });
+  }
+
+  /**
+   * Converts a power item to the Power domain class
+   *
+   * @type {Power}
+   */
+  get asPower() {
+    assert.precondition(this.type === "power");
+    return Power.fromItem(this);
   }
 
   /**

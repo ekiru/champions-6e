@@ -59,7 +59,7 @@
     }
   },
   "Item": {
-    "types": ["attack", "maneuver", "skill"],
+    "types": ["attack", "maneuver", "power", "skill"],
     "attack": {
       "cv": {
         "defensive": "dcv",
@@ -81,6 +81,16 @@
       "time": "HALF_PHASE",
       "summary": "",
       "description": "<p></p>"
+    },
+    "power": {
+      "power": {
+        "type": {
+          "isStandard": false,
+          "name": ""
+        },
+        "summary": "",
+        "description": "<p></p>"
+      }
     },
     "skill": {
       "description": "<p></p>",
