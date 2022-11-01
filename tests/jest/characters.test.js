@@ -2,6 +2,8 @@
 
 import { Character } from "../../src/mechanics/character.js";
 import { SPD, STR } from "../../src/mechanics/characteristics.js";
+import { MovementMode } from "../../src/mechanics/movement-mode.js";
+import { StandardPowerType } from "../../src/mechanics/power.js";
 
 describe("Characters", function () {
   describe("constructor", function () {
@@ -166,6 +168,25 @@ describe("Characters", function () {
 
       it("Swimming defaults to 4m", function () {
         expect(movementMode("Swimming")).toHaveProperty("distance", 4);
+      });
+    });
+
+    describe("supplying movementModes to the constructor", function () {
+      it("should override all default movementModes", function () {
+        const character = new Character("Rhy-fen", {
+          movementModes: [
+            new MovementMode("Swim", {
+              type: StandardPowerType.get("Swimming"),
+              distance: 20,
+            }),
+          ],
+        });
+        expect(character.movementModes).toHaveLength(1);
+        const swim = character.movementModes[0];
+        expect(swim).toBeInstanceOf(MovementMode);
+        expect(swim).toHaveProperty("name", "Swim");
+        expect(swim).toHaveProperty("type", StandardPowerType.get("Swimming"));
+        expect(swim).toHaveProperty("distance", 20);
       });
     });
   });

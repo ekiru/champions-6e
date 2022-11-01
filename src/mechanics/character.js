@@ -6,7 +6,7 @@ import {
 import { MovementMode } from "./movement-mode.js";
 import { Power, StandardPowerType } from "./power.js";
 
-const DEFAULT_MOVEMENT_MODES = [
+const DEFAULT_MOVEMENT_MODES = Object.freeze([
   new MovementMode("Running", {
     type: StandardPowerType.get("Running"),
     distance: 12,
@@ -19,7 +19,7 @@ const DEFAULT_MOVEMENT_MODES = [
     type: StandardPowerType.get("Swimming"),
     distance: 4,
   }),
-];
+]);
 
 /**
  * @typedef CharacteristicValue
@@ -33,6 +33,10 @@ const DEFAULT_MOVEMENT_MODES = [
  * Represents a HERO System 6E Character.
  *
  * @param {string} name The character's name.
+ * @param {object} data Additional data about the character.
+ * @param {Object<CharacteristicValue>?} data.characteristics The character's characteristics, keyed by e.g. "str".
+ * @param {MovementMode[]?} data.movementModes The character's movementModes.
+ * @param {Power[]?} data.powers The character's powers.
  */
 export class Character {
   /**
@@ -47,8 +51,16 @@ export class Character {
 
   #characteristics = new Map();
   #powers = [];
+  #movementModes = [];
 
-  constructor(name, { characteristics = {}, powers = [] } = {}) {
+  constructor(
+    name,
+    {
+      characteristics = {},
+      movementModes = DEFAULT_MOVEMENT_MODES,
+      powers = [],
+    } = {}
+  ) {
     assert.precondition(
       typeof name === "string",
       "A character's name must be a string"
@@ -61,6 +73,9 @@ export class Character {
         `No such characteristic: ${charName}`
       );
       this.#characteristics.set(char, data);
+    }
+    for (const mode of movementModes) {
+      this.#movementModes.push(mode);
     }
     for (const power of powers) {
       this.#powers.push(power);
@@ -83,7 +98,7 @@ export class Character {
   }
 
   get movementModes() {
-    return [...DEFAULT_MOVEMENT_MODES];
+    return this.#movementModes;
   }
 
   /**
