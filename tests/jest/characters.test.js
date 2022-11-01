@@ -63,6 +63,20 @@ describe("Characters", function () {
                 max: 20,
               },
             },
+            movements: {
+              run: {
+                value: 20,
+                modifier: 0,
+              },
+              leap: {
+                value: 10,
+                modifier: 0,
+              },
+              swim: {
+                value: 8,
+                modifier: 0,
+              },
+            },
           },
           items: [
             {
@@ -96,6 +110,22 @@ describe("Characters", function () {
         });
       });
 
+      it("should have the specified values for the standard movement modes", function () {
+        expect(character.movementModes).toEqual([
+          { name: "Run", type: StandardPowerType.get("Running"), distance: 20 },
+          {
+            name: "Leap",
+            type: StandardPowerType.get("Leaping"),
+            distance: 10,
+          },
+          {
+            name: "Swim",
+            type: StandardPowerType.get("Swimming"),
+            distance: 8,
+          },
+        ]);
+      });
+
       it("should return the power items in powers, converted using asPower", function () {
         expect(character.powers).toHaveLength(1);
         expect(character.powers[0]).toBe(LightboltAsPower);
@@ -108,7 +138,7 @@ describe("Characters", function () {
           name: 5,
           type: "character",
           items: [],
-          system: { characteristics: {} },
+          system: { characteristics: {}, movements: {} },
         })
       ).toThrow("name must be a string");
     });

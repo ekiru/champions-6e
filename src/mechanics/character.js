@@ -21,6 +21,12 @@ const DEFAULT_MOVEMENT_MODES = Object.freeze([
   }),
 ]);
 
+const MOVEMENT_TYPES_BY_NAME = {
+  run: StandardPowerType.get("Running"),
+  leap: StandardPowerType.get("Leaping"),
+  swim: StandardPowerType.get("Swimming"),
+};
+
 /**
  * @typedef CharacteristicValue
  * @property {number} value The base or current value of the characteristic. For
@@ -88,13 +94,23 @@ export class Character {
     for (const [charName, data] of Object.entries(system.characteristics)) {
       characteristics[charName] = data;
     }
+    const movementModes = [];
+    for (const [mode, data] of Object.entries(system.movements)) {
+      const name = mode.at(0).toUpperCase() + mode.substring(1);
+      movementModes.push(
+        new MovementMode(name, {
+          type: MOVEMENT_TYPES_BY_NAME[mode],
+          distance: data.value + data.modifier,
+        })
+      );
+    }
     const powers = [];
     for (const item of items) {
       if (item.type === "power") {
         powers.push(item.asPower);
       }
     }
-    return new Character(name, { characteristics, powers });
+    return new Character(name, { characteristics, movementModes, powers });
   }
 
   get movementModes() {
