@@ -2,6 +2,7 @@
 
 import { Character } from "../../src/mechanics/character.js";
 import { SPD, STR } from "../../src/mechanics/characteristics.js";
+import { ModifiableValue } from "../../src/mechanics/modifiable-value.js";
 import { MovementMode } from "../../src/mechanics/movement-mode.js";
 import { StandardPowerType } from "../../src/mechanics/power.js";
 
@@ -70,7 +71,7 @@ describe("Characters", function () {
               },
               leap: {
                 value: 10,
-                modifier: 0,
+                modifier: 1,
               },
               swim: {
                 value: 8,
@@ -112,16 +113,20 @@ describe("Characters", function () {
 
       it("should have the specified values for the standard movement modes", function () {
         expect(character.movementModes).toEqual([
-          { name: "Run", type: StandardPowerType.get("Running"), distance: 20 },
+          {
+            name: "Run",
+            type: StandardPowerType.get("Running"),
+            distance: new ModifiableValue(20),
+          },
           {
             name: "Leap",
             type: StandardPowerType.get("Leaping"),
-            distance: 10,
+            distance: new ModifiableValue(10, 1),
           },
           {
             name: "Swim",
             type: StandardPowerType.get("Swimming"),
-            distance: 8,
+            distance: new ModifiableValue(8),
           },
         ]);
       });
@@ -189,15 +194,15 @@ describe("Characters", function () {
       });
 
       it("Running defaults to 12m", function () {
-        expect(movementMode("Running")).toHaveProperty("distance", 12);
+        expect(movementMode("Running")).toHaveProperty("distance.total", 12);
       });
 
       it("Leaping defaults to 4m", function () {
-        expect(movementMode("Leaping")).toHaveProperty("distance", 4);
+        expect(movementMode("Leaping")).toHaveProperty("distance.total", 4);
       });
 
       it("Swimming defaults to 4m", function () {
-        expect(movementMode("Swimming")).toHaveProperty("distance", 4);
+        expect(movementMode("Swimming")).toHaveProperty("distance.total", 4);
       });
     });
 
@@ -207,7 +212,7 @@ describe("Characters", function () {
           movementModes: [
             new MovementMode("Swim", {
               type: StandardPowerType.get("Swimming"),
-              distance: 20,
+              distance: new ModifiableValue(20),
             }),
           ],
         });
@@ -216,7 +221,7 @@ describe("Characters", function () {
         expect(swim).toBeInstanceOf(MovementMode);
         expect(swim).toHaveProperty("name", "Swim");
         expect(swim).toHaveProperty("type", StandardPowerType.get("Swimming"));
-        expect(swim).toHaveProperty("distance", 20);
+        expect(swim).toHaveProperty("distance.total", 20);
       });
     });
   });

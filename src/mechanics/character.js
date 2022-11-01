@@ -3,21 +3,22 @@ import {
   Characteristic,
   byName as characteristicByName,
 } from "./characteristics.js";
+import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import { Power, StandardPowerType } from "./power.js";
 
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
   new MovementMode("Running", {
     type: StandardPowerType.get("Running"),
-    distance: 12,
+    distance: new ModifiableValue(12),
   }),
   new MovementMode("Leaping", {
     type: StandardPowerType.get("Leaping"),
-    distance: 4,
+    distance: new ModifiableValue(4),
   }),
   new MovementMode("Swimming", {
     type: StandardPowerType.get("Swimming"),
-    distance: 4,
+    distance: new ModifiableValue(4),
   }),
 ]);
 
@@ -100,7 +101,7 @@ export class Character {
       movementModes.push(
         new MovementMode(name, {
           type: MOVEMENT_TYPES_BY_NAME[mode],
-          distance: data.value + data.modifier,
+          distance: new ModifiableValue(data.value, data.modifier),
         })
       );
     }

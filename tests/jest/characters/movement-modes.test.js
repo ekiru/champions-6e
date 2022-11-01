@@ -1,5 +1,6 @@
 // eslint-env jest
 
+import { ModifiableValue } from "../../../src/mechanics/modifiable-value";
 import { MovementMode } from "../../../src/mechanics/movement-mode";
 import { StandardPowerType } from "../../../src/mechanics/power";
 
@@ -7,7 +8,7 @@ describe("MovementMode", function () {
   describe("constructor", function () {
     const name = "Blink";
     const type = new StandardPowerType("Teleportation");
-    const distance = 20;
+    const distance = new ModifiableValue(20);
 
     it("should require a string name", function () {
       expect(() => new MovementMode(5, { type, distance })).toThrow(
@@ -21,9 +22,9 @@ describe("MovementMode", function () {
       ).toThrow(new Error("type must be a PowerType"));
     });
 
-    it("should require a numeric distance", function () {
-      expect(() => new MovementMode(name, { type, distance: "20" })).toThrow(
-        new Error("distance must be a number")
+    it("should require a ModifiableValue distance", function () {
+      expect(() => new MovementMode(name, { type, distance: 20 })).toThrow(
+        new Error("distance must be a ModifiableValue")
       );
     });
   });
@@ -31,7 +32,7 @@ describe("MovementMode", function () {
   describe("accessors", function () {
     const mode = new MovementMode("Blink", {
       type: StandardPowerType.get("Teleportation"),
-      distance: 20,
+      distance: new ModifiableValue(20),
     });
 
     it(".name should expose the name", function () {
@@ -45,7 +46,7 @@ describe("MovementMode", function () {
     });
 
     it(".distance should expose the distance", function () {
-      expect(mode).toHaveProperty("distance", 20);
+      expect(mode).toHaveProperty("distance", new ModifiableValue(20));
     });
   });
 });
