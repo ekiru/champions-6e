@@ -31,12 +31,17 @@ describe("MovementMode", function () {
 
   describe("accessors", function () {
     const mode = new MovementMode("Blink", {
+      id: "5",
       type: StandardPowerType.get("Teleportation"),
       distance: new ModifiableValue(20),
     });
 
     it(".name should expose the name", function () {
       expect(mode).toHaveProperty("name", "Blink");
+    });
+
+    it(".id should expose the id, if supplied", function () {
+      expect(mode).toHaveProperty("id", "5");
     });
 
     it(".type should expose the type", function () {
