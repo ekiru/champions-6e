@@ -1,8 +1,11 @@
 /* eslint-env jest */
 
+import { ModifiableValue } from "../../../src/mechanics/modifiable-value.js";
+import { MovementMode } from "../../../src/mechanics/movement-mode.js";
 import {
   CustomPowerType,
   Power,
+  PowerCategory,
   PowerType,
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
@@ -253,6 +256,82 @@ describe("Power", function () {
       const power = Power.fromItem(item({ isStandard: false, name: "Blink" }));
       expect(power.type).toBeInstanceOf(CustomPowerType);
       expect(power.type.name).toBe("Blink");
+    });
+  });
+
+  describe("Categories", function () {
+    it("by default powers shouldn't have any categories", function () {
+      expect(
+        new Power("Allure", {
+          type: new CustomPowerType("PRE"),
+          summary: "",
+          description: "",
+        }).categories
+      ).toHaveLength(0);
+    });
+  });
+
+  it("throws if any non-symbol categories are supplied", function () {
+    expect(
+      () =>
+        new Power("Allure", {
+          type: new CustomPowerType("PRE"),
+          summary: "",
+          description: "",
+          categories: {
+            MOVEMENT: { distance: 1 },
+          },
+        })
+    ).toThrow("unrecognized category");
+  });
+
+  describe("Movement Powers", function () {
+    const powerName = "Blink";
+    const incidentalData = {
+      type: StandardPowerType.get("Teleportation"),
+      summary: "",
+      description: "",
+    };
+
+    it("should have the movement category", function () {
+      const power = new Power(powerName, {
+        ...incidentalData,
+        categories: {
+          [PowerCategory.MOVEMENT]: {
+            distance: new ModifiableValue(20),
+          },
+        },
+      });
+      expect(power.hasCategory(PowerCategory.MOVEMENT)).toBe(true);
+    });
+
+    it("must have a ModifiableValue distance", function () {
+      expect(
+        () =>
+          new Power(powerName, {
+            ...incidentalData,
+            categories: {
+              [PowerCategory.MOVEMENT]: { distance: 20 },
+            },
+          })
+      ).toThrow();
+    });
+
+    it("should have a MovementMode", function () {
+      const power = new Power(powerName, {
+        ...incidentalData,
+        categories: {
+          [PowerCategory.MOVEMENT]: {
+            distance: new ModifiableValue(20),
+          },
+        },
+      });
+      expect(power.movementMode).toEqual(
+        new MovementMode(powerName, {
+          type: incidentalData.type,
+          distance: new ModifiableValue(20),
+        })
+      );
     });
   });
 });

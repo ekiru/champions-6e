@@ -1,5 +1,15 @@
 import * as assert from "../util/assert.js";
 import { Enum } from "../util/enum.js";
+import { MovementMode } from "./movement-mode.js";
+
+/**
+ * Identifies a category of powers with special handling.
+ *
+ * @constant {object}
+ * @property {symbol} MOVEMENT Powers that provide the character with new modes of
+ * movement.
+ */
+export const PowerCategory = new Enum(["MOVEMENT"]);
 
 export class PowerType {
   get name() {
@@ -121,7 +131,9 @@ export class CustomPowerType extends PowerType {
 }
 
 export class Power {
-  constructor(name, { id, type, summary, description }) {
+  #categories = new Map();
+
+  constructor(name, { id, type, summary, description, categories = {} }) {
     assert.precondition(typeof name === "string", "name must be a string");
     assert.precondition(type instanceof PowerType, "type must be a PowerType");
     assert.precondition(
@@ -142,6 +154,20 @@ export class Power {
     this.id = id;
     this.summary = summary;
     this.description = description;
+
+    for (const category of Reflect.ownKeys(categories)) {
+      const unrecognizedCategoryMessage = `unrecognized category ${category.toString()}`;
+      assert.precondition(
+        typeof category === "symbol",
+        unrecognizedCategoryMessage
+      );
+      assert.precondition(
+        PowerCategory.has(category),
+        unrecognizedCategoryMessage
+      );
+      const data = this.#prepareCategoryData(category, categories[category]);
+      this.#categories.set(category, data);
+    }
   }
 
   static fromItem({ id, name, system, type }) {
@@ -158,5 +184,35 @@ export class Power {
     const summary = system.summary;
     const description = system.description;
     return new Power(name, { id, type: powerType, summary, description });
+  }
+
+  get categories() {
+    return Array.from(this.#categories.keys());
+  }
+
+  get movementMode() {
+    const mode = this.#categories.get(PowerCategory.MOVEMENT);
+    assert.precondition(mode !== undefined);
+    return mode;
+  }
+
+  hasCategory(category) {
+    return this.#categories.has(category);
+  }
+
+  #prepareCategoryData(category, raw) {
+    switch (category) {
+      case PowerCategory.MOVEMENT: {
+        const mode = new MovementMode(this.name, {
+          type: this.type,
+          distance: raw.distance,
+        });
+        return mode;
+      }
+      default:
+        assert.notYetImplemented(
+          `Power category ${category} not yet supported`
+        );
+    }
   }
 }
