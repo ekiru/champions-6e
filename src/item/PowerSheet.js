@@ -39,6 +39,21 @@ export default class PowerSheet extends ItemSheet {
       },
       summary: fields.text("Summary", "system.summary"),
     };
+    context.categories = {
+      movement: fields.checkbox("Movement", "system.power.categories.movement"),
+    };
+    context.movement = {
+      distance: {
+        value: fields.number(
+          "Base Distance (m)",
+          "system.power.movement.distance.value"
+        ),
+        modifier: fields.number(
+          "Distance Modifier (m)",
+          "system.power.movement.distance.modifier"
+        ),
+      },
+    };
 
     context.bio = {
       description: await fields.html("Description", "system.description"),

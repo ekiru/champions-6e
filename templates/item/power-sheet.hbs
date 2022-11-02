@@ -28,6 +28,25 @@
       <p>
         {{field attributes.summary}}
       </p>
+      <section>
+        <h2>Power Categories?</h2>
+        <p>
+          {{#each categories}}
+            {{field this}}
+          {{/each}}
+        </p>
+        {{#if categories.movement.value}}
+          <section class="category movement">
+            <h3>Movement Power</h3>
+            <p>
+              {{field movement.distance.value}}
+            </p>
+            <p>
+              {{field movement.distance.modifier}}
+            </p>
+          </section>
+        {{/if}}
+      </section>
     </div>
     <div class="tab notes flexcol" data-tab="description">
       {{field bio.description editable=editable}}

@@ -87,6 +87,15 @@
         "type": {
           "isStandard": false,
           "name": ""
+        },
+        "categories": {
+          "movement": false
+        },
+        "movement": {
+          "distance": {
+            "value": 0,
+            "modifier": 0
+          }
         }
       },
       "summary": "",
