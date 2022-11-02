@@ -1,5 +1,6 @@
 import * as assert from "../util/assert.js";
 import { Enum } from "../util/enum.js";
+import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 
 /**
@@ -181,9 +182,25 @@ export class Power {
     } else {
       powerType = new CustomPowerType(system.power.type.name);
     }
+    const categories = {};
+    for (const [category, present] of Object.entries(system.power.categories)) {
+      if (present) {
+        const categoryId = PowerCategory[category.toUpperCase()];
+        categories[categoryId] = parseCategoryDataFromItem(
+          category,
+          system.power[category]
+        );
+      }
+    }
     const summary = system.summary;
     const description = system.description;
-    return new Power(name, { id, type: powerType, summary, description });
+    return new Power(name, {
+      id,
+      type: powerType,
+      categories,
+      summary,
+      description,
+    });
   }
 
   get categories() {
@@ -211,8 +228,29 @@ export class Power {
       }
       default:
         assert.notYetImplemented(
-          `Power category ${category} not yet supported`
+          `Power category ${category.toString()} not yet supported`
         );
     }
+  }
+}
+
+/**
+ * Parses the data stored in a Power item for a category that the Power has.
+ *
+ * @param {"movement"} category The name of the category.
+ * @param {object} data The data stored in the item for the category.
+ * @returns {object} The data to be passed to the Power constructor for the category.
+ */
+function parseCategoryDataFromItem(category, data) {
+  switch (category) {
+    case "movement":
+      return {
+        distance: new ModifiableValue(
+          data.distance.value,
+          data.distance.modifier
+        ),
+      };
+    default:
+      assert.notYetImplemented(`Power category ${category} not yet supported`);
   }
 }

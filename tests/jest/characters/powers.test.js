@@ -229,6 +229,15 @@ describe("Power", function () {
         system: {
           power: {
             type,
+            categories: {
+              movement: true,
+            },
+            movement: {
+              distance: {
+                value: 40,
+                modifier: 0,
+              },
+            },
           },
           summary: "Teleport 40m",
           description: "<p></p>",
@@ -256,6 +265,17 @@ describe("Power", function () {
       const power = Power.fromItem(item({ isStandard: false, name: "Blink" }));
       expect(power.type).toBeInstanceOf(CustomPowerType);
       expect(power.type.name).toBe("Blink");
+    });
+
+    it("has the appropriate categories", function () {
+      const power = Power.fromItem(item());
+      expect(power.hasCategory(PowerCategory.MOVEMENT)).toBe(true);
+      expect(power.movementMode).toEqual(
+        new MovementMode("Blink", {
+          type: StandardPowerType.get("Teleportation"),
+          distance: new ModifiableValue(40, 0),
+        })
+      );
     });
   });
 
