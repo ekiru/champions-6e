@@ -245,14 +245,16 @@ export default class CharacterSheet extends ActorSheet {
     }
 
     context.movements = {};
-    for (const name of ["run", "leap", "swim"]) {
+    for (const mode of character.movementModes) {
+      const name = mode.name.toLowerCase();
       context.movements[name] = {
-        label: name.charAt(0).toUpperCase() + name.substring(1),
-        value: this.actor.system.movements[name].value,
+        label: mode.name,
+        tooltip: mode.type.name,
+        value: mode.distance.base,
         path: `system.movements.${name}.value`,
-        modifier: this.actor.system.movements[name].modifier,
+        modifier: mode.distance.modifier,
         modifierPath: `system.movements.${name}.modifier`,
-        total: this.actor.system.movements[name].total,
+        total: mode.distance.total,
       };
     }
 

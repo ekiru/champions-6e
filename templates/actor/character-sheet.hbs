@@ -140,7 +140,7 @@
 
         <table class="defenses">
           <thead>
-            <tr><th>Char</th> <th>Base</th> <th>Mod</th> <th>Total></th></tr>
+            <tr><th>Char</th> <th>Base</th> <th>Mod</th> <th>Total</th></tr>
           </thead>
           <tbody>
             {{#each characteristics.defenses}}
@@ -185,7 +185,7 @@
           <tbody>
             {{#each movements}}
               <tr>
-                <td>{{label}}</td>
+                <td><span title="{{tooltip}}">{{label}}</span></td>
                 <td>{{numberInput value name=path}}</td>
                 <td>{{numberInput modifier name=modifierPath}}</td>
                 <td>{{total}}</td>
