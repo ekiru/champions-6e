@@ -221,6 +221,7 @@ export class Power {
     switch (category) {
       case PowerCategory.MOVEMENT: {
         const mode = new MovementMode(this.name, {
+          id: this.id,
           type: this.type,
           distance: raw.distance,
         });

@@ -272,6 +272,7 @@ describe("Power", function () {
       expect(power.hasCategory(PowerCategory.MOVEMENT)).toBe(true);
       expect(power.movementMode).toEqual(
         new MovementMode("Blink", {
+          id: power.id,
           type: StandardPowerType.get("Teleportation"),
           distance: new ModifiableValue(40, 0),
         })
@@ -308,6 +309,7 @@ describe("Power", function () {
   describe("Movement Powers", function () {
     const powerName = "Blink";
     const incidentalData = {
+      id: "abcdef",
       type: StandardPowerType.get("Teleportation"),
       summary: "",
       description: "",
@@ -348,6 +350,7 @@ describe("Power", function () {
       });
       expect(power.movementMode).toEqual(
         new MovementMode(powerName, {
+          id: power.id,
           type: incidentalData.type,
           distance: new ModifiableValue(20),
         })
