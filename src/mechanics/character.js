@@ -6,7 +6,7 @@ import {
 } from "./characteristics.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
-import { Power, StandardPowerType } from "./power.js";
+import { Power, PowerCategory, StandardPowerType } from "./power.js";
 
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
   new MovementMode("Running", {
@@ -88,9 +88,12 @@ export class Character {
     for (const power of powers) {
       this.#powers.push(power);
     }
-    console.log(this.#powers);
     this.#powers.sort(compareBy((power) => power.name));
-    console.log(this.#powers);
+    for (const power of this.#powers) {
+      if (power.hasCategory(PowerCategory.MOVEMENT)) {
+        this.#movementModes.push(power.movementMode);
+      }
+    }
   }
 
   static fromActor({ name, items, type, system }) {

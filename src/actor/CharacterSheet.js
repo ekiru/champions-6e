@@ -248,6 +248,7 @@ export default class CharacterSheet extends ActorSheet {
     for (const mode of character.movementModes) {
       const name = mode.name.toLowerCase();
       context.movements[name] = {
+        id: mode.id,
         label: mode.name,
         tooltip: mode.type.name,
         value: mode.distance.base,

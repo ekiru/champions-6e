@@ -184,12 +184,29 @@
           </thead>
           <tbody>
             {{#each movements}}
-              <tr>
-                <td><span title="{{tooltip}}">{{label}}</span></td>
-                <td>{{numberInput value name=path}}</td>
-                <td>{{numberInput modifier name=modifierPath}}</td>
-                <td>{{total}}</td>
-              </tr>
+              {{#if id}}
+                <tr class="actor-item" data-item-id="{{id}}">
+                  <td>
+                    <span title="{{tooltip}}">{{label}}</span>
+                    <span class="item-controls">
+                      <a
+                        class="item-control item-edit"
+                        title="Edit Movement Power"
+                      ><i class="fas fa-edit"></i></a>
+                    </span>
+                  </td>
+                  <td>{{value}}</td>
+                  <td>{{modifier}}</td>
+                  <td>{{total}}</td>
+                </tr>
+              {{else}}
+                <tr>
+                  <td><span title="{{tooltip}}">{{label}}</span></td>
+                  <td>{{numberInput value name=path}}</td>
+                  <td>{{numberInput modifier name=modifierPath}}</td>
+                  <td>{{total}}</td>
+                </tr>
+              {{/if}}
             {{/each}}
           </tbody>
         </table>

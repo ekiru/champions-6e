@@ -26,6 +26,9 @@ describe("Characters", function () {
       let character;
       const LightboltAsPower = {
         name: "Lightbolt",
+        hasCategory() {
+          return false;
+        },
       };
       const FlyAsPower = {
         name: "Fly",
@@ -135,7 +138,7 @@ describe("Characters", function () {
       });
 
       it("should have the specified values for the standard movement modes", function () {
-        expect(character.movementModes).toEqual([
+        expect(character.movementModes.slice(0, 3)).toEqual([
           {
             name: "Run",
             type: StandardPowerType.get("Running"),
@@ -152,6 +155,14 @@ describe("Characters", function () {
             distance: new ModifiableValue(8),
           },
         ]);
+      });
+
+      it("should include any movement powers at the end of the movement modes", function () {
+        expect(character.movementModes).toHaveLength(4);
+        expect(FlyAsPower.hasCategory).toHaveBeenCalledWith(
+          PowerCategory.MOVEMENT
+        );
+        expect(character.movementModes[3]).toBe(FlyAsPower.movementMode);
       });
 
       it("should return the power items in powers, converted using asPower", function () {
