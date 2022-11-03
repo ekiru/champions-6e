@@ -1,10 +1,11 @@
 /* eslint-env jest */
+import { jest } from "@jest/globals";
 
 import { Character } from "../../src/mechanics/character.js";
 import { SPD, STR } from "../../src/mechanics/characteristics.js";
 import { ModifiableValue } from "../../src/mechanics/modifiable-value.js";
 import { MovementMode } from "../../src/mechanics/movement-mode.js";
-import { StandardPowerType } from "../../src/mechanics/power.js";
+import { PowerCategory, StandardPowerType } from "../../src/mechanics/power.js";
 
 describe("Characters", function () {
   describe("constructor", function () {
@@ -23,7 +24,15 @@ describe("Characters", function () {
   describe("Character.fromActor", function () {
     describe("the happy case", function () {
       let character;
-      const LightboltAsPower = Symbol("Lightbolt.asPower");
+      const LightboltAsPower = {
+        name: "Lightbolt",
+      };
+      const FlyAsPower = {
+        name: "Fly",
+        categories: [PowerCategory.MOVEMENT],
+        hasCategory: jest.fn(() => true),
+        movementMode: Symbol("Fly.asPower.movementMode"),
+      };
 
       beforeEach(function () {
         character = Character.fromActor({
@@ -91,6 +100,20 @@ describe("Characters", function () {
               asPower: LightboltAsPower,
             },
             { name: "Linguist", type: "skill" },
+            {
+              name: "Fly",
+              type: "power",
+              system: {
+                power: {
+                  type: { isStandard: true, name: "Flight" },
+                  categories: { movement: true },
+                  movement: { distance: { value: 20, modifier: 0 } },
+                  summary: "Flight 20m",
+                  description: "<p>Fly thru the air.</p>",
+                },
+              },
+              asPower: FlyAsPower,
+            },
           ],
         });
       });
@@ -132,8 +155,9 @@ describe("Characters", function () {
       });
 
       it("should return the power items in powers, converted using asPower", function () {
-        expect(character.powers).toHaveLength(1);
-        expect(character.powers[0]).toBe(LightboltAsPower);
+        expect(character.powers).toHaveLength(2);
+        expect(character.powers[0]).toBe(FlyAsPower);
+        expect(character.powers[1]).toBe(LightboltAsPower);
       });
     });
 

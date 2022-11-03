@@ -1,4 +1,5 @@
 import * as assert from "../util/assert.js";
+import { compareBy } from "../util/sort.js";
 import {
   Characteristic,
   byName as characteristicByName,
@@ -87,6 +88,9 @@ export class Character {
     for (const power of powers) {
       this.#powers.push(power);
     }
+    console.log(this.#powers);
+    this.#powers.sort(compareBy((power) => power.name));
+    console.log(this.#powers);
   }
 
   static fromActor({ name, items, type, system }) {
