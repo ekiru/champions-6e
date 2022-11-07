@@ -110,4 +110,33 @@ describe("Power Modifiers", function () {
       });
     });
   });
+
+  describe("fromItemData", function () {
+    const data = {
+      name: "Nothing",
+      value: 0,
+      summary: "A minimal modifier",
+      description: "<p></p>",
+    };
+
+    it("can parse any type of modifier", function () {
+      expect(PowerAdder.fromItemData(data)).toBeInstanceOf(PowerAdder);
+      expect(PowerAdvantage.fromItemData(data)).toBeInstanceOf(PowerAdvantage);
+      expect(PowerLimitation.fromItemData(data)).toBeInstanceOf(
+        PowerLimitation
+      );
+    });
+
+    it("round trips toItemData()", function () {
+      const advantage = new PowerAdvantage("Can Apply/Remove Adders", {
+        value: +1,
+        summary: "Can add new adders or enhance existing ones",
+        description: "",
+        increasesDamage: true,
+      });
+      expect(PowerAdvantage.fromItemData(advantage.toItemData())).toEqual(
+        advantage
+      );
+    });
+  });
 });

@@ -47,6 +47,19 @@ export class PowerModifier {
     this.summary = summary;
     this.description = description;
   }
+
+  static fromItemData({ name, ...data }) {
+    return new this(name, data);
+  }
+
+  toItemData() {
+    return {
+      name: this.name,
+      value: +this.value,
+      summary: this.summary,
+      description: this.description,
+    };
+  }
 }
 
 class AdderValue extends TaggedNumber {
@@ -95,6 +108,12 @@ export class PowerAdvantage extends PowerModifier {
     );
     this.increasesDamage = increasesDamage ?? false;
     this.value = new AdvantageOrLimitationValue(this.value);
+  }
+
+  toItemData() {
+    const data = super.toItemData();
+    data.increasesDamage = this.increasesDamage;
+    return data;
   }
 }
 
