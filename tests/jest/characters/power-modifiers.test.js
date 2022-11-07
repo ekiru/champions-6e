@@ -85,4 +85,29 @@ describe("Power Modifiers", function () {
       });
     });
   });
+
+  describe("PowerAdvantage", function () {
+    describe(".increasesDamage", function () {
+      it("should default to false", function () {
+        expect(
+          new PowerAdvantage("Affects Desolidifed", {
+            value: +0.5,
+            summary: "",
+            description: "<p></p>",
+          })
+        ).toHaveProperty("increasesDamage", false);
+      });
+
+      it("can be specified as true", function () {
+        expect(
+          new PowerAdvantage("Armor Piercing", {
+            value: +0.25,
+            summary: "",
+            description: "<p></p>",
+            increasesDamage: true,
+          })
+        ).toHaveProperty("increasesDamage", true);
+      });
+    });
+  });
 });

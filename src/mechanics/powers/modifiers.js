@@ -81,13 +81,19 @@ class AdvantageOrLimitationValue extends TaggedNumber {
 }
 
 export class PowerAdvantage extends PowerModifier {
-  constructor(...args) {
-    super(...args);
+  constructor(name, data) {
+    super(name, data);
 
+    const { increasesDamage } = data;
+    assert.precondition(
+      increasesDamage === undefined || typeof increasesDamage === "boolean",
+      "increasesDamage must be a boolean if present"
+    );
     assert.precondition(
       this.value >= 0,
       "Advantages cannot have negative values"
     );
+    this.increasesDamage = increasesDamage ?? false;
     this.value = new AdvantageOrLimitationValue(this.value);
   }
 }
