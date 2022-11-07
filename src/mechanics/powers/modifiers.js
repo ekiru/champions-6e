@@ -67,3 +67,39 @@ export class PowerAdder extends PowerModifier {
     this.value = new AdderValue(this.value);
   }
 }
+
+class AdvantageOrLimitationValue extends TaggedNumber {
+  _tagNumber(ordinary) {
+    let s = ordinary;
+    s = s.replace(/\.5$/, "½");
+    s = s.replace(/\.25$/, "¼");
+    s = s.replace(/\.75$/, "¾");
+
+    const prefix = s.startsWith("-") ? "" : "+";
+    return prefix + s;
+  }
+}
+
+export class PowerAdvantage extends PowerModifier {
+  constructor(...args) {
+    super(...args);
+
+    assert.precondition(
+      this.value >= 0,
+      "Advantages cannot have negative values"
+    );
+    this.value = new AdvantageOrLimitationValue(this.value);
+  }
+}
+
+export class PowerLimitation extends PowerModifier {
+  constructor(...args) {
+    super(...args);
+
+    assert.precondition(
+      this.value <= 0,
+      "Limitations cannot have positive values"
+    );
+    this.value = new AdvantageOrLimitationValue(this.value);
+  }
+}

@@ -2,6 +2,8 @@
 
 import {
   PowerAdder,
+  PowerAdvantage,
+  PowerLimitation,
   PowerModifier,
 } from "../../../src/mechanics/powers/modifiers.js";
 
@@ -45,6 +47,7 @@ describe("Power Modifiers", function () {
         description: "<p></p>",
       });
     };
+
     it("must be a non-negative integer for an adder", function () {
       expect(() => create(PowerAdder, -1)).toThrow(
         "Adders cannot have negative values"
@@ -54,9 +57,31 @@ describe("Power Modifiers", function () {
       );
     });
 
+    it("must be non-negative for an Advantage", function () {
+      expect(() => create(PowerAdvantage, -1)).toThrow(
+        "Advantages cannot have negative values"
+      );
+      expect(() => create(PowerAdvantage, 0.5)).not.toThrow();
+    });
+
+    it("must be non-positive for a Limitation", function () {
+      expect(() => create(PowerLimitation, +1)).toThrow(
+        "Limitations cannot have positive values"
+      );
+      expect(() => create(PowerLimitation, -0.5)).not.toThrow();
+    });
+
     describe("toString()", function () {
       it("should be of the form +X CP for Adders", function () {
         expect(create(PowerAdder, +5).value.toString()).toBe("+5 CP");
+      });
+
+      it("should be of the form +X for Advantages", function () {
+        expect(create(PowerAdvantage, +1.5).value.toString()).toBe("+1½");
+      });
+
+      it("should be of the form -X for Limitations", function () {
+        expect(create(PowerLimitation, -2.75).value.toString()).toBe("-2¾");
       });
     });
   });
