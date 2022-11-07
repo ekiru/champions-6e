@@ -1,4 +1,5 @@
 import * as assert from "../../util/assert.js";
+import { TaggedNumber } from "../../util/tagged-number.js";
 
 export class PowerModifier {
   /**
@@ -45,5 +46,24 @@ export class PowerModifier {
     this.value = value;
     this.summary = summary;
     this.description = description;
+  }
+}
+
+class AdderValue extends TaggedNumber {
+  _tagNumber(ordinary) {
+    return `+${ordinary} CP`;
+  }
+}
+
+export class PowerAdder extends PowerModifier {
+  constructor(...args) {
+    super(...args);
+
+    assert.precondition(this.value >= 0, "Adders cannot have negative values");
+    assert.precondition(
+      Number.isInteger(this.value),
+      "Adders cannot have fractional values"
+    );
+    this.value = new AdderValue(this.value);
   }
 }

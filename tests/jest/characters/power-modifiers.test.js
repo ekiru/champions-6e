@@ -1,6 +1,9 @@
 // eslint-env jest
 
-import { PowerModifier } from "../../../src/mechanics/powers/modifiers.js";
+import {
+  PowerAdder,
+  PowerModifier,
+} from "../../../src/mechanics/powers/modifiers.js";
 
 describe("Power Modifiers", function () {
   describe("constructor", function () {
@@ -31,6 +34,30 @@ describe("Power Modifiers", function () {
       expect(
         () => new PowerModifier(name, { description: ["abc"], value, summary })
       ).toThrow("description must be an HTML string");
+    });
+  });
+
+  describe("value", function () {
+    const create = function (cls, value) {
+      return new cls("Conditional", {
+        value,
+        summary: "",
+        description: "<p></p>",
+      });
+    };
+    it("must be a non-negative integer for an adder", function () {
+      expect(() => create(PowerAdder, -1)).toThrow(
+        "Adders cannot have negative values"
+      );
+      expect(() => create(PowerAdder, 1.5)).toThrow(
+        "Adders cannot have fractional values"
+      );
+    });
+
+    describe("toString()", function () {
+      it("should be of the form +X CP for Adders", function () {
+        expect(create(PowerAdder, +5).value.toString()).toBe("+5 CP");
+      });
     });
   });
 });
