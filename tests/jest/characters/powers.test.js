@@ -9,6 +9,11 @@ import {
   PowerType,
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
+import {
+  PowerAdder,
+  PowerAdvantage,
+  PowerLimitation,
+} from "../../../src/mechanics/powers/modifiers.js";
 import * as assert from "../../../src/util/assert.js";
 import { Enum } from "../../../src/util/enum.js";
 
@@ -238,6 +243,39 @@ describe("Power", function () {
                 modifier: 0,
               },
             },
+            adders: [
+              {
+                name: "Safe Aquatic Teleport",
+                value: +5,
+                summary: "Treat liquids as if they were air instead of solids",
+                description:
+                  "<p>This means you can safely teleport into water and won't take damage from doing so.</p>",
+              },
+            ],
+            advantages: [
+              {
+                name: "Reduced Endurance Cost",
+                value: +0.5,
+                summary: "0 END cost",
+                description: "<p></p>",
+              },
+              {
+                name: "Combat Acceleration/Deceleration",
+                value: +0.25,
+                summary:
+                  "Accelerate/decelerate by full combat movement per meter",
+                description: "<p></p>",
+              },
+            ],
+            limitations: [
+              {
+                name: "Must Pass Through Intervening Space",
+                value: -0.25,
+                summary: "Can't use it to escape entangles.",
+                description:
+                  "<p>You have to actually pass through the intervening space physically and therefore can't go through Entangles or Barriers or walls.</p>",
+              },
+            ],
           },
           summary: "Teleport 40m",
           description: "<p></p>",
@@ -276,6 +314,35 @@ describe("Power", function () {
           type: StandardPowerType.get("Teleportation"),
           distance: new ModifiableValue(40, 0),
         })
+      );
+    });
+
+    it("exposes its adders", function () {
+      const power = Power.fromItem(item());
+      expect(power.adders).toHaveLength(1);
+      expect(power.adders[0]).toBeInstanceOf(PowerAdder);
+      expect(power.adders[0]).toHaveProperty("name", "Safe Aquatic Teleport");
+    });
+
+    it("exposes its advantages, alphabetically sorted", function () {
+      const power = Power.fromItem(item());
+      expect(power.advantages).toEqual([
+        expect.any(PowerAdvantage),
+        expect.any(PowerAdvantage),
+      ]);
+      expect(power.advantages.map((a) => a.name)).toEqual([
+        "Combat Acceleration/Deceleration",
+        "Reduced Endurance Cost",
+      ]);
+    });
+
+    it("exposes its limitations", function () {
+      const power = Power.fromItem(item());
+      expect(power.limitations).toHaveLength(1);
+      expect(power.limitations[0]).toBeInstanceOf(PowerLimitation);
+      expect(power.limitations[0]).toHaveProperty(
+        "name",
+        "Must Pass Through Intervening Space"
       );
     });
   });

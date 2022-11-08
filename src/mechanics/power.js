@@ -1,7 +1,15 @@
 import * as assert from "../util/assert.js";
 import { Enum } from "../util/enum.js";
+import { compareBy } from "../util/sort.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
+import {
+  PowerAdder,
+  PowerAdvantage,
+  PowerLimitation,
+} from "./powers/modifiers.js";
+
+const compareByName = compareBy((mod) => mod.name);
 
 /**
  * Identifies a category of powers with special handling.
@@ -132,9 +140,25 @@ export class CustomPowerType extends PowerType {
 }
 
 export class Power {
+  #adders = [];
+  #advantages = [];
+  #limitations = [];
+
   #categories = new Map();
 
-  constructor(name, { id, type, summary, description, categories = {} }) {
+  constructor(
+    name,
+    {
+      id,
+      type,
+      summary,
+      description,
+      categories = {},
+      adders = [],
+      advantages = [],
+      limitations = [],
+    }
+  ) {
     assert.precondition(typeof name === "string", "name must be a string");
     assert.precondition(type instanceof PowerType, "type must be a PowerType");
     assert.precondition(
@@ -169,6 +193,31 @@ export class Power {
       const data = this.#prepareCategoryData(category, categories[category]);
       this.#categories.set(category, data);
     }
+
+    for (const adder of adders) {
+      assert.precondition(
+        adder instanceof PowerAdder,
+        "adder for Power must be PowerAdder"
+      );
+      this.#adders.push(adder);
+    }
+    for (const advantage of advantages) {
+      assert.precondition(
+        advantage instanceof PowerAdvantage,
+        "advantage for Power must be PowerAdvantage"
+      );
+      this.#advantages.push(advantage);
+    }
+    for (const limitation of limitations) {
+      assert.precondition(
+        limitation instanceof PowerLimitation,
+        "limitation for Power must be PowerLimitation"
+      );
+      this.#limitations.push(limitation);
+    }
+    this.#adders.sort(compareByName);
+    this.#advantages.sort(compareByName);
+    this.#limitations.sort(compareByName);
   }
 
   static fromItem({ id, name, system, type }) {
@@ -192,19 +241,45 @@ export class Power {
         );
       }
     }
+
+    const adders = system.power.adders.map((data) =>
+      PowerAdder.fromItemData(data)
+    );
+    const advantages = system.power.advantages.map((data) =>
+      PowerAdvantage.fromItemData(data)
+    );
+    const limitations = system.power.limitations.map((data) =>
+      PowerLimitation.fromItemData(data)
+    );
+
     const summary = system.summary;
     const description = system.description;
     return new Power(name, {
       id,
       type: powerType,
       categories,
+      adders,
+      advantages,
+      limitations,
       summary,
       description,
     });
   }
 
+  get adders() {
+    return this.#adders;
+  }
+
+  get advantages() {
+    return this.#advantages;
+  }
+
   get categories() {
     return Array.from(this.#categories.keys());
+  }
+
+  get limitations() {
+    return this.#limitations;
   }
 
   get movementMode() {
