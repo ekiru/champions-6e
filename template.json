@@ -96,7 +96,10 @@
             "value": 0,
             "modifier": 0
           }
-        }
+        },
+        "adders": [],
+        "advantages": [],
+        "limitations": []
       },
       "summary": "",
       "description": "<p></p>"
