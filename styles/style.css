@@ -66,6 +66,10 @@ div.tab.characteristics > table {
   grid-column-end: span 1;
 }
 
+details.modifier {
+  display: inline;
+}
+
 /* Item sheets */
 form.item header {
   display: flex;

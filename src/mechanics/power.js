@@ -282,6 +282,10 @@ export class Power {
     return this.#limitations;
   }
 
+  get modifiers() {
+    return [].concat(this.adders, this.advantages, this.limitations);
+  }
+
   get movementMode() {
     const mode = this.#categories.get(PowerCategory.MOVEMENT);
     assert.precondition(mode !== undefined);

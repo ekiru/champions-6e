@@ -419,7 +419,15 @@ export default class CharacterSheet extends ActorSheet {
       addManeuver(maneuver, null);
     }
 
-    context.powers = character.powers;
+    context.powers = character.powers.map((power) => {
+      const { id, name, type, summary } = power;
+      const modifiers = power.modifiers.map(({ name, value, summary }) => ({
+        name,
+        value: value.toString(),
+        summary,
+      }));
+      return { id, name, type, summary, modifiers };
+    });
 
     context.effects = [];
     for (const effect of this.actor.effects) {
