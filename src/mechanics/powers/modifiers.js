@@ -100,7 +100,7 @@ class AdvantageOrLimitationValue extends TaggedNumber {
     s = s.replace(/\.5$/, "½");
     s = s.replace(/\.25$/, "¼");
     s = s.replace(/\.75$/, "¾");
-
+    s = s.replace(/^(-?)0/, "$1");
     const prefix = s.startsWith("-") ? "" : "+";
     return prefix + s;
   }

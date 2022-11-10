@@ -83,6 +83,11 @@ describe("Power Modifiers", function () {
       it("should be of the form -X for Limitations", function () {
         expect(create(PowerLimitation, -2.75).value.toString()).toBe("-2¾");
       });
+
+      it("should ormat values between -1 and +1 appropriately", function () {
+        expect(create(PowerAdvantage, 0.5).value.toString()).toBe("+½");
+        expect(create(PowerLimitation, -0.25).value.toString()).toBe("-¼");
+      });
     });
   });
 

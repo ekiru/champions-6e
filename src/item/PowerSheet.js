@@ -60,30 +60,23 @@ export default class PowerSheet extends ItemSheet {
 
     context.modifiers = {
       adders: [],
+      advantages: [],
+      limitations: [],
     };
     for (const adder of power.adders) {
-      const basePath = `system.power.adders.${adder.id}`;
-      context.modifiers.adders.push({
-        id: adder.id,
-        name: {
-          path: `${basePath}.name`,
-          value: adder.name,
-        },
-        value: {
-          path: `${basePath}.value`,
-          value: adder.value,
-        },
-        summary: {
-          path: `${basePath}.summary`,
-          value: adder.summary,
-        },
-        description: {
-          path: `${basePath}.description`,
-          value: await TextEditor.enrichHTML(adder.description, {
-            async: true,
-          }),
-        },
-      });
+      context.modifiers.adders.push(await this.#modifierData("adders", adder));
+    }
+    for (const advantage of power.advantages) {
+      context.modifiers.advantages.push(
+        await this.#modifierData("advantages", advantage, {
+          increasesDamage: advantage.increasesDamage,
+        })
+      );
+    }
+    for (const limitation of power.limitations) {
+      context.modifiers.limitations.push(
+        await this.#modifierData("limitations", limitation)
+      );
     }
 
     context.bio = {
@@ -127,5 +120,37 @@ export default class PowerSheet extends ItemSheet {
       };
       item.update(removeModifier);
     });
+  }
+
+  async #modifierData(type, modifier, extraFields = {}) {
+    const basePath = `system.power.${type}.${modifier.id}`;
+    const result = {
+      id: modifier.id,
+      name: {
+        path: `${basePath}.name`,
+        value: modifier.name,
+      },
+      value: {
+        path: `${basePath}.value`,
+        value: modifier.value,
+      },
+      summary: {
+        path: `${basePath}.summary`,
+        value: modifier.summary,
+      },
+      description: {
+        path: `${basePath}.description`,
+        value: await TextEditor.enrichHTML(modifier.description, {
+          async: true,
+        }),
+      },
+    };
+    for (const [field, value] of Object.entries(extraFields)) {
+      result[field] = {
+        path: `${basePath}.${field}`,
+        value: value,
+      };
+    }
+    return result;
   }
 }

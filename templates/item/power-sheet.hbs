@@ -98,6 +98,108 @@
             class="fas fa-plus"
           ></i>
           Add Adder</a></p>
+      <table class="advantages">
+        <thead>
+          <tr><th>Advantage</th>
+            <th>Value</th>
+            <th>Damage?</th>
+            <th>Summary</th>
+            <th>Description</th>
+            <th></th></tr>
+        </thead>
+        <tbody>
+          {{#each modifiers.advantages}}
+            <tr>
+              <td><input
+                  type="text"
+                  value="{{name.value}}"
+                  name="{{name.path}}"
+                /></td>
+              <td><input
+                  type="number"
+                  value="{{value.value}}"
+                  name="{{value.path}}"
+                /></td>
+              <td><input
+                  type="checkbox"
+                  {{checked increasesDamage.value}}
+                  name="{{increasesDamage.path}}"
+                /></td>
+              <td><input
+                  type="text"
+                  value="{{summary.value}}"
+                  name="{{summary.path}}"
+                /></td>
+              <td>
+                {{editor
+                  description.value
+                  target=description.path
+                  button=true
+                  editable=true
+                }}
+              </td>
+              <td><a
+                  class="modifier-delete"
+                  data-id="{{id}}"
+                  data-type="advantages"
+                  title="Delete Modifier"
+                ><i class="fas fa-trash"></i></a></td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <p><a class="modifier-create" data-type="advantages"><i
+            class="fas fa-plus"
+          ></i>
+          Add Advantage</a></p>
+      <table class="limitations">
+        <thead>
+          <tr><th>Limitation</th>
+            <th>Value</th>
+            <th>Summary</th>
+            <th>Description</th>
+            <th></th></tr>
+        </thead>
+        <tbody>
+          {{#each modifiers.limitations}}
+            <tr>
+              <td><input
+                  type="text"
+                  value="{{name.value}}"
+                  name="{{name.path}}"
+                /></td>
+              <td><input
+                  type="number"
+                  value="{{value.value}}"
+                  name="{{value.path}}"
+                /></td>
+              <td><input
+                  type="text"
+                  value="{{summary.value}}"
+                  name="{{summary.path}}"
+                /></td>
+              <td>
+                {{editor
+                  description.value
+                  target=description.path
+                  button=true
+                  editable=true
+                }}
+              </td>
+              <td><a
+                  class="modifier-delete"
+                  data-id="{{id}}"
+                  data-type="limitations"
+                  title="Delete Modifier"
+                ><i class="fas fa-trash"></i></a></td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <p><a class="modifier-create" data-type="limitations"><i
+            class="fas fa-plus"
+          ></i>
+          Add Limitation</a></p>
     </div>
     <div class="tab notes flexcol" data-tab="description">
       {{field bio.description editable=editable}}
