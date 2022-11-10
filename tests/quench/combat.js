@@ -4,7 +4,7 @@ import {
   findDamageRollForAttack,
   nextDialog,
   nextMessage,
-  openAttackSheet,
+  openItemSheet,
   openCharacterSheet,
 } from "./helpers/sheets.js";
 import { waitOneMoment } from "./helpers/timers.js";
@@ -618,7 +618,7 @@ export function register(system, quench) {
           });
 
           it("when I change the attack's AP per d6 to 7½, it should cost 7½ AP per d6", async function () {
-            const sheet = await openAttackSheet(this.attack);
+            const sheet = await openItemSheet(this.attack);
             expect(sheet).to.have.lengthOf(1);
 
             const field = sheet.find('select[name="system.damage.apPerDie"]');

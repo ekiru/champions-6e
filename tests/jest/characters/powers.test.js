@@ -322,6 +322,7 @@ describe("Power", function () {
       expect(power.adders).toHaveLength(1);
       expect(power.adders[0]).toBeInstanceOf(PowerAdder);
       expect(power.adders[0]).toHaveProperty("name", "Safe Aquatic Teleport");
+      expect(power.adders[0]).toHaveProperty("id", "1");
     });
 
     it("exposes its advantages, alphabetically sorted", function () {

@@ -48,15 +48,15 @@ export function nextMessage() {
 }
 
 /**
- * Opens an attack's sheet.
+ * Opens an item's sheet.
  *
- * @param {Item} attack The item whose sheet to open
+ * @param {Item} item The item whose sheet to open
  * @returns {jQuery} A jQuery object for the root element of the actor's sheet.
  */
-export async function openAttackSheet(attack) {
-  attack.sheet.render(true);
+export async function openItemSheet(item) {
+  item.sheet.render(true);
   await waitOneMoment();
-  return attack.sheet.element;
+  return item.sheet.element;
 }
 
 /**

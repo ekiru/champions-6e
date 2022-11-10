@@ -1,5 +1,7 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
 import * as build from "../helpers/build.js";
+import { openItemSheet } from "../helpers/sheets.js";
+import { waitOneMoment } from "../helpers/timers.js";
 
 /**
  * Registers the tests for Items with type=attack.
@@ -84,6 +86,41 @@ export function register(system, quench) {
             await this.power.update({ "system.power.type.isStandard": false });
 
             expect(this.power.system.power.type.name).to.equal("Blast");
+          });
+        });
+      });
+
+      describe("Power modifiers", function () {
+        afterEach(build.afterEach);
+
+        describe("A new power", function () {
+          beforeEach(async function () {
+            await build.at(this).power().build();
+            this.sheet = await openItemSheet(this.power);
+          });
+
+          it("should initially have no adders", function () {
+            expect(this.power.asPower.adders).to.have.lengthOf(0);
+          });
+
+          it("should have an adder after clicking the add adder link", async function () {
+            this.sheet.find("a.modifier-create[data-type='adders']").click();
+            await waitOneMoment();
+            expect(this.power.asPower.adders).to.have.lengthOf(1);
+          });
+
+          it("should continue to work after editing an adder", async function () {
+            this.sheet.find("a.modifier-create[data-type='adders']").click();
+            await waitOneMoment();
+            this.sheet
+              .find(
+                "table.adders > tbody > tr:first-child > td:first-child > input"
+              )
+              .val("Green");
+            await this.power.sheet.submit();
+            const power = this.power.asPower;
+            expect(power.adders).to.have.lengthOf(1);
+            expect(power.adders[0].name).to.equal("Green");
           });
         });
       });

@@ -3,6 +3,13 @@ import { TaggedNumber } from "../../util/tagged-number.js";
 
 export class PowerModifier {
   /**
+   * An identifier for the modifier.
+   *
+   * @type {string?}
+   */
+  id;
+
+  /**
    * The name of the modifier
    *
    * @type {string}
@@ -31,7 +38,11 @@ export class PowerModifier {
    */
   description;
 
-  constructor(name, { value, summary, description }) {
+  constructor(name, { id, value, summary, description }) {
+    assert.precondition(
+      id === undefined || typeof id === "string",
+      "id must be a string if present"
+    );
     assert.precondition(typeof name === "string", "name must be a string");
     assert.precondition(typeof value === "number", "value must be a number");
     assert.precondition(
@@ -42,6 +53,7 @@ export class PowerModifier {
       typeof description === "string",
       "description must be an HTML string"
     );
+    this.id = id;
     this.name = name;
     this.value = value;
     this.summary = summary;
@@ -54,6 +66,7 @@ export class PowerModifier {
 
   toItemData() {
     return {
+      id: this.id,
       name: this.name,
       value: +this.value,
       summary: this.summary,

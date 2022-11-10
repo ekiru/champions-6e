@@ -1,5 +1,6 @@
 import { StandardPowerType } from "../mechanics/power.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
+import * as assert from "../util/assert.js";
 
 export default class PowerSheet extends ItemSheet {
   /** @override */
@@ -21,6 +22,7 @@ export default class PowerSheet extends ItemSheet {
   async getData(options = {}) {
     const context = super.getData(options);
     const fields = new FieldBuilder(this.item);
+    const power = this.item.asPower;
 
     const isStandard = this.item.system.power.type.isStandard;
     context.attributes = {
@@ -55,10 +57,65 @@ export default class PowerSheet extends ItemSheet {
       },
     };
 
+    context.modifiers = {
+      adders: [],
+    };
+    for (const adder of power.adders) {
+      const basePath = `system.power.adders.${adder.id}`;
+      context.modifiers.adders.push({
+        name: {
+          path: `${basePath}.name`,
+          value: adder.name,
+        },
+        value: {
+          path: `${basePath}.value`,
+          value: adder.value,
+        },
+        summary: {
+          path: `${basePath}.summary`,
+          value: adder.summary,
+        },
+        description: {
+          path: `${basePath}.description`,
+          value: await TextEditor.enrichHTML(adder.description, {
+            async: true,
+          }),
+        },
+      });
+    }
+
     context.bio = {
       description: await fields.html("Description", "system.description"),
     };
 
     return context;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    const item = this.item;
+
+    html.find(".modifier-create").click(function () {
+      const { type } = this.dataset;
+      const existing = item.system.power[type];
+      let id;
+      let i = 0;
+      do {
+        id = foundry.utils.randomID();
+        assert.precondition(
+          i++ < 10,
+          "extremely unlucky generation of 10 duplicate randomIDs..."
+        );
+      } while (id in existing);
+
+      item.update({
+        [`system.power.${type}.${id}`]: {
+          name: "New Modifier",
+          value: 0,
+          summary: "",
+          description: "<p></p>",
+        },
+      });
+    });
   }
 }

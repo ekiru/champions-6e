@@ -97,9 +97,9 @@
             "modifier": 0
           }
         },
-        "adders": [],
-        "advantages": [],
-        "limitations": []
+        "adders": {},
+        "advantages": {},
+        "limitations": {}
       },
       "summary": "",
       "description": "<p></p>"

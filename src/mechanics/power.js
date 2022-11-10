@@ -242,14 +242,14 @@ export class Power {
       }
     }
 
-    const adders = Object.values(system.power.adders).map((data) =>
-      PowerAdder.fromItemData(data)
+    const adders = Object.entries(system.power.adders).map(([id, data]) =>
+      PowerAdder.fromItemData({ id, ...data })
     );
-    const advantages = Object.values(system.power.advantages).map((data) =>
-      PowerAdvantage.fromItemData(data)
+    const advantages = Object.entries(system.power.advantages).map(
+      ([id, data]) => PowerAdvantage.fromItemData({ id, ...data })
     );
-    const limitations = Object.values(system.power.limitations).map((data) =>
-      PowerLimitation.fromItemData(data)
+    const limitations = Object.entries(system.power.limitations).map(
+      ([id, data]) => PowerLimitation.fromItemData({ id, ...data })
     );
 
     const summary = system.summary;
