@@ -243,39 +243,39 @@ describe("Power", function () {
                 modifier: 0,
               },
             },
-            adders: [
-              {
+            adders: {
+              1: {
                 name: "Safe Aquatic Teleport",
                 value: +5,
                 summary: "Treat liquids as if they were air instead of solids",
                 description:
                   "<p>This means you can safely teleport into water and won't take damage from doing so.</p>",
               },
-            ],
-            advantages: [
-              {
+            },
+            advantages: {
+              a: {
                 name: "Reduced Endurance Cost",
                 value: +0.5,
                 summary: "0 END cost",
                 description: "<p></p>",
               },
-              {
+              b: {
                 name: "Combat Acceleration/Deceleration",
                 value: +0.25,
                 summary:
                   "Accelerate/decelerate by full combat movement per meter",
                 description: "<p></p>",
               },
-            ],
-            limitations: [
-              {
+            },
+            limitations: {
+              a: {
                 name: "Must Pass Through Intervening Space",
                 value: -0.25,
                 summary: "Can't use it to escape entangles.",
                 description:
                   "<p>You have to actually pass through the intervening space physically and therefore can't go through Entangles or Barriers or walls.</p>",
               },
-            ],
+            },
           },
           summary: "Teleport 40m",
           description: "<p></p>",

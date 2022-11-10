@@ -242,13 +242,13 @@ export class Power {
       }
     }
 
-    const adders = system.power.adders.map((data) =>
+    const adders = Object.values(system.power.adders).map((data) =>
       PowerAdder.fromItemData(data)
     );
-    const advantages = system.power.advantages.map((data) =>
+    const advantages = Object.values(system.power.advantages).map((data) =>
       PowerAdvantage.fromItemData(data)
     );
-    const limitations = system.power.limitations.map((data) =>
+    const limitations = Object.values(system.power.limitations).map((data) =>
       PowerLimitation.fromItemData(data)
     );
 
