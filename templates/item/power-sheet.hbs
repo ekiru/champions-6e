@@ -55,11 +55,11 @@
           <tr><th>Adder</th>
             <th>Value</th>
             <th>Summary</th>
-            <th>Description</th></tr>
+            <th>Description</th>
+            <th></th></tr>
         </thead>
         <tbody>
           {{#each modifiers.adders}}
-            {{log this}}
             <tr>
               <td><input
                   type="text"
@@ -84,6 +84,12 @@
                   editable=true
                 }}
               </td>
+              <td><a
+                  class="modifier-delete"
+                  data-id="{{id}}"
+                  data-type="adders"
+                  title="Delete Modifier"
+                ><i class="fas fa-trash"></i></a></td>
             </tr>
           {{/each}}
         </tbody>

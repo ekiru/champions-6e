@@ -7,6 +7,7 @@ export default class PowerSheet extends ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       height: 500,
+      width: 800,
       tabs: [
         {
           navSelector: "nav.tabs",
@@ -63,6 +64,7 @@ export default class PowerSheet extends ItemSheet {
     for (const adder of power.adders) {
       const basePath = `system.power.adders.${adder.id}`;
       context.modifiers.adders.push({
+        id: adder.id,
         name: {
           path: `${basePath}.name`,
           value: adder.name,
@@ -116,6 +118,14 @@ export default class PowerSheet extends ItemSheet {
           description: "<p></p>",
         },
       });
+    });
+
+    html.find(".modifier-delete").click(function () {
+      const { id, type } = this.dataset;
+      const removeModifier = {
+        system: { power: { [type]: { [`-=${id}`]: null } } },
+      };
+      item.update(removeModifier);
     });
   }
 }

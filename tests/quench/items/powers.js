@@ -109,7 +109,7 @@ export function register(system, quench) {
             expect(this.power.asPower.adders).to.have.lengthOf(1);
           });
 
-          it("should continue to work after editing an adder", async function () {
+          it("should allow editing adders", async function () {
             this.sheet.find("a.modifier-create[data-type='adders']").click();
             await waitOneMoment();
             this.sheet
@@ -121,6 +121,23 @@ export function register(system, quench) {
             const power = this.power.asPower;
             expect(power.adders).to.have.lengthOf(1);
             expect(power.adders[0].name).to.equal("Green");
+          });
+
+          it("should allow deleting an adder", async function () {
+            await this.power.update({
+              "system.power.adders.gay": {
+                name: "Homosexuality",
+                value: 999,
+                summary: "Being gay",
+                description: "<p>Loving other women</p>",
+              },
+            });
+            this.sheet = await openItemSheet(this.power);
+            expect(this.power.asPower.adders).to.have.lengthOf(1);
+            const deleteButton = this.sheet.find("a.modifier-delete");
+            deleteButton.click();
+            await waitOneMoment();
+            expect(this.power.asPower.adders).to.have.lengthOf(0);
           });
         });
       });
