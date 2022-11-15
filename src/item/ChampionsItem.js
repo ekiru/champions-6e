@@ -1,6 +1,7 @@
 import { Attack } from "../mechanics/attack.js";
 import { Maneuver } from "../mechanics/maneuvers.js";
 import { Power, StandardPowerType } from "../mechanics/power.js";
+import { Multipower } from "../mechanics/powers/multipowers.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
 
@@ -51,6 +52,16 @@ export default class ChampionsItem extends Item {
   }
 
   /**
+   * Converts a multipower item to the Multipower domain class.
+   *
+   * @type {Multipower}
+   */
+  get asMultipower() {
+    assert.precondition(this.type === "multipower");
+    return Multipower.fromItem(this, this.#powerCollectionForFramework());
+  }
+
+  /**
    * Converts a power item to the Power domain class
    *
    * @type {Power}
@@ -86,6 +97,36 @@ export default class ChampionsItem extends Item {
       default:
         assert.notYetImplemented();
         return 0;
+    }
+  }
+
+  async _preCreate(data) {
+    if (this.type === "multipower" && data?.system?.framework?.slots) {
+      const collection = this.#powerCollectionForFramework();
+      for (const slot of Object.values(data.system.framework.slots)) {
+        if ("powers" in slot) {
+          assert.precondition(slot.powers instanceof Array);
+          for (const id of slot.powers) {
+            assert.that(collection.has(id), `Missing power ${id}`);
+          }
+        }
+      }
+    }
+  }
+
+  _onCreate(data, options, user) {
+    if (this.type === "multipower" && user === game.userId) {
+      const collection = this.#powerCollectionForFramework();
+      for (const slot of Object.values(this.system.framework.slots)) {
+        for (const powerId of slot.powers) {
+          const power = collection.get(powerId);
+          assert.that(
+            power instanceof ChampionsItem,
+            `couldn't get power ${powerId} from collection ${collection}`
+          );
+          power.update({ "system.power.framework": this.id });
+        }
+      }
     }
   }
 
@@ -359,5 +400,9 @@ export default class ChampionsItem extends Item {
     );
     const char = this.actor.system.characteristics[this.system.characteristic];
     return char.targetNumber + this.system.bonus.value;
+  }
+
+  #powerCollectionForFramework() {
+    return game.items;
   }
 }

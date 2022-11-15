@@ -1,4 +1,5 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
+import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
 import * as build from "../helpers/build.js";
 import { openItemSheet } from "../helpers/sheets.js";
 import { waitOneMoment } from "../helpers/timers.js";
@@ -143,5 +144,69 @@ export function register(system, quench) {
       });
     },
     { displayName: `${system}: Power items` }
+  );
+
+  quench.registerBatch(
+    `${system}.items.frameworks.multipowers`,
+    function ({ describe, it, expect, afterEach, beforeEach }) {
+      afterEach(build.afterEach);
+
+      describe("A new stand-alone multipower", function () {
+        beforeEach("create a new multipower", async function () {
+          await build.at(this).multipower().build();
+        });
+
+        it("should be a valid Multipower", function () {
+          let multipower;
+          expect(
+            () => (multipower = this.multipower.asMultipower)
+          ).to.not.throw();
+          expect(multipower).to.be.an.instanceof(Multipower);
+        });
+
+        it("should have a reserve of 0", function () {
+          expect(this.multipower.asMultipower).to.have.property("reserve", 0);
+        });
+
+        it("should have no slots", function () {
+          expect(this.multipower.asMultipower.slots).to.have.lengthOf(0);
+        });
+      });
+
+      describe("A new standalone multipower with slots", function () {
+        beforeEach("create the powers and multipower", async function () {
+          await build
+            .at(this, "morphStr")
+            .power()
+            .named("Morph STR")
+            .withCustomType("STR")
+            .build();
+          await build
+            .at(this, "morphDex")
+            .power()
+            .named("Morph DEX")
+            .withCustomType("DEX")
+            .build();
+          await build
+            .at(this, "morph")
+            .multipower()
+            .named("Morph")
+            .withReserve(30)
+            .withSlot(this.morphStr)
+            .withSlot(this.morphDex)
+            .build();
+
+          await waitOneMoment();
+        });
+
+        it("should contain two slots", function () {
+          const multipower = this.morph.asMultipower;
+          expect(multipower.slots).to.have.lengthOf(2);
+          expect(multipower.slots[0]).to.have.property("name", "Morph STR");
+          expect(multipower.slots[1]).to.have.property("name", "Morph DEX");
+        });
+      });
+    },
+    { displayName: `${system}: Multipower items` }
   );
 }

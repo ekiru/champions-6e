@@ -59,7 +59,14 @@
     }
   },
   "Item": {
-    "types": ["attack", "maneuver", "power", "skill"],
+    "types": ["attack", "maneuver", "multipower", "power", "skill"],
+    "templates": {
+      "slots": {
+        "framework": {
+          "slots": {}
+        }
+      }
+    },
     "attack": {
       "cv": {
         "defensive": "dcv",
@@ -82,6 +89,13 @@
       "summary": "",
       "description": "<p></p>"
     },
+    "multipower": {
+      "templates": ["slots"],
+      "framework": {
+        "reserve": 0
+      },
+      "description": "<p></p>"
+    },
     "power": {
       "power": {
         "type": {
@@ -99,7 +113,8 @@
         },
         "adders": {},
         "advantages": {},
-        "limitations": {}
+        "limitations": {},
+        "framework": null
       },
       "summary": "",
       "description": "<p></p>"

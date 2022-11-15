@@ -1,3 +1,4 @@
+import ChampionsItem from "../../../src/item/ChampionsItem.js";
 import * as assert from "../../../src/util/assert.js";
 
 let documents = [];
@@ -100,6 +101,15 @@ class Builder {
   }
 
   /**
+   * Begins building a multipower.
+   *
+   * @returns {MultipowerBuilder} A builder for the multipower.
+   */
+  multipower() {
+    return new MultipowerBuilder(this.#context, this.#path);
+  }
+
+  /**
    * Begins building a power.
    *
    * @returns {PowerBuilder} A builder for the power.
@@ -197,6 +207,43 @@ class ManeuverBuilder extends DocumentBuilder {
     super(context, path ?? "maneuver", Item);
     this.setProperty("name", "Punch");
     this.setProperty("type", "maneuver");
+  }
+}
+
+class MultipowerBuilder extends DocumentBuilder {
+  #nextSlot = 0;
+
+  constructor(context, path) {
+    super(context, path ?? "multipower", Item);
+    this.setProperty("name", "Lasers");
+    this.setProperty("type", "multipower");
+  }
+
+  /**
+   * Sets the reserve for the multipower.
+   *
+   * @param {number} reserve The number of AP that can be distributed between the
+   * multipower's slots.
+   * @returns {MultipowerBuilder} `this` for chaining
+   */
+  withReserve(reserve) {
+    this.setProperty("system.framework.reserve", reserve);
+    return this;
+  }
+
+  /**
+   * Adds a slot to the multipower.
+   *
+   * @param  {...ChampionsItem} powers Powers to include in the slot
+   * @returns {MultipowerBuilder} `this` for chaining
+   */
+  withSlot(...powers) {
+    const slot = this.#nextSlot++;
+    this.setProperty(
+      `system.framework.slots.${slot}.powers`,
+      powers.map((power) => power.id)
+    );
+    return this;
   }
 }
 
