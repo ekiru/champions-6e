@@ -45,4 +45,82 @@ describe("Multipowers", function () {
       ).toHaveProperty("slots", [fireball]);
     });
   });
+
+  describe("fromItem", function () {
+    const id = "mp01";
+
+    const powers = new Map([
+      [
+        "001",
+        {
+          id: "001",
+          name: "Lightning Bolt",
+          type: "power",
+          system: {
+            power: {
+              type: { isStandard: true, name: "Killing Attack" },
+              categories: {},
+              adders: {},
+              advantages: {},
+              limitations: {},
+              framework: id,
+            },
+            summary: "RKA 4d6",
+            description: "<p>Shoot lightning at them!</p>",
+          },
+        },
+      ],
+      [
+        "002",
+        {
+          id: "002",
+          name: "Arcane Shield",
+          type: "power",
+          system: {
+            power: {
+              type: { isStandard: true, name: "Resistant Protection" },
+              categories: {},
+              adders: {},
+              advantages: {},
+              limitations: {},
+              framework: id,
+            },
+            summary: "+24rPD/+24rED",
+            description: "<p>A protective field of arcane energy</p>",
+          },
+        },
+      ],
+    ]);
+
+    it("should parse a valid multipower correctly", function () {
+      const mp = Multipower.fromItem(
+        {
+          id,
+          name: "Magic",
+          type: "multipower",
+          system: {
+            framework: {
+              reserve: 60,
+              slots: {
+                a: { powers: ["001"] },
+                b: { powers: ["002"] },
+              },
+            },
+            description: "<p>An array of magical spells</p>",
+          },
+        },
+        powers
+      );
+      expect(mp).toBeInstanceOf(Multipower);
+      expect(mp).toHaveProperty("name", "Magic");
+      expect(mp).toHaveProperty("id", id);
+      expect(mp).toHaveProperty("reserve", 60);
+      expect(mp).toHaveProperty("slots", [
+        expect.any(Power),
+        expect.any(Power),
+      ]);
+      expect(mp.slots[0]).toHaveProperty("name", "Lightning Bolt");
+      expect(mp.slots[1]).toHaveProperty("name", "Arcane Shield");
+    });
+  });
 });
