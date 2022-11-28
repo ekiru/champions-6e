@@ -7,7 +7,6 @@ let documents = [];
  * Cleans up any built objects.
  */
 export async function afterEach() {
-  console.log(documents);
   await Promise.allSettled(documents.map((doc) => doc.delete()));
   documents = [];
 }

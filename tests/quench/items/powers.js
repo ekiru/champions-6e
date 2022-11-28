@@ -228,6 +228,66 @@ export function register(system, quench) {
               .and.to.have.a.property("message")
               .that.matches(/must not have an owner/);
           });
+
+          it("should add the power to the framework", async function () {
+            await build.at(this).power().build();
+
+            await this.multipower.addPower(this.power);
+
+            expect(this.multipower.asMultipower.slots).to.deep.equal([
+              this.power.asPower,
+            ]);
+          });
+
+          it("should mark the power as belonging to the framework", async function () {
+            await build.at(this).power().build();
+
+            await this.multipower.addPower(this.power);
+
+            expect(this.power.system.power.framework).to.equal(
+              this.multipower.id
+            );
+          });
+        });
+
+        describe("that belongs to an actor", function () {
+          beforeEach(async function () {
+            await build.at(this).character().build();
+            await build.at(this).multipower().ownedBy(this.character).build();
+          });
+
+          it("should require that the powers belong to an actor", async function () {
+            await build.at(this).power().build();
+            let error;
+            try {
+              await this.multipower.addPower(this.power);
+            } catch (e) {
+              error = e;
+            }
+            expect(error)
+              .to.be.an.instanceof(AssertionError)
+              .and.to.have.a.property("message")
+              .that.matches(/must belong to the same actor/);
+          });
+
+          it("should require that the powers belong to the same actor", async function () {
+            await build
+              .at(this, "somebodyElse")
+              .character()
+              .named("Somebody else")
+              .build();
+            await build.at(this).power().ownedBy(this.somebodyElse).build();
+            let error;
+            try {
+              await this.multipower.addPower(this.power);
+            } catch (e) {
+              error = e;
+            }
+            expect(error)
+              .to.be.an.instanceof(AssertionError)
+              .and.to.have.a.property("message")
+              .that.matches(/must belong to the same actor/);
+          });
         });
       });
     },

@@ -13,6 +13,10 @@ const MANEUVER_SCHEMA = {
   numberFields: [],
 };
 
+const MULTIPOWER_SCHEMA = {
+  numberFields: [{ path: "system.framework.reserve", default: 0 }],
+};
+
 const POWER_SCHEMA = {
   numberFields: [],
 };
@@ -120,7 +124,17 @@ export default class ChampionsItem extends Item {
         power.parent === null,
         "Powers in frameworks that do not have an owner must not have an owner either"
       );
+    } else {
+      assert.precondition(
+        power.parent === this.parent,
+        "Powers in owned frameworks must belong to the same actor"
+      );
     }
+
+    await this.update({
+      [`system.framework.slots.${power.id}`]: { powers: [power.id] },
+    });
+    await power.update({ "system.power.framework": this.id });
   }
 
   async _preCreate(data) {
@@ -162,6 +176,9 @@ export default class ChampionsItem extends Item {
       case "maneuver":
         schema = MANEUVER_SCHEMA;
         break;
+      case "multipower":
+        schema = MULTIPOWER_SCHEMA;
+        break;
       case "power":
         schema = POWER_SCHEMA;
         break;
@@ -178,6 +195,8 @@ export default class ChampionsItem extends Item {
         this.#preUpdateAttack(changes);
         break;
       case "maneuver":
+        break;
+      case "multipower":
         break;
       case "power":
         this.#preUpdatePower(changes);
