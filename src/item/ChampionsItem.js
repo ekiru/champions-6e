@@ -100,6 +100,29 @@ export default class ChampionsItem extends Item {
     }
   }
 
+  /**
+   * Adds a power to a power framework.
+   *
+   * @param {ChampionsItem} power The power to add.
+   * @async
+   */
+  async addPower(power) {
+    assert.precondition(
+      this.type === "multipower",
+      "Powers can only be added to power frameworks"
+    );
+    assert.precondition(
+      power.type === "power",
+      "Only powers can be added to a power framework"
+    );
+    if (this.parent === null) {
+      assert.precondition(
+        power.parent === null,
+        "Powers in frameworks that do not have an owner must not have an owner either"
+      );
+    }
+  }
+
   async _preCreate(data) {
     if (this.type === "multipower" && data?.system?.framework?.slots) {
       const collection = this.#powerCollectionForFramework();

@@ -1,5 +1,6 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
+import { AssertionError } from "../../../src/util/assert.js";
 import * as build from "../helpers/build.js";
 import { openItemSheet } from "../helpers/sheets.js";
 import { waitOneMoment } from "../helpers/timers.js";
@@ -204,6 +205,29 @@ export function register(system, quench) {
           expect(multipower.slots).to.have.lengthOf(2);
           expect(multipower.slots[0]).to.have.property("name", "Morph STR");
           expect(multipower.slots[1]).to.have.property("name", "Morph DEX");
+        });
+      });
+
+      describe("Adding powers to a multipower", function () {
+        describe("that is standalone", function () {
+          beforeEach(async function () {
+            await build.at(this).multipower().build();
+          });
+
+          it("should require that the powers be standalone too", async function () {
+            await build.at(this).character().build();
+            await build.at(this).power().ownedBy(this.character).build();
+            let error;
+            try {
+              await this.multipower.addPower(this.power);
+            } catch (e) {
+              error = e;
+            }
+            expect(error)
+              .to.be.an.instanceof(AssertionError)
+              .and.to.have.a.property("message")
+              .that.matches(/must not have an owner/);
+          });
         });
       });
     },

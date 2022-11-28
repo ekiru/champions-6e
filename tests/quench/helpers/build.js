@@ -7,6 +7,7 @@ let documents = [];
  * Cleans up any built objects.
  */
 export async function afterEach() {
+  console.log(documents);
   await Promise.allSettled(documents.map((doc) => doc.delete()));
   documents = [];
 }
@@ -163,7 +164,7 @@ class DocumentBuilder {
    * @returns {Builder} `this` for chaining.
    */
   ownedBy(owner) {
-    this.setOption("owner", owner);
+    this.setOption("parent", owner);
     return this;
   }
 
@@ -178,7 +179,10 @@ class DocumentBuilder {
       this.#options
     );
     this.#context[this.#path] = document;
-    documents.push(document);
+    if (!("parent" in this.#options)) {
+      // let contained documents be deleted by their parent
+      documents.push(document);
+    }
   }
 }
 
