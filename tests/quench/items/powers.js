@@ -290,6 +290,16 @@ export function register(system, quench) {
           });
         });
       });
+
+      describe("Removing powers from a multipower", function () {
+        beforeEach(async function () {
+          await build.at(this).power().build();
+          await build.at(this).multipower().withSlot(this.power).build();
+        });
+
+        it.skip("should remove the multipower slot");
+        it.skip("should mark the power as not belonging to any framework");
+      });
     },
     { displayName: `${system}: Multipower items` }
   );
