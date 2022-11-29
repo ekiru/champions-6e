@@ -143,6 +143,48 @@ export default class ChampionsItem extends Item {
     );
   }
 
+  /**
+   * Removes a power from the item, which must be a multipower.
+   *
+   * @param {ChampionsItem} power The power to remove
+   * @async
+   */
+  async removePower(power) {
+    assert.precondition(
+      this.type === "multipower",
+      "Only frameworks contain powers"
+    );
+    assert.precondition(
+      power.type === "power",
+      "Only powers can be part of a framework"
+    );
+    let slot = null;
+    for (const [key, { powers }] of Object.entries(
+      this.system.framework.slots
+    )) {
+      const [slotPower] = powers;
+      if (slotPower === power.id) {
+        slot = key;
+        break;
+      }
+    }
+    assert.precondition(
+      power.system.power.framework === this.id && slot !== null,
+      "Cannot remove a power from a framework it isn't a part of"
+    );
+
+    await this.constructor.updateDocuments(
+      [
+        {
+          _id: this.id,
+          system: { framework: { slots: { [`-=${slot}`]: null } } },
+        },
+        { _id: power.id, "system.power.framework": null },
+      ],
+      this.#contextForUpdates()
+    );
+  }
+
   async _preCreate(data) {
     if (this.type === "multipower" && data?.system?.framework?.slots) {
       const collection = this.#parentCollectionForFramework();

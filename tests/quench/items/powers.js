@@ -322,11 +322,38 @@ export function register(system, quench) {
       describe("Removing powers from a multipower", function () {
         beforeEach(async function () {
           await build.at(this).power().build();
-          await build.at(this).multipower().withSlot(this.power).build();
+          await build.at(this).multipower().build();
+          await this.multipower.addPower(this.power);
         });
 
-        it.skip("should remove the multipower slot");
-        it.skip("should mark the power as not belonging to any framework");
+        it("should be an error if the power is not in the multipower", async function () {
+          await build.at(this, "anotherPower").power().build();
+
+          let error;
+          try {
+            await this.multipower.removePower(this.anotherPower);
+          } catch (e) {
+            error = e;
+          }
+          expect(error)
+            .to.be.an.instanceof(AssertionError)
+            .and.to.have.a.property("message")
+            .that.equals(
+              "Cannot remove a power from a framework it isn't a part of"
+            );
+        });
+
+        it("should remove the multipower slot", async function () {
+          await this.multipower.removePower(this.power);
+
+          expect(this.multipower.asMultipower.slots).to.have.lengthOf(0);
+        });
+
+        it("should mark the power as not belonging to any framework", async function () {
+          await this.multipower.removePower(this.power);
+
+          expect(this.power.system.power.framework).to.be.null;
+        });
       });
     },
     { displayName: `${system}: Multipower items` }
