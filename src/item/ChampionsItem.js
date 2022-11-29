@@ -215,6 +215,17 @@ export default class ChampionsItem extends Item {
     }
   }
 
+  async _preDelete() {
+    if (this.type === "multipower") {
+      // we delete the powers as well.
+      const powers = [];
+      for (const slot of Object.values(this.system.framework.slots)) {
+        powers.push(...slot.powers);
+      }
+      await this.constructor.deleteDocuments(powers, this.#contextForUpdates());
+    }
+  }
+
   async _preUpdate(changes) {
     let schema;
     switch (this.type) {

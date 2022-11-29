@@ -355,6 +355,35 @@ export function register(system, quench) {
           expect(this.power.system.power.framework).to.be.null;
         });
       });
+
+      describe("Deleting a multipower", function () {
+        beforeEach(async function () {
+          await build.at(this).multipower().build();
+          await build.at(this, "blink").power().build();
+          await build.at(this, "zap").power().named("Zap").build();
+          await this.multipower.addPower(this.blink);
+          await this.multipower.addPower(this.zap);
+          await build
+            .at(this, "otherPower")
+            .power()
+            .named("Other power")
+            .build();
+          this.powerIds = [this.blink.id, this.zap.id];
+        });
+
+        it("should delete all the powers in the multipower", async function () {
+          await this.multipower.delete();
+          expect(this.powerIds.map((id) => game.items.get(id))).to.deep.equal([
+            undefined,
+            undefined,
+          ]);
+        });
+
+        it("should not delete powers outside of the multipower", async function () {
+          await this.multipower.delete();
+          expect(game.items.get(this.otherPower.id)).to.equal(this.otherPower);
+        });
+      });
     },
     { displayName: `${system}: Multipower items` }
   );
