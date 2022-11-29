@@ -62,7 +62,7 @@ export default class ChampionsItem extends Item {
    */
   get asMultipower() {
     assert.precondition(this.type === "multipower");
-    return Multipower.fromItem(this, this.#powerCollectionForFramework());
+    return Multipower.fromItem(this, this.#parentCollectionForFramework());
   }
 
   /**
@@ -131,15 +131,21 @@ export default class ChampionsItem extends Item {
       );
     }
 
-    await this.update({
-      [`system.framework.slots.${power.id}`]: { powers: [power.id] },
-    });
-    await power.update({ "system.power.framework": this.id });
+    await this.constructor.updateDocuments(
+      [
+        {
+          _id: this.id,
+          [`system.framework.slots.${power.id}`]: { powers: [power.id] },
+        },
+        { _id: power.id, "system.power.framework": this.id },
+      ],
+      this.#contextForUpdates()
+    );
   }
 
   async _preCreate(data) {
     if (this.type === "multipower" && data?.system?.framework?.slots) {
-      const collection = this.#powerCollectionForFramework();
+      const collection = this.#parentCollectionForFramework();
       for (const slot of Object.values(data.system.framework.slots)) {
         if ("powers" in slot) {
           assert.precondition(slot.powers instanceof Array);
@@ -153,7 +159,7 @@ export default class ChampionsItem extends Item {
 
   _onCreate(data, options, user) {
     if (this.type === "multipower" && user === game.userId) {
-      const collection = this.#powerCollectionForFramework();
+      const collection = this.#parentCollectionForFramework();
       for (const slot of Object.values(this.system.framework.slots)) {
         for (const powerId of slot.powers) {
           const power = collection.get(powerId);
@@ -444,7 +450,19 @@ export default class ChampionsItem extends Item {
     return char.targetNumber + this.system.bonus.value;
   }
 
-  #powerCollectionForFramework() {
-    return game.items;
+  #contextForUpdates() {
+    if (this.parent) {
+      return { parent: this.parent };
+    } else {
+      return {};
+    }
+  }
+
+  #parentCollectionForFramework() {
+    if (this.parent) {
+      return this.parent.items;
+    } else {
+      return game.items;
+    }
   }
 }

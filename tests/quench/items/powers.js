@@ -288,6 +288,34 @@ export function register(system, quench) {
               .and.to.have.a.property("message")
               .that.matches(/must belong to the same actor/);
           });
+
+          it("should add the power to the framework", async function () {
+            await build
+              .at(this)
+              .power()
+              .ownedBy(this.multipower.parent)
+              .build();
+
+            await this.multipower.addPower(this.power);
+
+            expect(this.multipower.asMultipower.slots).to.deep.equal([
+              this.power.asPower,
+            ]);
+          });
+
+          it("should mark the power as belonging to the framework", async function () {
+            await build
+              .at(this)
+              .power()
+              .ownedBy(this.multipower.parent)
+              .build();
+
+            await this.multipower.addPower(this.power);
+
+            expect(this.power.system.power.framework).to.equal(
+              this.multipower.id
+            );
+          });
         });
       });
 
