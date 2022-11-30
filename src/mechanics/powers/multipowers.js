@@ -96,4 +96,15 @@ export class Multipower {
       slots,
     });
   }
+
+  display() {
+    const { id, name, reserve } = this;
+    const slots = this.slots.map((power) => power.display());
+    return {
+      id,
+      name,
+      reserve,
+      slots,
+    };
+  }
 }

@@ -417,6 +417,49 @@
           {{/each}}
         </tbody>
       </table>
+
+      <section class="multipowers">
+        <p>
+          <a class="item-create" data-type="multipower">
+            <i class="fas fa-plus"></i>
+            Add Multipower
+          </a>
+        </p>
+        {{#each multipowers}}
+          <table class="multipower" data-item-id="{{id}}">
+            <caption>
+              <b>Multipower:</b>
+              {{name}}
+              <span class="reserve">
+                0 /
+                {{reserve}}
+              </span>
+              <span class="item-controls">
+                <a class="item-control item-edit" title="Edit Framework">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="item-control item-delete" title="Delete Framework">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </span>
+            </caption>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Power</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each slots}}
+                <tr>
+                  {{partial "item/partials/power-data.hbs" this}}
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/each}}
+      </section>
     </div>
     <div class="tab combat" data-tab="combat">
       <div class="attack-buttons flexrow">
