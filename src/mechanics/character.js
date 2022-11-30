@@ -7,6 +7,7 @@ import {
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import { Power, PowerCategory, StandardPowerType } from "./power.js";
+import { Multipower } from "./powers/multipowers.js";
 
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
   new MovementMode("Running", {
@@ -58,6 +59,7 @@ export class Character {
   name;
 
   #characteristics = new Map();
+  #multipowers = [];
   #powers = [];
   #movementModes = [];
 
@@ -66,6 +68,7 @@ export class Character {
     {
       characteristics = {},
       movementModes = DEFAULT_MOVEMENT_MODES,
+      multipowers = [],
       powers = [],
     } = {}
   ) {
@@ -84,6 +87,9 @@ export class Character {
     }
     for (const mode of movementModes) {
       this.#movementModes.push(mode);
+    }
+    for (const framework of multipowers) {
+      this.#multipowers.push(framework);
     }
     for (const power of powers) {
       this.#powers.push(power);
@@ -112,17 +118,37 @@ export class Character {
         })
       );
     }
+    const multipowers = [];
     const powers = [];
     for (const item of items) {
-      if (item.type === "power") {
-        powers.push(item.asPower);
+      if (item.type === "multipower") {
+        multipowers.push(item.asMultipower);
+      } else if (item.type === "power") {
+        const power = item.asPower;
+        if (!item.system.power.framework) {
+          powers.push(power);
+        }
       }
     }
-    return new Character(name, { characteristics, movementModes, powers });
+    return new Character(name, {
+      characteristics,
+      movementModes,
+      multipowers,
+      powers,
+    });
   }
 
   get movementModes() {
     return this.#movementModes;
+  }
+
+  /**
+   * Retrieves the character's multipowers.
+   *
+   * @type {Multipower[]}
+   */
+  get multipowers() {
+    return this.#multipowers;
   }
 
   /**

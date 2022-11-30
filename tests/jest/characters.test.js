@@ -36,6 +36,14 @@ describe("Characters", function () {
         hasCategory: jest.fn(() => true),
         movementMode: Symbol("Fly.asPower.movementMode"),
       };
+      const TeleportAsPower = {
+        name: "Teleport",
+        hasCategory() {
+          return false;
+        },
+      };
+
+      const CosmicAsMultipower = Symbol("CosmicEnergy.asMultipower");
 
       beforeEach(function () {
         character = Character.fromActor({
@@ -117,6 +125,47 @@ describe("Characters", function () {
               },
               asPower: FlyAsPower,
             },
+            {
+              name: "Cosmic Energy",
+              id: "cosmicenergy",
+              asMultipower: CosmicAsMultipower,
+              type: "multipower",
+              system: {
+                description:
+                  "<p>Manipulation of the intrinsic energy of the cosmos.</p>",
+                framework: {
+                  reserve: 100,
+                  slots: {
+                    abc: { powers: ["teleportid"] },
+                  },
+                },
+              },
+            },
+            {
+              name: "Cosmic Teleportation",
+              type: "power",
+              id: "teleportid",
+              system: {
+                power: {
+                  type: { isStandard: true, name: "Teleportation" },
+                  framework: "cosmicenergy",
+                  categories: { movement: false },
+                  adders: {},
+                  advantages: {
+                    mega: {
+                      name: "Megascale",
+                      value: +7,
+                      summary: "scale up to 100 billion light-years",
+                      description: "<p></p>",
+                    },
+                  },
+                  limitations: {},
+                },
+                summary: "Teleport 7×100 billion light-years",
+                description: "<p>Teleport anywhere.</p>",
+              },
+              asPower: TeleportAsPower,
+            },
           ],
         });
       });
@@ -169,6 +218,11 @@ describe("Characters", function () {
         expect(character.powers).toHaveLength(2);
         expect(character.powers[0]).toBe(FlyAsPower);
         expect(character.powers[1]).toBe(LightboltAsPower);
+      });
+
+      it("should return the multipowers in .multipowers, converted using asMultipower", function () {
+        expect(character.multipowers).toHaveLength(1);
+        expect(character.multipowers[0]).toBe(CosmicAsMultipower);
       });
     });
 
