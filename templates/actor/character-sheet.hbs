@@ -404,20 +404,7 @@
         <tbody>
           {{#each powers}}
             <tr class="actor-item" data-item-id="{{id}}">
-              <td>{{name}}</td>
-              <td>{{type.name}}</td>
-              <td>
-                {{summary}}{{#each modifiers}};
-                  {{#if summary}}
-                    <details class="modifier">
-                      <summary>{{name}} ({{value}})</summary>
-                      {{summary}}
-                    </details>
-                  {{else}}
-                    <span class="modifier">{{name}} ({{value}})</span>
-                  {{/if}}
-                {{/each}}
-              </td>
+              {{partial "item/partials/power-data.hbs" this}}
               <td class="item-controls">
                 <a class="item-control item-edit" title="Edit Power">
                   <i class="fas fa-edit"></i>

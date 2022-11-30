@@ -12,6 +12,7 @@ import {
   performHapRoll,
   successRollDialog,
 } from "../rolls.js";
+import { registerPartial } from "../sheets/partial-helper.js";
 import * as assert from "../util/assert.js";
 import { compareBy } from "../util/sort.js";
 
@@ -108,6 +109,10 @@ function getManeuver(dataset, actor) {
   );
   return maneuver;
 }
+
+Hooks.once("init", function () {
+  registerPartial("item/partials/power-data.hbs");
+});
 
 export default class CharacterSheet extends ActorSheet {
   /** @override */
