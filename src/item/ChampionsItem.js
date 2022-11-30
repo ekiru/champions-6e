@@ -144,6 +144,29 @@ export default class ChampionsItem extends Item {
   }
 
   /**
+   * Gets a power contained in a framework by ID.
+   *
+   * @param {string} id The power's ID.
+   * @returns {ChampionsItem} The power
+   */
+  getContainedPower(id) {
+    const power = this.#parentCollectionForFramework().get(id);
+    assert.that(
+      power !== undefined,
+      "Tried to get contained power that did not exist"
+    );
+    assert.that(
+      power.type === "power",
+      "Tried to get contained power but it wasn't a power"
+    );
+    assert.that(
+      power.system.power.framework === this.id,
+      "Tried to get contained power but it wasn't part of the framework"
+    );
+    return power;
+  }
+
+  /**
    * Removes a power from the item, which must be a multipower.
    *
    * @param {ChampionsItem} power The power to remove
@@ -265,6 +288,15 @@ export default class ChampionsItem extends Item {
         break;
       default:
         assert.notYetImplemented();
+    }
+  }
+
+  _onUpdate(changed, options, userId) {
+    super._onUpdate(changed, options, userId);
+
+    if (this.type === "power" && this.system.power.framework !== null) {
+      const collection = this.parent ? this.parent.items : game.items;
+      collection.get(this.system.power.framework).render();
     }
   }
 
@@ -512,6 +544,7 @@ export default class ChampionsItem extends Item {
   }
 
   #parentCollectionForFramework() {
+    assert.precondition(this.type === "multipower", "Not a framework");
     if (this.parent) {
       return this.parent.items;
     } else {

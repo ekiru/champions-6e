@@ -10,6 +10,7 @@ import ChampionsCombatTracker from "./sheets/ChampionsCombatTracker.js";
 
 import "./activeEffects.js"; // for Hooks
 import PowerSheet from "./item/PowerSheet.js";
+import MultipowerSheet from "./item/MultipowerSheet.js";
 
 // Register Quench tests if it's available.
 Hooks.on("quenchReady", async function (quench) {
@@ -39,6 +40,11 @@ Hooks.once("init", function () {
   Items.registerSheet("champions-6e", ManeuverSheet, {
     label: "Champions Maneuver",
     types: ["maneuver"],
+    makeDefault: true,
+  });
+  Items.registerSheet("champions-6e", MultipowerSheet, {
+    label: "Champions Multipower",
+    types: ["multipower"],
     makeDefault: true,
   });
   Items.registerSheet("champions-6e", PowerSheet, {

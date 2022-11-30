@@ -292,6 +292,17 @@ export class Power {
     return mode;
   }
 
+  display() {
+    const { id, name, summary } = this;
+    const type = this.type.name;
+    const modifiers = this.modifiers.map(({ name, value, summary }) => ({
+      name,
+      value: value.toString(),
+      summary,
+    }));
+    return { id, name, type, summary, modifiers };
+  }
+
   hasCategory(category) {
     return this.#categories.has(category);
   }

@@ -387,4 +387,32 @@ export function register(system, quench) {
     },
     { displayName: `${system}: Multipower items` }
   );
+
+  quench.registerBatch(
+    `${system}.items.frameworks.multipowers.sheet`,
+    function ({ describe, it, expect, afterEach, beforeEach }) {
+      afterEach(build.afterEach);
+
+      describe("Multipower sheets", function () {
+        beforeEach(async function () {
+          await build.at(this).multipower().build();
+          this.sheet = await openItemSheet(this.multipower);
+        });
+
+        describe("clicking the Add Slot button", async function () {
+          beforeEach(async function () {
+            this.sheet.find(".add-slot").click();
+            await waitOneMoment();
+            await this.multipower.sheet.render();
+          });
+
+          it("should add a new slot with a new power to the sheet", async function () {
+            const multipower = this.multipower.asMultipower;
+            expect(multipower.slots).to.have.lengthOf(1);
+          });
+        });
+      });
+    },
+    { displayName: `${system}: Multipower sheets` }
+  );
 }

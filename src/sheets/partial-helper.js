@@ -22,7 +22,6 @@ export async function registerPartial(path) {
 
 Hooks.once("setup", function () {
   Handlebars.registerHelper("partial", function (path, context = {}) {
-    console.log(PARTIALS, path);
     assert.precondition(
       PARTIALS.has(path),
       `no partial registered for path: ${path}`
