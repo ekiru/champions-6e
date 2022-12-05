@@ -1,7 +1,10 @@
 // eslint-env jest
 
 import { Power, StandardPowerType } from "../../../src/mechanics/power.js";
-import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
+import {
+  Multipower,
+  MultipowerSlot,
+} from "../../../src/mechanics/powers/multipowers.js";
 
 describe("Multipowers", function () {
   describe("new multipowers", function () {
@@ -116,11 +119,11 @@ describe("Multipowers", function () {
       expect(mp).toHaveProperty("id", id);
       expect(mp).toHaveProperty("reserve", 60);
       expect(mp).toHaveProperty("slots", [
-        expect.any(Power),
-        expect.any(Power),
+        expect.any(MultipowerSlot),
+        expect.any(MultipowerSlot),
       ]);
-      expect(mp.slots[0]).toHaveProperty("name", "Lightning Bolt");
-      expect(mp.slots[1]).toHaveProperty("name", "Arcane Shield");
+      expect(mp.slots[0]).toHaveProperty("power.name", "Lightning Bolt");
+      expect(mp.slots[1]).toHaveProperty("power.name", "Arcane Shield");
     });
   });
 });

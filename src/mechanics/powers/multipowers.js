@@ -87,7 +87,7 @@ export class Multipower {
         power.system.power.framework === id,
         `Power ${power.name} (${power.id}) is not part of framework ${name} (${id})`
       );
-      slots.push(Power.fromItem(power));
+      slots.push(new MultipowerSlot(Power.fromItem(power)));
     }
     return new Multipower(name, {
       description,
@@ -99,12 +99,30 @@ export class Multipower {
 
   display() {
     const { id, name, reserve } = this;
-    const slots = this.slots.map((power) => power.display());
+    const slots = this.slots.map((slot) => slot.power.display());
     return {
       id,
       name,
       reserve,
       slots,
     };
+  }
+}
+
+/**
+ * A slot in a multipower.
+ *
+ * @param {Power} power The power in the slot.
+ */
+export class MultipowerSlot {
+  /**
+   * The power contained in the slot.
+   *
+   * @type {Power}
+   */
+  power;
+
+  constructor(power) {
+    this.power = power;
   }
 }

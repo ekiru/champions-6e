@@ -1,5 +1,8 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
-import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
+import {
+  Multipower,
+  MultipowerSlot,
+} from "../../../src/mechanics/powers/multipowers.js";
 import { AssertionError } from "../../../src/util/assert.js";
 import * as build from "../helpers/build.js";
 import { openItemSheet } from "../helpers/sheets.js";
@@ -203,8 +206,14 @@ export function register(system, quench) {
         it("should contain two slots", function () {
           const multipower = this.morph.asMultipower;
           expect(multipower.slots).to.have.lengthOf(2);
-          expect(multipower.slots[0]).to.have.property("name", "Morph STR");
-          expect(multipower.slots[1]).to.have.property("name", "Morph DEX");
+          expect(multipower.slots[0]).to.have.nested.property(
+            "power.name",
+            "Morph STR"
+          );
+          expect(multipower.slots[1]).to.have.nested.property(
+            "power.name",
+            "Morph DEX"
+          );
         });
       });
 
@@ -235,7 +244,7 @@ export function register(system, quench) {
             await this.multipower.addPower(this.power);
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
-              this.power.asPower,
+              new MultipowerSlot(this.power.asPower),
             ]);
           });
 
@@ -299,7 +308,7 @@ export function register(system, quench) {
             await this.multipower.addPower(this.power);
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
-              this.power.asPower,
+              new MultipowerSlot(this.power.asPower),
             ]);
           });
 
