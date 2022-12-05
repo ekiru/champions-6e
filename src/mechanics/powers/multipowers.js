@@ -1,4 +1,5 @@
 import * as assert from "../../util/assert.js";
+import { Enum } from "../../util/enum.js";
 import { Power } from "../power.js";
 
 export class Multipower {
@@ -110,11 +111,46 @@ export class Multipower {
 }
 
 /**
+ * Slot types in multipowers.
+ *
+ * @constant {Enum}
+ * @property {symbol} Fixed Fixed slots can only be allocated at full cost but cost
+ * fewer CP.
+ * @property {symbol} Variable Variable slots can be allocated a part of their
+ * reserve cost, but cost more CP.
+ */
+export const SlotType = new Enum("Fixed", "Variable");
+
+/**
  * A slot in a multipower.
  *
  * @param {Power} power The power in the slot.
  */
 export class MultipowerSlot {
+  /**
+   * The number of points of reserve allocated to the slot.
+   *
+   * For fixed slots, this is equal to either 0 or fullCost (if the slot isActive).
+   * For variable slots, it can range between the two.
+   *
+   * @type {number}
+   */
+  allocatedCost;
+
+  /**
+   * The full active points cost of the slot.
+   *
+   * @type {number}
+   */
+  fullCost;
+
+  /**
+   * Is the power at all active currently?
+   *
+   * @type {boolean}
+   */
+  isActive;
+
   /**
    * The power contained in the slot.
    *
@@ -122,7 +158,18 @@ export class MultipowerSlot {
    */
   power;
 
+  /**
+   * Is the slot fixed or variable? Must be a member of `SlotType`.
+   *
+   * @type {symbol}
+   */
+  type;
+
   constructor(power) {
     this.power = power;
+    // temporarily hard-coded data
+    this.allocatedCost = this.fullCost = 0;
+    this.isActive = false;
+    this.type = SlotType.Fixed;
   }
 }
