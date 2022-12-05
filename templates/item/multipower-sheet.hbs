@@ -37,8 +37,8 @@
         </thead>
         <tbody>
           {{#each slots}}
-            <tr class="embedded-item" data-item-id="{{id}}">
-              {{partial "item/partials/power-data.hbs" this}}
+            <tr class="embedded-item" data-item-id="{{display.power.id}}">
+              {{partial "item/partials/power-data.hbs" display.power}}
               <td class="item-controls">
                 <a class="item-control item-edit" title="Edit Power">
                   <i class="fas fa-edit"></i>
@@ -48,7 +48,6 @@
                 </a>
               </td>
             </tr>
-
           {{/each}}
         </tbody>
       </table>

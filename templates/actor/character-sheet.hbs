@@ -445,15 +445,27 @@
             </caption>
             <thead>
               <tr>
+                <td>Type</td>
                 <th>Name</th>
                 <th>Power</th>
                 <th>Summary</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
               {{#each slots}}
                 <tr>
-                  {{partial "item/partials/power-data.hbs" this}}
+                  <td>{{type}}</td>
+                  {{partial "item/partials/power-data.hbs" power}}
+                  <td>
+                    {{#if isFixed}}
+                      <input type="checkbox" disabled {{checked isActive}} />
+                    {{else}}
+                      {{allocatedCost}}
+                      /
+                      {{fullCost}}
+                    {{/if}}
+                  </td>
                 </tr>
               {{/each}}
             </tbody>

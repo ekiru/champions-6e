@@ -100,7 +100,7 @@ export class Multipower {
 
   display() {
     const { id, name, reserve } = this;
-    const slots = this.slots.map((slot) => slot.power.display());
+    const slots = this.slots.map((slot) => slot.display());
     return {
       id,
       name,
@@ -119,7 +119,7 @@ export class Multipower {
  * @property {symbol} Variable Variable slots can be allocated a part of their
  * reserve cost, but cost more CP.
  */
-export const SlotType = new Enum("Fixed", "Variable");
+export const SlotType = new Enum(["Fixed", "Variable"]);
 
 /**
  * A slot in a multipower.
@@ -171,5 +171,16 @@ export class MultipowerSlot {
     this.allocatedCost = this.fullCost = 0;
     this.isActive = false;
     this.type = SlotType.Fixed;
+  }
+
+  display() {
+    return {
+      type: this.type.description.charAt(0).toLowerCase(),
+      isActive: this.isActive,
+      isFixed: this.type === SlotType.Fixed,
+      allocatedCost: this.allocatedCost,
+      fullCost: this.fullCost,
+      power: this.power.display(),
+    };
   }
 }

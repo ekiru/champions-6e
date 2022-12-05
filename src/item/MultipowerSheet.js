@@ -29,7 +29,9 @@ export default class MultipowerSheet extends ItemSheet {
       description: await fields.html("Description", "system.description"),
     };
 
-    context.slots = multipower.slots.map((slot) => slot.power.display());
+    context.slots = multipower.slots.map((slot) => ({
+      display: slot.display(),
+    }));
 
     return context;
   }
