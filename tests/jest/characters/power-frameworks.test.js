@@ -144,3 +144,37 @@ describe("Multipowers", function () {
     });
   });
 });
+
+describe("Multipower slots", function () {
+  const power = new Power("Shift", {
+    type: StandardPowerType.get("Flight"),
+    summary: "",
+    description: "",
+  });
+
+  describe("Fixed slots", function () {
+    it("should have allocatedCost equal to fullCost when active", function () {
+      const slot = new MultipowerSlot({
+        power,
+        active: true,
+        type: SlotType.Fixed,
+        fullCost: 33,
+        allocatedCost: 2,
+      });
+
+      expect(slot.allocatedCost).toBe(33);
+    });
+
+    it("have allocatedCost equal to 0 when inactive", function () {
+      const slot = new MultipowerSlot({
+        power,
+        active: false,
+        type: SlotType.Fixed,
+        fullCost: 33,
+        allocatedCost: 2,
+      });
+
+      expect(slot.allocatedCost).toBe(0);
+    });
+  });
+});

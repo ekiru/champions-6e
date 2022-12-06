@@ -148,7 +148,20 @@ export class MultipowerSlot {
    *
    * @type {number}
    */
-  allocatedCost;
+  get allocatedCost() {
+    switch (this.type) {
+      case SlotType.Variable:
+        return this.#allocatedCost;
+      case SlotType.Fixed:
+        return this.isActive ? this.fullCost : 0;
+      default:
+        assert.notYetImplemented(
+          `unrecognized slot type: ${this.type.description}`
+        );
+        return 0;
+    }
+  }
+  #allocatedCost;
 
   /**
    * The full active points cost of the slot.
@@ -182,7 +195,7 @@ export class MultipowerSlot {
     this.power = power;
     this.isActive = active;
     this.type = type;
-    this.allocatedCost = allocatedCost;
+    this.#allocatedCost = allocatedCost;
     this.fullCost = fullCost;
   }
 
