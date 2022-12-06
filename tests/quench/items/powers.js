@@ -2,6 +2,7 @@ import { StandardPowerType } from "../../../src/mechanics/power.js";
 import {
   Multipower,
   MultipowerSlot,
+  SlotType,
 } from "../../../src/mechanics/powers/multipowers.js";
 import { AssertionError } from "../../../src/util/assert.js";
 import * as build from "../helpers/build.js";
@@ -244,7 +245,13 @@ export function register(system, quench) {
             await this.multipower.addPower(this.power);
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
-              new MultipowerSlot(this.power.asPower),
+              new MultipowerSlot({
+                power: this.power.asPower,
+                active: false,
+                type: SlotType.Fixed,
+                allocatedCost: 0,
+                fullCost: 0,
+              }),
             ]);
           });
 
@@ -308,7 +315,13 @@ export function register(system, quench) {
             await this.multipower.addPower(this.power);
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
-              new MultipowerSlot(this.power.asPower),
+              new MultipowerSlot({
+                power: this.power.asPower,
+                active: false,
+                type: SlotType.Fixed,
+                allocatedCost: 0,
+                fullCost: 0,
+              }),
             ]);
           });
 

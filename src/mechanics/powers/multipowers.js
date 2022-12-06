@@ -2,6 +2,17 @@ import * as assert from "../../util/assert.js";
 import { Enum } from "../../util/enum.js";
 import { Power } from "../power.js";
 
+/**
+ * Slot types in multipowers.
+ *
+ * @constant {Enum}
+ * @property {symbol} Fixed Fixed slots can only be allocated at full cost but cost
+ * fewer CP.
+ * @property {symbol} Variable Variable slots can be allocated a part of their
+ * reserve cost, but cost more CP.
+ */
+export const SlotType = new Enum(["Fixed", "Variable"]);
+
 export class Multipower {
   /**
    * A name given to the multipower.
@@ -34,7 +45,7 @@ export class Multipower {
   /**
    * The slots of the multipower.
    *
-   * @type {Power[]}
+   * @type {MultipowerSlot[]}
    */
   slots;
 
@@ -88,7 +99,22 @@ export class Multipower {
         power.system.power.framework === id,
         `Power ${power.name} (${power.id}) is not part of framework ${name} (${id})`
       );
-      slots.push(new MultipowerSlot(Power.fromItem(power)));
+      const {
+        active = false,
+        fixed = true,
+        allocatedCost = 0,
+        fullCost = 0,
+      } = slot;
+      const type = fixed ? SlotType.Fixed : SlotType.Variable;
+      slots.push(
+        new MultipowerSlot({
+          active,
+          type,
+          allocatedCost,
+          fullCost,
+          power: Power.fromItem(power),
+        })
+      );
     }
     return new Multipower(name, {
       description,
@@ -111,20 +137,7 @@ export class Multipower {
 }
 
 /**
- * Slot types in multipowers.
- *
- * @constant {Enum}
- * @property {symbol} Fixed Fixed slots can only be allocated at full cost but cost
- * fewer CP.
- * @property {symbol} Variable Variable slots can be allocated a part of their
- * reserve cost, but cost more CP.
- */
-export const SlotType = new Enum(["Fixed", "Variable"]);
-
-/**
  * A slot in a multipower.
- *
- * @param {Power} power The power in the slot.
  */
 export class MultipowerSlot {
   /**
@@ -165,12 +178,12 @@ export class MultipowerSlot {
    */
   type;
 
-  constructor(power) {
+  constructor({ power, active, type, fullCost, allocatedCost }) {
     this.power = power;
-    // temporarily hard-coded data
-    this.allocatedCost = this.fullCost = 0;
-    this.isActive = false;
-    this.type = SlotType.Fixed;
+    this.isActive = active;
+    this.type = type;
+    this.allocatedCost = allocatedCost;
+    this.fullCost = fullCost;
   }
 
   display() {

@@ -4,6 +4,7 @@ import { Power, StandardPowerType } from "../../../src/mechanics/power.js";
 import {
   Multipower,
   MultipowerSlot,
+  SlotType,
 } from "../../../src/mechanics/powers/multipowers.js";
 
 describe("Multipowers", function () {
@@ -105,7 +106,13 @@ describe("Multipowers", function () {
             framework: {
               reserve: 60,
               slots: {
-                a: { powers: ["001"] },
+                a: {
+                  active: true,
+                  fixed: false,
+                  powers: ["001"],
+                  allocatedCost: 5,
+                  fullCost: 30,
+                },
                 b: { powers: ["002"] },
               },
             },
@@ -122,8 +129,18 @@ describe("Multipowers", function () {
         expect.any(MultipowerSlot),
         expect.any(MultipowerSlot),
       ]);
+
       expect(mp.slots[0]).toHaveProperty("power.name", "Lightning Bolt");
+      expect(mp.slots[0]).toHaveProperty("isActive", true);
+      expect(mp.slots[0]).toHaveProperty("type", SlotType.Variable);
+      expect(mp.slots[0]).toHaveProperty("allocatedCost", 5);
+      expect(mp.slots[0]).toHaveProperty("fullCost", 30);
+
       expect(mp.slots[1]).toHaveProperty("power.name", "Arcane Shield");
+      expect(mp.slots[1]).toHaveProperty("isActive", false);
+      expect(mp.slots[1]).toHaveProperty("type", SlotType.Fixed);
+      expect(mp.slots[1]).toHaveProperty("fullCost", 0);
+      expect(mp.slots[1]).toHaveProperty("allocatedCost", 0);
     });
   });
 });
