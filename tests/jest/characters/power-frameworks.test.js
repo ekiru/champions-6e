@@ -152,6 +152,32 @@ describe("Multipower slots", function () {
     description: "",
   });
 
+  describe("Variable slots", function () {
+    it("should be active when allocatedCost is nonzero", function () {
+      const slot = new MultipowerSlot({
+        power,
+        active: false,
+        type: SlotType.Variable,
+        fullCost: 33,
+        allocatedCost: 2,
+      });
+
+      expect(slot.isActive).toBe(true);
+    });
+
+    it("should be inactive when allocatedCost is zero", function () {
+      const slot = new MultipowerSlot({
+        power,
+        active: true,
+        type: SlotType.Variable,
+        fullCost: 33,
+        allocatedCost: 0,
+      });
+
+      expect(slot.isActive).toBe(false);
+    });
+  });
+
   describe("Fixed slots", function () {
     it("should have allocatedCost equal to fullCost when active", function () {
       const slot = new MultipowerSlot({
@@ -165,7 +191,7 @@ describe("Multipower slots", function () {
       expect(slot.allocatedCost).toBe(33);
     });
 
-    it("have allocatedCost equal to 0 when inactive", function () {
+    it("should have allocatedCost equal to 0 when inactive", function () {
       const slot = new MultipowerSlot({
         power,
         active: false,

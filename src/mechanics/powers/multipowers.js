@@ -175,7 +175,20 @@ export class MultipowerSlot {
    *
    * @type {boolean}
    */
-  isActive;
+  get isActive() {
+    switch (this.type) {
+      case SlotType.Fixed:
+        return this.#isActive;
+      case SlotType.Variable:
+        return this.allocatedCost > 0;
+      default:
+        assert.notYetImplemented(
+          `unrecognized slot type: ${this.type.description}`
+        );
+        return 0;
+    }
+  }
+  #isActive;
 
   /**
    * The power contained in the slot.
@@ -193,7 +206,7 @@ export class MultipowerSlot {
 
   constructor({ power, active, type, fullCost, allocatedCost }) {
     this.power = power;
-    this.isActive = active;
+    this.#isActive = active;
     this.type = type;
     this.#allocatedCost = allocatedCost;
     this.fullCost = fullCost;
