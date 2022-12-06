@@ -135,7 +135,13 @@ export default class ChampionsItem extends Item {
       [
         {
           _id: this.id,
-          [`system.framework.slots.${power.id}`]: { powers: [power.id] },
+          [`system.framework.slots.${power.id}`]: {
+            active: false,
+            fixed: true,
+            fullCost: 0,
+            allocatedCost: 0,
+            powers: [power.id],
+          },
         },
         { _id: power.id, "system.power.framework": this.id },
       ],
