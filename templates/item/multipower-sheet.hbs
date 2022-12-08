@@ -26,9 +26,11 @@
       <table>
         <thead>
           <tr>
+            <th>Type</th>
             <th>Name</th>
             <th>Power</th>
             <th>Summary</th>
+            <th>Active Points</th>
             <th><a class="add-slot">
                 <i class="fas fa-plus"></i>
                 Add Slot
@@ -38,7 +40,19 @@
         <tbody>
           {{#each slots}}
             <tr class="embedded-item" data-item-id="{{display.power.id}}">
+              <td>
+                {{#with attributes.type}}
+                  <select data-dtype="Boolean" name="{{path}}">
+                    {{selectOptions options selected=value}}
+                  </select>
+                {{/with}}
+              </td>
               {{partial "item/partials/power-data.hbs" display.power}}
+              <td>
+                {{#with attributes.fullCost}}
+                  <input type="number" value="{{value}}" name="{{path}}" />
+                {{/with}}
+              </td>
               <td class="item-controls">
                 <a class="item-control item-edit" title="Edit Power">
                   <i class="fas fa-edit"></i>

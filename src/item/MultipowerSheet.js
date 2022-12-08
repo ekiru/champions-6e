@@ -1,3 +1,4 @@
+import { SlotType } from "../mechanics/powers/multipowers.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
 
 export default class MultipowerSheet extends ItemSheet {
@@ -30,6 +31,20 @@ export default class MultipowerSheet extends ItemSheet {
     };
 
     context.slots = multipower.slots.map((slot) => ({
+      attributes: {
+        type: {
+          path: `system.framework.slots.${slot.id}.fixed`,
+          options: {
+            true: "Fixed",
+            false: "Variable",
+          },
+          value: slot.type === SlotType.Fixed,
+        },
+        fullCost: {
+          path: `system.framework.slots.${slot.id}.fullCost`,
+          value: slot.fullCost,
+        },
+      },
       display: slot.display(),
     }));
 
