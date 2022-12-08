@@ -426,7 +426,7 @@
           </a>
         </p>
         {{#each multipowers}}
-          <table class="multipower" data-item-id="{{id}}">
+          <table class="multipower framework" data-item-id="{{id}}">
             <caption>
               <b>Multipower:</b>
               {{name}}
@@ -459,7 +459,12 @@
                   {{partial "item/partials/power-data.hbs" power}}
                   <td>
                     {{#if isFixed}}
-                      <input type="checkbox" disabled {{checked isActive}} />
+                      <input
+                        type="checkbox"
+                        {{checked isActive}}
+                        class="slot-is-active"
+                        data-slot-id="{{id}}"
+                      />
                     {{else}}
                       {{allocatedCost}}
                       /

@@ -223,6 +223,7 @@ export class MultipowerSlot {
 
   display() {
     return {
+      id: this.id,
       type: this.type.description.charAt(0).toLowerCase(),
       isActive: this.isActive,
       isFixed: this.type === SlotType.Fixed,

@@ -105,6 +105,29 @@ export default class ChampionsItem extends Item {
   }
 
   /**
+   * Activates a fixed slot in a power framework.
+   *
+   * @param {string} slotId The ID of the slot
+   * @async
+   */
+  async activateSlot(slotId) {
+    assert.precondition(
+      this.type === "multipower",
+      "Powers can only be added to power frameworks"
+    );
+    assert.precondition(
+      slotId in this.system.framework.slots,
+      `No such slot ${slotId}`
+    );
+    assert.precondition(
+      this.system.framework.slots[slotId].fixed,
+      "activateSlot() is for fixed slots"
+    );
+
+    return this.update({ [`system.framework.slots.${slotId}.active`]: true });
+  }
+
+  /**
    * Adds a power to a power framework.
    *
    * @param {ChampionsItem} power The power to add.
@@ -147,6 +170,29 @@ export default class ChampionsItem extends Item {
       ],
       this.#contextForUpdates()
     );
+  }
+
+  /**
+   * Deactivates a fixed slot in a power framework.
+   *
+   * @param {string} slotId The ID of the slot
+   * @async
+   */
+  async deactivateSlot(slotId) {
+    assert.precondition(
+      this.type === "multipower",
+      "Powers can only be added to power frameworks"
+    );
+    assert.precondition(
+      slotId in this.system.framework.slots,
+      `No such slot ${slotId}`
+    );
+    assert.precondition(
+      this.system.framework.slots[slotId].fixed,
+      "deactivateSlot() is for fixed slots"
+    );
+
+    return this.update({ [`system.framework.slots.${slotId}.active`]: false });
   }
 
   /**

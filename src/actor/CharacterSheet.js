@@ -472,6 +472,22 @@ export default class CharacterSheet extends ActorSheet {
             actor.deleteEmbeddedDocuments("Item", [itemId]);
           });
       });
+      html.find(".framework[data-item-id]").each(function () {
+        const { itemId } = this.dataset;
+        $(this)
+          .find("input.slot-is-active")
+          .each(function () {
+            const { slotId } = this.dataset;
+            $(this).change(function () {
+              const framework = actor.items.get(itemId);
+              if (this.checked) {
+                framework.activateSlot(slotId);
+              } else {
+                framework.deactivateSlot(slotId);
+              }
+            });
+          });
+      });
       html.find("[data-effect-id]").each(function () {
         const { effectId } = this.dataset;
         $(this)
