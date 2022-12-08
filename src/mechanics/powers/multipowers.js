@@ -132,11 +132,12 @@ export class Multipower {
   }
 
   display() {
-    const { id, name, reserve } = this;
+    const { id, name, allocatedReserve, reserve } = this;
     const slots = this.slots.map((slot) => slot.display());
     return {
       id,
       name,
+      allocatedReserve,
       reserve,
       slots,
     };
