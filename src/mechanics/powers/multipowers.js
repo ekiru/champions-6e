@@ -83,7 +83,7 @@ export class Multipower {
     powerCollection
   ) {
     const slots = [];
-    for (const slot of Object.values(rawSlots)) {
+    for (const [slotId, slot] of Object.entries(rawSlots)) {
       if (slot.powers.length !== 1) {
         assert.notYetImplemented(
           "Slots with multiple powers not yet implemented"
@@ -112,6 +112,7 @@ export class Multipower {
           type,
           allocatedCost,
           fullCost,
+          id: slotId,
           power: Power.fromItem(power),
         })
       );
@@ -171,6 +172,13 @@ export class MultipowerSlot {
   fullCost;
 
   /**
+   * The ID used to reference the slot within the framework.
+   *
+   * @type {string?}
+   */
+  id;
+
+  /**
    * Is the power at all active currently?
    *
    * @type {boolean}
@@ -204,8 +212,9 @@ export class MultipowerSlot {
    */
   type;
 
-  constructor({ power, active, type, fullCost, allocatedCost }) {
+  constructor({ power, active, type, fullCost, allocatedCost, id = null }) {
     this.power = power;
+    this.id = id;
     this.#isActive = active;
     this.type = type;
     this.#allocatedCost = allocatedCost;

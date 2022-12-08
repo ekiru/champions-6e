@@ -131,12 +131,14 @@ describe("Multipowers", function () {
       ]);
 
       expect(mp.slots[0]).toHaveProperty("power.name", "Lightning Bolt");
+      expect(mp.slots[0]).toHaveProperty("id", "a");
       expect(mp.slots[0]).toHaveProperty("isActive", true);
       expect(mp.slots[0]).toHaveProperty("type", SlotType.Variable);
       expect(mp.slots[0]).toHaveProperty("allocatedCost", 5);
       expect(mp.slots[0]).toHaveProperty("fullCost", 30);
 
       expect(mp.slots[1]).toHaveProperty("power.name", "Arcane Shield");
+      expect(mp.slots[1]).toHaveProperty("id", "b");
       expect(mp.slots[1]).toHaveProperty("isActive", false);
       expect(mp.slots[1]).toHaveProperty("type", SlotType.Fixed);
       expect(mp.slots[1]).toHaveProperty("fullCost", 0);

@@ -246,6 +246,7 @@ export function register(system, quench) {
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
               new MultipowerSlot({
+                id: this.power.id,
                 power: this.power.asPower,
                 active: false,
                 type: SlotType.Fixed,
@@ -316,6 +317,7 @@ export function register(system, quench) {
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
               new MultipowerSlot({
+                id: this.power.id,
                 power: this.power.asPower,
                 active: false,
                 type: SlotType.Fixed,
