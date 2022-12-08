@@ -172,6 +172,25 @@ export default class ChampionsItem extends Item {
     );
   }
 
+  async changeSlotAllocation(slotId, allocatedCost) {
+    assert.precondition(
+      this.type === "multipower",
+      "Powers can only be added to power frameworks"
+    );
+    assert.precondition(
+      slotId in this.system.framework.slots,
+      `No such slot ${slotId}`
+    );
+    assert.precondition(
+      !this.system.framework.slots[slotId].fixed,
+      "changeSlotAllocation() is for variable slots"
+    );
+
+    await this.update({
+      [`system.framework.slots.${slotId}.allocatedCost`]: allocatedCost,
+    });
+  }
+
   /**
    * Deactivates a fixed slot in a power framework.
    *

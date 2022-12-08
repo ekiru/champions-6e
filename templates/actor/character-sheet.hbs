@@ -455,10 +455,10 @@
             </thead>
             <tbody>
               {{#each slots}}
-                <tr>
+                <tr class="multipower-slot">
                   <td>{{type}}</td>
                   {{partial "item/partials/power-data.hbs" power}}
-                  <td>
+                  <td class="slot-status">
                     {{#if isFixed}}
                       <input
                         type="checkbox"
@@ -466,10 +466,18 @@
                         class="slot-is-active"
                         data-slot-id="{{id}}"
                       />
+                      ({{fullCost}})
                     {{else}}
-                      {{allocatedCost}}
+                      <input
+                        class="slot-allocated-cost"
+                        type="number"
+                        value="{{allocatedCost}}"
+                        data-slot-id="{{id}}"
+                        min="0"
+                        max="{{fullCost}}"
+                      />
                       /
-                      {{fullCost}}
+                      <input disabled type="number" value="{{fullCost}}" />
                     {{/if}}
                   </td>
                 </tr>

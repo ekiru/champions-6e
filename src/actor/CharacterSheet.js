@@ -487,6 +487,15 @@ export default class CharacterSheet extends ActorSheet {
               }
             });
           });
+        $(this)
+          .find("input.slot-allocated-cost")
+          .each(function () {
+            const { slotId } = this.dataset;
+            $(this).change(function () {
+              const framework = actor.items.get(itemId);
+              framework.changeSlotAllocation(slotId, +this.value);
+            });
+          });
       });
       html.find("[data-effect-id]").each(function () {
         const { effectId } = this.dataset;
