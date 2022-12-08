@@ -35,6 +35,12 @@ export class Multipower {
    */
   description;
 
+  get allocatedReserve() {
+    return this.slots
+      .map((slot) => slot.allocatedCost)
+      .reduce((a, b) => a + b, 0);
+  }
+
   /**
    * The number of points that can be distributed between the slots at any given time.
    *

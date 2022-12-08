@@ -1,6 +1,10 @@
 // eslint-env jest
 
-import { Power, StandardPowerType } from "../../../src/mechanics/power.js";
+import {
+  CustomPowerType,
+  Power,
+  StandardPowerType,
+} from "../../../src/mechanics/power.js";
 import {
   Multipower,
   MultipowerSlot,
@@ -143,6 +147,51 @@ describe("Multipowers", function () {
       expect(mp.slots[1]).toHaveProperty("type", SlotType.Fixed);
       expect(mp.slots[1]).toHaveProperty("fullCost", 0);
       expect(mp.slots[1]).toHaveProperty("allocatedCost", 0);
+    });
+  });
+
+  describe("allocatedReserve", function () {
+    it("should sum the allocatedCost of active slots", function () {
+      const multipower = new Multipower("Siren Song", {
+        description: "The magical power of a siren's song",
+        reserve: 60,
+        slots: [
+          new MultipowerSlot({
+            power: new Power("Allure", {
+              type: StandardPowerType.get("Mind Control"),
+              summary: "Mind Control 12d6 only to approach the singer",
+              description: "Lure people in with your mind control",
+            }),
+            type: SlotType.Variable,
+            fullCost: 60,
+            allocatedCost: 30,
+          }),
+          new MultipowerSlot({
+            power: new Power("Beguile", {
+              type: StandardPowerType.get("Mental Illusions"),
+              summary: "Mental Illusions 12d6",
+              description:
+                "Enchant your listeners into perceiving what you wish",
+            }),
+            type: SlotType.Fixed,
+            fullCost: 60,
+            active: false,
+          }),
+          new MultipowerSlot({
+            power: new Power("Charm", {
+              type: new CustomPowerType("PRE"),
+              summary: "+15 PRE",
+              description:
+                "Subtly increase your charm with a charming lilt to your words.",
+            }),
+            active: true,
+            fullCost: 15,
+            type: SlotType.Fixed,
+          }),
+        ],
+      });
+
+      expect(multipower.allocatedReserve).toBe(45);
     });
   });
 });
