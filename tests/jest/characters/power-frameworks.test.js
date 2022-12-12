@@ -9,6 +9,7 @@ import {
   Multipower,
   MultipowerSlot,
   SlotType,
+  WarningScope,
 } from "../../../src/mechanics/powers/multipowers.js";
 
 describe("Multipowers", function () {
@@ -192,6 +193,153 @@ describe("Multipowers", function () {
       });
 
       expect(multipower.allocatedReserve).toBe(45);
+    });
+  });
+
+  describe("warnings", function () {
+    it("should be empty for a multipower that doesn't contain any too-large slots and doesn't overallocate", function () {
+      const mp = new Multipower("Flower Power", {
+        description: "The power of flowers~~",
+        reserve: 40,
+        slots: [
+          new MultipowerSlot({
+            power: new Power("Relaxing Aroma", {
+              type: StandardPowerType.get("Drain"),
+              summary: "Drain END 2d6 no end cost",
+              description: "A relaxing floral scent that puts people to sleep",
+            }),
+            type: SlotType.Fixed,
+            active: true,
+            fullCost: 40,
+          }),
+          new MultipowerSlot({
+            power: new Power("Choking Pollen", {
+              type: StandardPowerType.get("Blast"),
+              summary: "Blast 4d6 NND vs life support",
+              description: "Choke people with your pollen",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 40,
+          }),
+        ],
+      });
+      expect(mp.warnings).toHaveLength(0);
+    });
+
+    it("should warn if a power is bigger than the reserve", function () {
+      const mp = new Multipower("Flower Power", {
+        description: "The power of flowers~~",
+        reserve: 40,
+        slots: [
+          new MultipowerSlot({
+            id: "relaxingaroma",
+            power: new Power("Relaxing Aroma", {
+              type: StandardPowerType.get("Drain"),
+              summary: "Drain END 2d6 no end cost",
+              description: "A relaxing floral scent that puts people to sleep",
+            }),
+            type: SlotType.Fixed,
+            active: true,
+            fullCost: 40,
+          }),
+          new MultipowerSlot({
+            id: "chokingpollen",
+            power: new Power("Choking Pollen", {
+              type: StandardPowerType.get("Blast"),
+              summary: "Blast 4d6 NND vs life support",
+              description: "Choke people with your pollen",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 50,
+          }),
+        ],
+      });
+      expect(mp.warnings).toHaveLength(1);
+      expect(mp.warnings[0]).toHaveProperty(
+        "message",
+        "Slot active points are larger than the framework's reserve"
+      );
+      expect(mp.warnings[0]).toHaveProperty("scope", WarningScope.Slot);
+      expect(mp.warnings[0]).toHaveProperty("slotId", "chokingpollen");
+    });
+
+    it("should warn if more points are allocated than the reserve", function () {
+      const mp = new Multipower("Flower Power", {
+        description: "The power of flowers~~",
+        reserve: 40,
+        slots: [
+          new MultipowerSlot({
+            id: "relaxingaroma",
+            power: new Power("Relaxing Aroma", {
+              type: StandardPowerType.get("Drain"),
+              summary: "Drain END 2d6",
+              description: "A relaxing floral scent that puts people to sleep",
+            }),
+            type: SlotType.Fixed,
+            active: true,
+            fullCost: 20,
+          }),
+          new MultipowerSlot({
+            id: "chokingpollen",
+            power: new Power("Choking Pollen", {
+              type: StandardPowerType.get("Blast"),
+              summary: "Blast 4d6 NND vs life support",
+              description: "Choke people with your pollen",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 25,
+            fullCost: 40,
+          }),
+        ],
+      });
+
+      expect(mp.warnings).toHaveLength(1);
+      expect(mp.warnings[0]).toHaveProperty(
+        "message",
+        "More active points are allocated than fit in the framework's reserve"
+      );
+      expect(mp.warnings[0]).toHaveProperty("scope", WarningScope.Framework);
+    });
+
+    it("should warn if more points are allocated to a slot than the slot can use", function () {
+      const mp = new Multipower("Flower Power", {
+        description: "The power of flowers~~",
+        reserve: 40,
+        slots: [
+          new MultipowerSlot({
+            id: "relaxingaroma",
+            power: new Power("Relaxing Aroma", {
+              type: StandardPowerType.get("Drain"),
+              summary: "Drain END 2d6 no end cost",
+              description: "A relaxing floral scent that puts people to sleep",
+            }),
+            type: SlotType.Fixed,
+            active: false,
+            fullCost: 40,
+          }),
+          new MultipowerSlot({
+            id: "chokingpollen",
+            power: new Power("Choking Pollen", {
+              type: StandardPowerType.get("Blast"),
+              summary: "Blast 3d6 NND vs life support",
+              description: "Choke people with your pollen",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 40,
+            fullCost: 30,
+          }),
+        ],
+      });
+
+      expect(mp.warnings).toHaveLength(1);
+      expect(mp.warnings[0]).toHaveProperty(
+        "message",
+        "This slot has more points allocated to it than it can use"
+      );
+      expect(mp.warnings[0]).toHaveProperty("scope", WarningScope.Slot),
+        expect(mp.warnings[0]).toHaveProperty("slotId", "chokingpollen");
     });
   });
 });
