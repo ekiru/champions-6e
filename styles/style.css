@@ -70,7 +70,14 @@ details.modifier {
   display: inline;
 }
 
-tr.multipower-slot > td.slot-status > input[type="number"] {
+.framework .warning {
+  text-decoration: red wavy underline;
+}
+.framework .warning input {
+  background-color: red;
+}
+
+tr.multipower-slot > td.slot-status input[type="number"] {
   width: auto;
 }
 

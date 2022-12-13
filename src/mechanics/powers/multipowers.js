@@ -144,14 +144,36 @@ export class Multipower {
   }
 
   display() {
+    const slotWarnings = new Map();
+    const frameworkWarnings = [];
+    for (const warning of this.warnings) {
+      if (warning.scope === WarningScope.Framework) {
+        frameworkWarnings.push(warning.message);
+      } else if (warning.scope === WarningScope.Slot) {
+        if (!warning.slotId) {
+          console.log("slot warning with no slot ID", warning);
+          continue;
+        }
+        if (!slotWarnings.has(warning.slotId)) {
+          slotWarnings.set(warning.slotId, []);
+        }
+        slotWarnings.get(warning.slotId).push(warning.message);
+      } else {
+        assert.notYetImplemented();
+      }
+    }
+
     const { id, name, allocatedReserve, reserve } = this;
-    const slots = this.slots.map((slot) => slot.display());
+    const slots = this.slots.map((slot) =>
+      slot.display(slotWarnings.get(slot.id))
+    );
     return {
       id,
       name,
       allocatedReserve,
       reserve,
       slots,
+      warnings: frameworkWarnings?.join("\n"),
     };
   }
 
@@ -256,7 +278,7 @@ export class MultipowerSlot {
     this.fullCost = fullCost;
   }
 
-  display() {
+  display(warnings) {
     return {
       id: this.id,
       type: this.type.description.charAt(0).toLowerCase(),
@@ -265,6 +287,7 @@ export class MultipowerSlot {
       allocatedCost: this.allocatedCost,
       fullCost: this.fullCost,
       power: this.power.display(),
+      warnings: warnings?.join("\n"),
     };
   }
 }

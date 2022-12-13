@@ -430,11 +430,19 @@
             <caption>
               <b>Multipower:</b>
               {{name}}
-              <span class="reserve">
-                {{allocatedReserve}}
-                /
-                {{reserve}}
-              </span>
+              {{#if warnings}}
+                <span class="reserve warning" title="{{warnings}}">
+                  {{allocatedReserve}}
+                  /
+                  {{reserve}}
+                </span>
+              {{else}}
+                <span class="reserve">
+                  {{allocatedReserve}}
+                  /
+                  {{reserve}}
+                </span>
+              {{/if}}
               <span class="item-controls">
                 <a class="item-control item-edit" title="Edit Framework">
                   <i class="fas fa-edit"></i>
@@ -466,18 +474,39 @@
                         class="slot-is-active"
                         data-slot-id="{{id}}"
                       />
-                      ({{fullCost}})
+                      {{#if warnings}}
+                        <span class="warning" title="{{warnings}}">
+                          ({{fullCost}})
+                        </span>
+                      {{else}}
+                        <span>({{fullCost}})</span>
+                      {{/if}}
                     {{else}}
-                      <input
-                        class="slot-allocated-cost"
-                        type="number"
-                        value="{{allocatedCost}}"
-                        data-slot-id="{{id}}"
-                        min="0"
-                        max="{{fullCost}}"
-                      />
-                      /
-                      <input disabled type="number" value="{{fullCost}}" />
+                      {{#if warnings}}
+                        <span class="warning" title="{{warnings}}">
+                          <input
+                            class="slot-allocated-cost"
+                            type="number"
+                            value="{{allocatedCost}}"
+                            data-slot-id="{{id}}"
+                            min="0"
+                            max="{{fullCost}}"
+                          />
+                          /
+                          <input disabled type="number" value="{{fullCost}}" />
+                        </span>
+                      {{else}}
+                        <input
+                          class="slot-allocated-cost"
+                          type="number"
+                          value="{{allocatedCost}}"
+                          data-slot-id="{{id}}"
+                          min="0"
+                          max="{{fullCost}}"
+                        />
+                        /
+                        <input disabled type="number" value="{{fullCost}}" />
+                      {{/if}}
                     {{/if}}
                   </td>
                 </tr>
