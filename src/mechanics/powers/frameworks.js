@@ -101,7 +101,7 @@ export class Slot {
     id,
     rawSlot,
     powerCollection,
-    { id: frameworkId, name: frameworkName }
+    { framework: { id: frameworkId, name: frameworkName }, defaultSlotType }
   ) {
     if (rawSlot.powers.length !== 1) {
       assert.notYetImplemented(
@@ -120,7 +120,7 @@ export class Slot {
     );
     const {
       active = false,
-      fixed = true,
+      fixed = defaultSlotType === SlotType.Fixed,
       allocatedCost = 0,
       fullCost = 0,
     } = rawSlot;

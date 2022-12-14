@@ -1,6 +1,6 @@
 import * as assert from "../../util/assert.js";
 import { Enum } from "../../util/enum.js";
-import { Framework, Slot } from "./frameworks.js";
+import { Framework, Slot, SlotType } from "./frameworks.js";
 
 export class Multipower extends Framework {
   get allocatedReserve() {
@@ -60,8 +60,11 @@ export class Multipower extends Framework {
     const slots = [];
     for (const [slotId, rawSlot] of Object.entries(rawSlots)) {
       const slot = Slot.fromItemData(slotId, rawSlot, powerCollection, {
-        id,
-        name,
+        framework: {
+          id,
+          name,
+        },
+        defaultSlotType: SlotType.Fixed,
       });
       slots.push(slot);
     }
