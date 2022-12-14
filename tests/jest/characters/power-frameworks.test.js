@@ -10,6 +10,7 @@ import {
   Multipower,
   WarningScope,
 } from "../../../src/mechanics/powers/multipowers.js";
+import { VPP } from "../../../src/mechanics/powers/vpps.js";
 
 describe("Multipowers", function () {
   describe("new multipowers", function () {
@@ -336,6 +337,45 @@ describe("Multipowers", function () {
       );
       expect(mp.warnings[0]).toHaveProperty("scope", WarningScope.Slot),
         expect(mp.warnings[0]).toHaveProperty("slotId", "chokingpollen");
+    });
+  });
+});
+
+describe("Variable Power Pools", function () {
+  describe("new VPPs", function () {
+    const name = "Magic";
+    const description = "<p>Description</p>";
+    const control = 30;
+    const pool = 60;
+    const slots = [];
+
+    it("must have a name", function () {
+      expect(() => new VPP(null, {})).toThrow(
+        new Error("name must be a string")
+      );
+    });
+
+    it("must have an integral pool", function () {
+      expect(
+        () => new VPP(name, { control, pool: "30", slots, description })
+      ).toThrow(new Error("pool must be an integer"));
+    });
+
+    it("must have an integral control", function () {
+      expect(
+        () => new VPP(name, { control: "60", pool, slots, description })
+      ).toThrow(new Error("control must be an integer"));
+    });
+
+    it("should expose its properties", function () {
+      expect(new VPP(name, { control, pool, slots, description })).toEqual({
+        name,
+        control,
+        pool,
+        slots,
+        description,
+        id: undefined,
+      });
     });
   });
 });
