@@ -114,4 +114,41 @@ export class MultipowerSlot {
 /**
  * A base class to represent any type of power framework.
  */
-export class Framework {}
+export class Framework {
+  /**
+   * A name given to the framework.
+   *
+   * @type {string}
+   */
+  name;
+
+  /**
+   * The ID of the framework's corresponding Foundry item.
+   *
+   * @type {string}
+   */
+  id;
+
+  /**
+   * A HTML description of the framework.
+   *
+   * @type {string}
+   */
+  description;
+
+  constructor(name, { id, description }) {
+    assert.precondition(typeof name === "string", "name must be a string");
+    assert.precondition(
+      id === undefined || typeof id === "string",
+      "id must be a string if present"
+    );
+    assert.precondition(
+      typeof description === "string",
+      "description must be a string"
+    );
+
+    this.name = name;
+    this.id = id;
+    this.description = description;
+  }
+}

@@ -4,27 +4,6 @@ import { Power } from "../power.js";
 import { Framework, MultipowerSlot, SlotType } from "./frameworks.js";
 
 export class Multipower extends Framework {
-  /**
-   * A name given to the multipower.
-   *
-   * @type {string}
-   */
-  name;
-
-  /**
-   * The ID of the multipower's corresponding Foundry item.
-   *
-   * @type {string}
-   */
-  id;
-
-  /**
-   * A HTML description of the multipower.
-   *
-   * @type {string}
-   */
-  description;
-
   get allocatedReserve() {
     return this.slots
       .map((slot) => slot.allocatedCost)
@@ -55,25 +34,13 @@ export class Multipower extends Framework {
    */
   warnings;
 
-  constructor(name, { id, description, reserve, slots = [] }) {
-    super();
-    assert.precondition(typeof name === "string", "name must be a string");
-    assert.precondition(
-      id === undefined || typeof id === "string",
-      "id must be a string if present"
-    );
-    assert.precondition(
-      typeof description === "string",
-      "description must be a string"
-    );
+  constructor(name, { reserve, slots = [], ...properties }) {
+    super(name, properties);
     assert.precondition(
       Number.isInteger(reserve),
       "reserve must be a non-negative integer"
     );
 
-    this.name = name;
-    this.id = id;
-    this.description = description;
     this.reserve = reserve;
     this.slots = slots;
 
