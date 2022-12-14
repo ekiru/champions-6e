@@ -6,9 +6,11 @@ import {
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
 import {
-  Multipower,
   MultipowerSlot,
   SlotType,
+} from "../../../src/mechanics/powers/frameworks.js";
+import {
+  Multipower,
   WarningScope,
 } from "../../../src/mechanics/powers/multipowers.js";
 

@@ -1,4 +1,4 @@
-import { SlotType } from "../mechanics/powers/multipowers.js";
+import { SlotType } from "../mechanics/powers/frameworks.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
 
 export default class MultipowerSheet extends ItemSheet {

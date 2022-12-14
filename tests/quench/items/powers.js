@@ -1,9 +1,9 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
 import {
-  Multipower,
   MultipowerSlot,
   SlotType,
-} from "../../../src/mechanics/powers/multipowers.js";
+} from "../../../src/mechanics/powers/frameworks.js";
+import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
 import { AssertionError } from "../../../src/util/assert.js";
 import * as build from "../helpers/build.js";
 import { openItemSheet } from "../helpers/sheets.js";
