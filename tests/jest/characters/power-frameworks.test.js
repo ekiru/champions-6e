@@ -340,7 +340,7 @@ describe("Multipowers", function () {
   });
 });
 
-describe("Multipower slots", function () {
+describe("Slots", function () {
   const power = new Power("Shift", {
     type: StandardPowerType.get("Flight"),
     summary: "",
