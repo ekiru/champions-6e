@@ -1,7 +1,6 @@
 import * as assert from "../../util/assert.js";
 import { Enum } from "../../util/enum.js";
-import { Power } from "../power.js";
-import { Framework, Slot, SlotType } from "./frameworks.js";
+import { Framework, Slot } from "./frameworks.js";
 
 export class Multipower extends Framework {
   get allocatedReserve() {
@@ -59,39 +58,12 @@ export class Multipower extends Framework {
     powerCollection
   ) {
     const slots = [];
-    for (const [slotId, slot] of Object.entries(rawSlots)) {
-      if (slot.powers.length !== 1) {
-        assert.notYetImplemented(
-          "Slots with multiple powers not yet implemented"
-        );
-      }
-      const [powerId] = slot.powers;
-      const power = powerCollection.get(powerId);
-      assert.precondition(
-        power !== undefined,
-        `No such power ${powerId} in collection ${powerCollection}`
-      );
-      assert.precondition(
-        power.system.power.framework === id,
-        `Power ${power.name} (${power.id}) is not part of framework ${name} (${id})`
-      );
-      const {
-        active = false,
-        fixed = true,
-        allocatedCost = 0,
-        fullCost = 0,
-      } = slot;
-      const type = fixed ? SlotType.Fixed : SlotType.Variable;
-      slots.push(
-        new Slot({
-          active,
-          type,
-          allocatedCost,
-          fullCost,
-          id: slotId,
-          power: Power.fromItem(power),
-        })
-      );
+    for (const [slotId, rawSlot] of Object.entries(rawSlots)) {
+      const slot = Slot.fromItemData(slotId, rawSlot, powerCollection, {
+        id,
+        name,
+      });
+      slots.push(slot);
     }
     return new Multipower(name, {
       description,

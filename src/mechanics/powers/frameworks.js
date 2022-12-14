@@ -97,6 +97,45 @@ export class Slot {
     this.fullCost = fullCost;
   }
 
+  static fromItemData(
+    id,
+    rawSlot,
+    powerCollection,
+    { id: frameworkId, name: frameworkName }
+  ) {
+    if (rawSlot.powers.length !== 1) {
+      assert.notYetImplemented(
+        "Slots with multiple powers not yet implemented"
+      );
+    }
+    const [powerId] = rawSlot.powers;
+    const power = powerCollection.get(powerId);
+    assert.precondition(
+      power !== undefined,
+      `No such power ${powerId} in collection ${powerCollection}`
+    );
+    assert.precondition(
+      power.system.power.framework === frameworkId,
+      `Power ${power.name} (${power.id}) is not part of framework ${frameworkName} (${frameworkId})`
+    );
+    const {
+      active = false,
+      fixed = true,
+      allocatedCost = 0,
+      fullCost = 0,
+    } = rawSlot;
+    const type = fixed ? SlotType.Fixed : SlotType.Variable;
+    const slot = new Slot({
+      active,
+      type,
+      allocatedCost,
+      fullCost,
+      id: id,
+      power: Power.fromItem(power),
+    });
+    return slot;
+  }
+
   display(warnings) {
     return {
       id: this.id,
