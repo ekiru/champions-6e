@@ -16,7 +16,7 @@ export const SlotType = new Enum(["Fixed", "Variable"]);
 /**
  * A slot in a multipower.
  */
-export class MultipowerSlot {
+export class Slot {
   /**
    * The number of points of reserve allocated to the slot.
    *

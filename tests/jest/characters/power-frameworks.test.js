@@ -5,10 +5,7 @@ import {
   Power,
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
-import {
-  MultipowerSlot,
-  SlotType,
-} from "../../../src/mechanics/powers/frameworks.js";
+import { Slot, SlotType } from "../../../src/mechanics/powers/frameworks.js";
 import {
   Multipower,
   WarningScope,
@@ -132,10 +129,7 @@ describe("Multipowers", function () {
       expect(mp).toHaveProperty("name", "Magic");
       expect(mp).toHaveProperty("id", id);
       expect(mp).toHaveProperty("reserve", 60);
-      expect(mp).toHaveProperty("slots", [
-        expect.any(MultipowerSlot),
-        expect.any(MultipowerSlot),
-      ]);
+      expect(mp).toHaveProperty("slots", [expect.any(Slot), expect.any(Slot)]);
 
       expect(mp.slots[0]).toHaveProperty("power.name", "Lightning Bolt");
       expect(mp.slots[0]).toHaveProperty("id", "a");
@@ -159,7 +153,7 @@ describe("Multipowers", function () {
         description: "The magical power of a siren's song",
         reserve: 60,
         slots: [
-          new MultipowerSlot({
+          new Slot({
             power: new Power("Allure", {
               type: StandardPowerType.get("Mind Control"),
               summary: "Mind Control 12d6 only to approach the singer",
@@ -169,7 +163,7 @@ describe("Multipowers", function () {
             fullCost: 60,
             allocatedCost: 30,
           }),
-          new MultipowerSlot({
+          new Slot({
             power: new Power("Beguile", {
               type: StandardPowerType.get("Mental Illusions"),
               summary: "Mental Illusions 12d6",
@@ -180,7 +174,7 @@ describe("Multipowers", function () {
             fullCost: 60,
             active: false,
           }),
-          new MultipowerSlot({
+          new Slot({
             power: new Power("Charm", {
               type: new CustomPowerType("PRE"),
               summary: "+15 PRE",
@@ -204,7 +198,7 @@ describe("Multipowers", function () {
         description: "The power of flowers~~",
         reserve: 40,
         slots: [
-          new MultipowerSlot({
+          new Slot({
             power: new Power("Relaxing Aroma", {
               type: StandardPowerType.get("Drain"),
               summary: "Drain END 2d6 no end cost",
@@ -214,7 +208,7 @@ describe("Multipowers", function () {
             active: true,
             fullCost: 40,
           }),
-          new MultipowerSlot({
+          new Slot({
             power: new Power("Choking Pollen", {
               type: StandardPowerType.get("Blast"),
               summary: "Blast 4d6 NND vs life support",
@@ -234,7 +228,7 @@ describe("Multipowers", function () {
         description: "The power of flowers~~",
         reserve: 40,
         slots: [
-          new MultipowerSlot({
+          new Slot({
             id: "relaxingaroma",
             power: new Power("Relaxing Aroma", {
               type: StandardPowerType.get("Drain"),
@@ -245,7 +239,7 @@ describe("Multipowers", function () {
             active: true,
             fullCost: 40,
           }),
-          new MultipowerSlot({
+          new Slot({
             id: "chokingpollen",
             power: new Power("Choking Pollen", {
               type: StandardPowerType.get("Blast"),
@@ -272,7 +266,7 @@ describe("Multipowers", function () {
         description: "The power of flowers~~",
         reserve: 40,
         slots: [
-          new MultipowerSlot({
+          new Slot({
             id: "relaxingaroma",
             power: new Power("Relaxing Aroma", {
               type: StandardPowerType.get("Drain"),
@@ -283,7 +277,7 @@ describe("Multipowers", function () {
             active: true,
             fullCost: 20,
           }),
-          new MultipowerSlot({
+          new Slot({
             id: "chokingpollen",
             power: new Power("Choking Pollen", {
               type: StandardPowerType.get("Blast"),
@@ -310,7 +304,7 @@ describe("Multipowers", function () {
         description: "The power of flowers~~",
         reserve: 40,
         slots: [
-          new MultipowerSlot({
+          new Slot({
             id: "relaxingaroma",
             power: new Power("Relaxing Aroma", {
               type: StandardPowerType.get("Drain"),
@@ -321,7 +315,7 @@ describe("Multipowers", function () {
             active: false,
             fullCost: 40,
           }),
-          new MultipowerSlot({
+          new Slot({
             id: "chokingpollen",
             power: new Power("Choking Pollen", {
               type: StandardPowerType.get("Blast"),
@@ -355,7 +349,7 @@ describe("Multipower slots", function () {
 
   describe("Variable slots", function () {
     it("should be active when allocatedCost is nonzero", function () {
-      const slot = new MultipowerSlot({
+      const slot = new Slot({
         power,
         active: false,
         type: SlotType.Variable,
@@ -367,7 +361,7 @@ describe("Multipower slots", function () {
     });
 
     it("should be inactive when allocatedCost is zero", function () {
-      const slot = new MultipowerSlot({
+      const slot = new Slot({
         power,
         active: true,
         type: SlotType.Variable,
@@ -381,7 +375,7 @@ describe("Multipower slots", function () {
 
   describe("Fixed slots", function () {
     it("should have allocatedCost equal to fullCost when active", function () {
-      const slot = new MultipowerSlot({
+      const slot = new Slot({
         power,
         active: true,
         type: SlotType.Fixed,
@@ -393,7 +387,7 @@ describe("Multipower slots", function () {
     });
 
     it("should have allocatedCost equal to 0 when inactive", function () {
-      const slot = new MultipowerSlot({
+      const slot = new Slot({
         power,
         active: false,
         type: SlotType.Fixed,

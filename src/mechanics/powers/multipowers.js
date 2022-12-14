@@ -1,7 +1,7 @@
 import * as assert from "../../util/assert.js";
 import { Enum } from "../../util/enum.js";
 import { Power } from "../power.js";
-import { Framework, MultipowerSlot, SlotType } from "./frameworks.js";
+import { Framework, Slot, SlotType } from "./frameworks.js";
 
 export class Multipower extends Framework {
   get allocatedReserve() {
@@ -20,7 +20,7 @@ export class Multipower extends Framework {
   /**
    * The slots of the multipower.
    *
-   * @type {MultipowerSlot[]}
+   * @type {Slot[]}
    */
   slots;
 
@@ -83,7 +83,7 @@ export class Multipower extends Framework {
       } = slot;
       const type = fixed ? SlotType.Fixed : SlotType.Variable;
       slots.push(
-        new MultipowerSlot({
+        new Slot({
           active,
           type,
           allocatedCost,
@@ -185,7 +185,7 @@ class Warning {
   /**
    * Warns that a slot has more points allocated to it than its full cost.
    *
-   * @param {MultipowerSlot} slot The slot.
+   * @param {Slot} slot The slot.
    * @returns {Warning} The warning.
    */
   static slotHasTooManyPointsAllocated(slot) {
@@ -199,7 +199,7 @@ class Warning {
   /**
    * Warns that a slot is too big for the framework's reserve.
    *
-   * @param {MultipowerSlot} slot The slot that is too big.
+   * @param {Slot} slot The slot that is too big.
    * @returns {Warning} The warning.
    */
   static slotIsTooBigForReserve(slot) {

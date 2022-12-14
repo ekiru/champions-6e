@@ -1,8 +1,5 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
-import {
-  MultipowerSlot,
-  SlotType,
-} from "../../../src/mechanics/powers/frameworks.js";
+import { Slot, SlotType } from "../../../src/mechanics/powers/frameworks.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
 import { AssertionError } from "../../../src/util/assert.js";
 import * as build from "../helpers/build.js";
@@ -245,7 +242,7 @@ export function register(system, quench) {
             await this.multipower.addPower(this.power);
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
-              new MultipowerSlot({
+              new Slot({
                 id: this.power.id,
                 power: this.power.asPower,
                 active: false,
@@ -316,7 +313,7 @@ export function register(system, quench) {
             await this.multipower.addPower(this.power);
 
             expect(this.multipower.asMultipower.slots).to.deep.equal([
-              new MultipowerSlot({
+              new Slot({
                 id: this.power.id,
                 power: this.power.asPower,
                 active: false,
