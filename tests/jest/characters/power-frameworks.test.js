@@ -376,6 +376,7 @@ describe("Variable Power Pools", function () {
         slots,
         description,
         id: undefined,
+        warnings: [],
       });
     });
   });
@@ -443,6 +444,80 @@ describe("Variable Power Pools", function () {
       });
 
       expect(vpp.allocatedPool).toBe(45);
+    });
+  });
+
+  describe("warnings", function () {
+    it("should be empty for a VPP without any problems", function () {
+      const vpp = new VPP("Hellfire", {
+        control: 50,
+        pool: 50,
+        description: "Demonic fire powers",
+        slots: [
+          new Slot({
+            power: new Power("Fire Whip", {
+              type: StandardPowerType.get("Entangle"),
+              summary: "Entangle 2d6 BODY, 2 DEF",
+              description: "Lasso a foe in a whip of hell fire",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 20,
+          }),
+          new Slot({
+            power: new Power("Firewall", {
+              type: StandardPowerType.get("Barrier"),
+              summary: "3 DEF Barrier",
+              description: "Throw up a wall of fire to bar the way",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 30,
+          }),
+        ],
+      });
+
+      expect(vpp.warnings).toHaveLength(0);
+    });
+
+    it("should warn if a power's AP exceeds the control cost", function () {
+      const vpp = new VPP("Hellfire", {
+        control: 40,
+        pool: 50,
+        description: "Demonic fire powers",
+        slots: [
+          new Slot({
+            id: "firewhip",
+            power: new Power("Fire Whip", {
+              type: StandardPowerType.get("Entangle"),
+              summary: "Entangle 2d6 BODY, 2 DEF",
+              description: "Lasso a foe in a whip of hell fire",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 20,
+          }),
+          new Slot({
+            id: "firewall",
+            power: new Power("Firewall", {
+              type: StandardPowerType.get("Barrier"),
+              summary: "3 DEF Barrier",
+              description: "Throw up a wall of fire to bar the way",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 50,
+          }),
+        ],
+      });
+
+      expect(vpp.warnings).toHaveLength(1);
+      expect(vpp.warnings[0]).toHaveProperty(
+        "message",
+        "Slot active points are larger than the framework's control"
+      );
+      expect(vpp.warnings[0]).toHaveProperty("scope", WarningScope.Slot);
+      expect(vpp.warnings[0]).toHaveProperty("slotId", "firewall");
     });
   });
 });

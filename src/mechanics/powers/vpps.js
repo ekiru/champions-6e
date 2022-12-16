@@ -56,5 +56,16 @@ export class VPP extends Framework {
     this.control = control;
     this.pool = pool;
     this.slots = slots;
+    this.warnings = this.#validate();
+  }
+
+  #validate() {
+    const warnings = [];
+    for (const slot of this.slots) {
+      if (slot.fullCost > this.control) {
+        warnings.push(Warning.slotIsTooBigForControl(slot));
+      }
+    }
+    return warnings;
   }
 }

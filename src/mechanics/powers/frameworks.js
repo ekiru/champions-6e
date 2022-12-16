@@ -47,6 +47,20 @@ export class Warning {
   }
 
   /**
+   * Warns that a slot is too big for the framework's control.
+   *
+   * @param {Slot} slot The slot that is too big.
+   * @returns {Warning} The warning.
+   */
+  static slotIsTooBigForControl(slot) {
+    return new Warning({
+      message: "Slot active points are larger than the framework's control",
+      scope: WarningScope.Slot,
+      slotId: slot.id,
+    });
+  }
+
+  /**
    * Warns that a slot is too big for the framework's reserve.
    *
    * @param {Slot} slot The slot that is too big.
