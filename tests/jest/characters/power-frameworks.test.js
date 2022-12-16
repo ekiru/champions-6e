@@ -378,6 +378,72 @@ describe("Variable Power Pools", function () {
       });
     });
   });
+
+  describe("allocatedPool", function () {
+    it("should equal 0 for a VPP with no active slots", function () {
+      const vpp = new VPP("Hellfire", {
+        control: 50,
+        pool: 50,
+        description: "Demonic fire powers",
+        slots: [
+          new Slot({
+            power: new Power("Fire Whip", {
+              type: StandardPowerType.get("Entangle"),
+              summary: "Entangle 2d6 BODY, 2 DEF",
+              description: "Lasso a foe in a whip of hell fire",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 20,
+          }),
+          new Slot({
+            power: new Power("Firewall", {
+              type: StandardPowerType.get("Barrier"),
+              summary: "3 DEF Barrier",
+              description: "Throw up a wall of fire to bar the way",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 0,
+            fullCost: 30,
+          }),
+        ],
+      });
+
+      expect(vpp.allocatedPool).toBe(0);
+    });
+
+    it("should equal the sum of the allocated costs of the powers", function () {
+      const vpp = new VPP("Hellfire", {
+        control: 50,
+        pool: 50,
+        description: "Demonic fire powers",
+        slots: [
+          new Slot({
+            power: new Power("Fire Whip", {
+              type: StandardPowerType.get("Entangle"),
+              summary: "Entangle 2d6 BODY, 2 DEF",
+              description: "Lasso a foe in a whip of hell fire",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 20,
+            fullCost: 20,
+          }),
+          new Slot({
+            power: new Power("Firewall", {
+              type: StandardPowerType.get("Barrier"),
+              summary: "3 DEF Barrier",
+              description: "Throw up a wall of fire to bar the way",
+            }),
+            type: SlotType.Variable,
+            allocatedCost: 25,
+            fullCost: 30,
+          }),
+        ],
+      });
+
+      expect(vpp.allocatedPool).toBe(45);
+    });
+  });
 });
 
 describe("Slots", function () {
