@@ -5,11 +5,12 @@ import {
   Power,
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
-import { Slot, SlotType } from "../../../src/mechanics/powers/frameworks.js";
 import {
-  Multipower,
+  Slot,
+  SlotType,
   WarningScope,
-} from "../../../src/mechanics/powers/multipowers.js";
+} from "../../../src/mechanics/powers/frameworks.js";
+import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
 import { VPP } from "../../../src/mechanics/powers/vpps.js";
 
 describe("Multipowers", function () {

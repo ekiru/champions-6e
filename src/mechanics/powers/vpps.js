@@ -1,4 +1,4 @@
-import { Framework, Slot } from "./frameworks.js";
+import { Framework, Slot, Warning } from "./frameworks.js";
 import * as assert from "../../util/assert.js";
 
 export class VPP extends Framework {
@@ -34,6 +34,16 @@ export class VPP extends Framework {
    * @type {Slot[]}
    */
   slots;
+
+  /**
+   * Problems with the VPP.
+   *
+   * This might include powers that are too big for the framework's control, active
+   * powers that use up more than the pool cumulatively, or other issues.
+   *
+   * @type {Warning[]}
+   */
+  warnings;
 
   constructor(name, { control, pool, slots = [], ...properties }) {
     super(name, properties);
