@@ -416,7 +416,7 @@ describe("Variable Power Pools", function () {
       expect(vpp.allocatedPool).toBe(0);
     });
 
-    it("should equal the sum of the allocated costs of the powers", function () {
+    it("should equal the sum of the allocated Real Costs of the powers", function () {
       const vpp = new VPP("Hellfire", {
         control: 50,
         pool: 50,
@@ -430,7 +430,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 20,
             fullCost: 20,
-            realCost: 20,
+            realCost: 10,
           }),
           new VPPSlot({
             power: new Power("Firewall", {
@@ -445,7 +445,7 @@ describe("Variable Power Pools", function () {
         ],
       });
 
-      expect(vpp.allocatedPool).toBe(45);
+      expect(vpp.allocatedPool).toBe(35);
     });
   });
 

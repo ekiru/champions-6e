@@ -34,7 +34,7 @@ export class VPP extends Framework {
    */
   get allocatedPool() {
     return this.slots
-      .map((slot) => slot.allocatedCost)
+      .map((slot) => slot.allocatedRealCost)
       .reduce((a, b) => a + b, 0);
   }
 
