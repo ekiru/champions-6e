@@ -11,7 +11,7 @@ import {
   WarningScope,
 } from "../../../src/mechanics/powers/frameworks.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
-import { VPP } from "../../../src/mechanics/powers/vpps.js";
+import { VPP, VPPSlot } from "../../../src/mechanics/powers/vpps.js";
 
 describe("Multipowers", function () {
   describe("new multipowers", function () {
@@ -388,7 +388,7 @@ describe("Variable Power Pools", function () {
         pool: 50,
         description: "Demonic fire powers",
         slots: [
-          new Slot({
+          new VPPSlot({
             power: new Power("Fire Whip", {
               type: StandardPowerType.get("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
@@ -398,7 +398,7 @@ describe("Variable Power Pools", function () {
             allocatedCost: 0,
             fullCost: 20,
           }),
-          new Slot({
+          new VPPSlot({
             power: new Power("Firewall", {
               type: StandardPowerType.get("Barrier"),
               summary: "3 DEF Barrier",
@@ -420,23 +420,21 @@ describe("Variable Power Pools", function () {
         pool: 50,
         description: "Demonic fire powers",
         slots: [
-          new Slot({
+          new VPPSlot({
             power: new Power("Fire Whip", {
               type: StandardPowerType.get("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
-            type: SlotType.Variable,
             allocatedCost: 20,
             fullCost: 20,
           }),
-          new Slot({
+          new VPPSlot({
             power: new Power("Firewall", {
               type: StandardPowerType.get("Barrier"),
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
-            type: SlotType.Variable,
             allocatedCost: 25,
             fullCost: 30,
           }),
@@ -454,23 +452,21 @@ describe("Variable Power Pools", function () {
         pool: 50,
         description: "Demonic fire powers",
         slots: [
-          new Slot({
+          new VPPSlot({
             power: new Power("Fire Whip", {
               type: StandardPowerType.get("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
-            type: SlotType.Variable,
             allocatedCost: 0,
             fullCost: 20,
           }),
-          new Slot({
+          new VPPSlot({
             power: new Power("Firewall", {
               type: StandardPowerType.get("Barrier"),
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
-            type: SlotType.Variable,
             allocatedCost: 0,
             fullCost: 30,
           }),
@@ -486,25 +482,23 @@ describe("Variable Power Pools", function () {
         pool: 50,
         description: "Demonic fire powers",
         slots: [
-          new Slot({
+          new VPPSlot({
             id: "firewhip",
             power: new Power("Fire Whip", {
               type: StandardPowerType.get("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
-            type: SlotType.Variable,
             allocatedCost: 0,
             fullCost: 20,
           }),
-          new Slot({
+          new VPPSlot({
             id: "firewall",
             power: new Power("Firewall", {
               type: StandardPowerType.get("Barrier"),
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
-            type: SlotType.Variable,
             allocatedCost: 0,
             fullCost: 50,
           }),
@@ -578,6 +572,18 @@ describe("Slots", function () {
       });
 
       expect(slot.allocatedCost).toBe(0);
+    });
+  });
+
+  describe("VPP slots", function () {
+    it("should always be a variable slot", function () {
+      const slot = new VPPSlot({
+        power,
+        type: SlotType.Fixed,
+        fullCost: 30,
+        allocatedCost: 5,
+      });
+      expect(slot).toHaveProperty("type", SlotType.Variable);
     });
   });
 });

@@ -1,5 +1,11 @@
-import { Framework, Slot, Warning } from "./frameworks.js";
+import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
 import * as assert from "../../util/assert.js";
+
+export class VPPSlot extends Slot {
+  constructor({ power, id, fullCost, allocatedCost }) {
+    super({ power, id, fullCost, allocatedCost, type: SlotType.Variable });
+  }
+}
 
 export class VPP extends Framework {
   /**
@@ -31,7 +37,7 @@ export class VPP extends Framework {
   /**
    * The slots of the framework.
    *
-   * @type {Slot[]}
+   * @type {VPPSlot[]}
    */
   slots;
 
@@ -52,6 +58,10 @@ export class VPP extends Framework {
       "control must be an integer"
     );
     assert.precondition(Number.isInteger(pool), "pool must be an integer");
+    assert.precondition(
+      slots.every((slot) => slot instanceof VPPSlot),
+      "slots must be VPPSlots"
+    );
 
     this.control = control;
     this.pool = pool;
