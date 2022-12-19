@@ -1,9 +1,28 @@
 import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
 import * as assert from "../../util/assert.js";
+import { favouringLower } from "../../util/round.js";
 
 export class VPPSlot extends Slot {
-  constructor({ power, id, fullCost, allocatedCost }) {
+  get allocatedRealCost() {
+    return favouringLower((this.realCost * this.allocatedCost) / this.fullCost);
+  }
+
+  /**
+   * The maximum Real Cost of the slot.
+   *
+   * The (allocated) Real Cost determines how much of the VPP's pool the slot uses.
+   *
+   * @type {number}
+   */
+  realCost;
+
+  constructor({ power, id, fullCost, allocatedCost, realCost }) {
     super({ power, id, fullCost, allocatedCost, type: SlotType.Variable });
+    assert.precondition(
+      Number.isInteger(realCost),
+      "realCost must be an integer"
+    );
+    this.realCost = realCost;
   }
 }
 

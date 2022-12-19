@@ -397,6 +397,7 @@ describe("Variable Power Pools", function () {
             type: SlotType.Variable,
             allocatedCost: 0,
             fullCost: 20,
+            realCost: 20,
           }),
           new VPPSlot({
             power: new Power("Firewall", {
@@ -407,6 +408,7 @@ describe("Variable Power Pools", function () {
             type: SlotType.Variable,
             allocatedCost: 0,
             fullCost: 30,
+            realCost: 30,
           }),
         ],
       });
@@ -428,6 +430,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 20,
             fullCost: 20,
+            realCost: 20,
           }),
           new VPPSlot({
             power: new Power("Firewall", {
@@ -437,6 +440,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 25,
             fullCost: 30,
+            realCost: 30,
           }),
         ],
       });
@@ -460,6 +464,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 0,
             fullCost: 20,
+            realCost: 20,
           }),
           new VPPSlot({
             power: new Power("Firewall", {
@@ -469,6 +474,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 0,
             fullCost: 30,
+            realCost: 30,
           }),
         ],
       });
@@ -491,6 +497,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 0,
             fullCost: 20,
+            realCost: 20,
           }),
           new VPPSlot({
             id: "firewall",
@@ -501,6 +508,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 0,
             fullCost: 50,
+            realCost: 50,
           }),
         ],
       });
@@ -582,8 +590,44 @@ describe("Slots", function () {
         type: SlotType.Fixed,
         fullCost: 30,
         allocatedCost: 5,
+        realCost: 20,
       });
       expect(slot).toHaveProperty("type", SlotType.Variable);
+    });
+
+    describe("allocatedRealCost", function () {
+      it("should have the same ratio to realCost as allocatedCost does to fullCost", function () {
+        const slot = new VPPSlot({
+          power,
+          fullCost: 30,
+          allocatedCost: 15,
+          realCost: 20,
+        });
+
+        expect(slot.allocatedRealCost).toBe(10);
+      });
+
+      it("should round halves in the character's favor", function () {
+        const slot = new VPPSlot({
+          power,
+          fullCost: 30,
+          allocatedCost: 15,
+          realCost: 15,
+        });
+
+        expect(slot.allocatedRealCost).toBe(7);
+      });
+
+      it("should still round e.g. x.6 to x+1", function () {
+        const slot = new VPPSlot({
+          power,
+          fullCost: 30,
+          allocatedCost: 16,
+          realCost: 20,
+        });
+
+        expect(slot.allocatedRealCost).toBe(11);
+      });
     });
   });
 });
