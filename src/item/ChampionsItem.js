@@ -2,6 +2,7 @@ import { Attack } from "../mechanics/attack.js";
 import { Maneuver } from "../mechanics/maneuvers.js";
 import { Power, StandardPowerType } from "../mechanics/power.js";
 import { Multipower } from "../mechanics/powers/multipowers.js";
+import { VPP } from "../mechanics/powers/vpps.js";
 import * as assert from "../util/assert.js";
 import { preprocessUpdate } from "../util/validation.js";
 
@@ -73,6 +74,16 @@ export default class ChampionsItem extends Item {
   get asPower() {
     assert.precondition(this.type === "power");
     return Power.fromItem(this);
+  }
+
+  /**
+   * Converts a vpp item to the VPP domain class.
+   *
+   * @type {VPP}
+   */
+  get asVPP() {
+    assert.precondition(this.type === "vpp");
+    return VPP.fromItem(this, this.#parentCollectionForFramework());
   }
 
   /**
@@ -615,7 +626,10 @@ export default class ChampionsItem extends Item {
   }
 
   #parentCollectionForFramework() {
-    assert.precondition(this.type === "multipower", "Not a framework");
+    assert.precondition(
+      this.type === "multipower" || this.type === "vpp",
+      "Not a framework"
+    );
     if (this.parent) {
       return this.parent.items;
     } else {

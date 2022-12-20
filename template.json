@@ -59,7 +59,7 @@
     }
   },
   "Item": {
-    "types": ["attack", "maneuver", "multipower", "power", "skill"],
+    "types": ["attack", "maneuver", "multipower", "power", "skill", "vpp"],
     "templates": {
       "slots": {
         "framework": {

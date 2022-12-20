@@ -117,6 +117,15 @@ class Builder {
   power() {
     return new PowerBuilder(this.#context, this.#path);
   }
+
+  /**
+   * Begins building a VPP.
+   *
+   * @returns {VPPBuilder} A builder for the VPP.
+   */
+  vpp() {
+    return new VPPBuilder(this.#context, this.#path);
+  }
 }
 
 class DocumentBuilder {
@@ -213,43 +222,6 @@ class ManeuverBuilder extends DocumentBuilder {
   }
 }
 
-class MultipowerBuilder extends DocumentBuilder {
-  #nextSlot = 0;
-
-  constructor(context, path) {
-    super(context, path ?? "multipower", Item);
-    this.setProperty("name", "Lasers");
-    this.setProperty("type", "multipower");
-  }
-
-  /**
-   * Sets the reserve for the multipower.
-   *
-   * @param {number} reserve The number of AP that can be distributed between the
-   * multipower's slots.
-   * @returns {MultipowerBuilder} `this` for chaining
-   */
-  withReserve(reserve) {
-    this.setProperty("system.framework.reserve", reserve);
-    return this;
-  }
-
-  /**
-   * Adds a slot to the multipower.
-   *
-   * @param  {...ChampionsItem} powers Powers to include in the slot
-   * @returns {MultipowerBuilder} `this` for chaining
-   */
-  withSlot(...powers) {
-    const slot = this.#nextSlot++;
-    this.setProperty(
-      `system.framework.slots.${slot}.powers`,
-      powers.map((power) => power.id)
-    );
-    return this;
-  }
-}
-
 class PowerBuilder extends DocumentBuilder {
   constructor(context, path) {
     super(context, path ?? "power", Item);
@@ -279,5 +251,52 @@ class PowerBuilder extends DocumentBuilder {
     this.setProperty("system.power.type.isStandard", true);
     this.setProperty("system.power.type.name", name);
     return this;
+  }
+}
+
+class FrameworkBuilder extends DocumentBuilder {
+  #nextSlot = 0;
+
+  /**
+   * Adds a slot to the framework.
+   *
+   * @param  {...ChampionsItem} powers Powers to include in the slot
+   * @returns {FrameworkBuilder} `this` for chaining
+   */
+  withSlot(...powers) {
+    const slot = this.#nextSlot++;
+    this.setProperty(
+      `system.framework.slots.${slot}.powers`,
+      powers.map((power) => power.id)
+    );
+    return this;
+  }
+}
+
+class MultipowerBuilder extends FrameworkBuilder {
+  constructor(context, path) {
+    super(context, path ?? "multipower", Item);
+    this.setProperty("name", "Lasers");
+    this.setProperty("type", "multipower");
+  }
+
+  /**
+   * Sets the reserve for the multipower.
+   *
+   * @param {number} reserve The number of AP that can be distributed between the
+   * multipower's slots.
+   * @returns {MultipowerBuilder} `this` for chaining
+   */
+  withReserve(reserve) {
+    this.setProperty("system.framework.reserve", reserve);
+    return this;
+  }
+}
+
+class VPPBuilder extends FrameworkBuilder {
+  constructor(context, path) {
+    super(context, path ?? "vpp", Item);
+    this.setProperty("name", "Lasers");
+    this.setProperty("type", "vpp");
   }
 }

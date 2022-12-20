@@ -1,6 +1,7 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
 import { Slot, SlotType } from "../../../src/mechanics/powers/frameworks.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
+import { VPP } from "../../../src/mechanics/powers/vpps.js";
 import { AssertionError } from "../../../src/util/assert.js";
 import * as build from "../helpers/build.js";
 import { openItemSheet } from "../helpers/sheets.js";
@@ -435,5 +436,34 @@ export function register(system, quench) {
       });
     },
     { displayName: `${system}: Multipower sheets` }
+  );
+
+  quench.registerBatch(
+    `${system}.items.frameworks.vpps`,
+    function ({ describe, it, expect, afterEach, beforeEach }) {
+      afterEach(build.afterEach);
+
+      describe("A new stand-alone vpp", function () {
+        beforeEach("create a new vpp", async function () {
+          await build.at(this).vpp().build();
+        });
+
+        it("should be a valid VPP", function () {
+          let vpp;
+          expect(() => (vpp = this.vpp.asVPP)).to.not.throw();
+          expect(vpp).to.be.an.instanceof(VPP);
+        });
+
+        it("should have a pool and control of 0", function () {
+          expect(this.vpp.asVPP).to.have.property("pool", 0);
+          expect(this.vpp.asVPP).to.have.property("control", 0);
+        });
+
+        it("should have no slots", function () {
+          expect(this.vpp.asVPP.slots).to.have.lengthOf(0);
+        });
+      });
+    },
+    { displayName: `${system}: VPP items` }
   );
 }
