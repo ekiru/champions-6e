@@ -1,6 +1,7 @@
 import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
+import { Power } from "../power.js";
 
 export class VPPSlot extends Slot {
   get allocatedRealCost() {
@@ -23,6 +24,38 @@ export class VPPSlot extends Slot {
       "realCost must be an integer"
     );
     this.realCost = realCost;
+  }
+
+  static fromItemData(
+    id,
+    rawSlot,
+    powerCollection,
+    { framework: { id: frameworkId, name: frameworkName } }
+  ) {
+    if (rawSlot.powers.length !== 1) {
+      assert.notYetImplemented(
+        "Slots with multiple powers not yet implemented"
+      );
+    }
+    const [powerId] = rawSlot.powers;
+    const power = powerCollection.get(powerId);
+    assert.precondition(
+      power !== undefined,
+      `No such power ${powerId} in collection ${powerCollection}`
+    );
+    assert.precondition(
+      power.system.power.framework === frameworkId,
+      `Power ${power.name} (${power.id}) is not part of framework ${frameworkName} (${frameworkId})`
+    );
+    const { allocatedCost = 0, fullCost = 0, realCost = 0 } = rawSlot;
+    const slot = new VPPSlot({
+      allocatedCost,
+      fullCost,
+      realCost,
+      id: id,
+      power: Power.fromItem(power),
+    });
+    return slot;
   }
 }
 
@@ -86,6 +119,37 @@ export class VPP extends Framework {
     this.pool = pool;
     this.slots = slots;
     this.warnings = this.#validate();
+  }
+
+  static fromItem(
+    {
+      id,
+      name,
+      system: {
+        framework: { control, pool, slots: rawSlots },
+        description,
+      },
+    },
+    powerCollection
+  ) {
+    const slots = [];
+    for (const [slotId, rawSlot] of Object.entries(rawSlots)) {
+      const slot = VPPSlot.fromItemData(slotId, rawSlot, powerCollection, {
+        framework: {
+          id,
+          name,
+        },
+      });
+      slots.push(slot);
+    }
+
+    return new VPP(name, {
+      id,
+      description,
+      control,
+      pool,
+      slots,
+    });
   }
 
   #validate() {

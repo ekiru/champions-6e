@@ -381,6 +381,112 @@ describe("Variable Power Pools", function () {
     });
   });
 
+  describe("fromItem", function () {
+    const id = "vpp01";
+
+    const powers = new Map([
+      [
+        "001",
+        {
+          id: "001",
+          name: "Lightning Bolt",
+          type: "power",
+          system: {
+            power: {
+              type: { isStandard: true, name: "Killing Attack" },
+              categories: {},
+              adders: {},
+              advantages: {},
+              limitations: {},
+              framework: id,
+            },
+            summary: "RKA 4d6",
+            description: "<p>Shoot lightning at them!</p>",
+          },
+        },
+      ],
+      [
+        "002",
+        {
+          id: "002",
+          name: "Arcane Shield",
+          type: "power",
+          system: {
+            power: {
+              type: { isStandard: true, name: "Resistant Protection" },
+              categories: {},
+              adders: {},
+              advantages: {},
+              limitations: {},
+              framework: id,
+            },
+            summary: "+24rPD/+24rED",
+            description: "<p>A protective field of arcane energy</p>",
+          },
+        },
+      ],
+    ]);
+
+    it("should parse a valid VPP correctly", function () {
+      const vpp = VPP.fromItem(
+        {
+          id,
+          name: "Magic",
+          type: "vpp",
+          system: {
+            description: "<p>Flexible magical powers</p>",
+            framework: {
+              control: 30,
+              pool: 60,
+              slots: {
+                a: {
+                  powers: ["001"],
+                  allocatedCost: 6,
+                  fullCost: 30,
+                  realCost: 20,
+                },
+                b: {
+                  powers: ["002"],
+                  allocatedCost: 0,
+                  fullCost: 20,
+                  realCost: 20,
+                },
+              },
+            },
+          },
+        },
+        powers
+      );
+
+      expect(vpp).toBeInstanceOf(VPP);
+      expect(vpp).toHaveProperty("name", "Magic");
+      expect(vpp).toHaveProperty(
+        "description",
+        "<p>Flexible magical powers</p>"
+      );
+      expect(vpp).toHaveProperty("control", 30);
+      expect(vpp).toHaveProperty("pool", 60);
+
+      expect(vpp.slots).toHaveLength(2);
+
+      expect(vpp.slots[0]).toBeInstanceOf(VPPSlot);
+      expect(vpp.slots[0]).toHaveProperty("power.name", "Lightning Bolt");
+      expect(vpp.slots[0]).toHaveProperty("id", "a");
+      expect(vpp.slots[0]).toHaveProperty("fullCost", 30);
+      expect(vpp.slots[0]).toHaveProperty("realCost", 20);
+      expect(vpp.slots[0]).toHaveProperty("allocatedCost", 6);
+      expect(vpp.slots[0]).toHaveProperty("isActive", true);
+
+      expect(vpp.slots[1]).toBeInstanceOf(VPPSlot);
+      expect(vpp.slots[1]).toHaveProperty("power.name", "Arcane Shield");
+      expect(vpp.slots[1]).toHaveProperty("id", "b");
+      expect(vpp.slots[1]).toHaveProperty("fullCost", 20);
+      expect(vpp.slots[1]).toHaveProperty("realCost", 20);
+      expect(vpp.slots[1]).toHaveProperty("allocatedCost", 0);
+      expect(vpp.slots[1]).toHaveProperty("isActive", false);
+    });
+  });
+
   describe("allocatedPool", function () {
     it("should equal 0 for a VPP with no active slots", function () {
       const vpp = new VPP("Hellfire", {
@@ -529,6 +635,7 @@ describe("Slots", function () {
     type: StandardPowerType.get("Flight"),
     summary: "",
     description: "",
+    id: "e23fs",
   });
 
   describe("Variable slots", function () {

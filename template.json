@@ -136,6 +136,14 @@
         "class": "combat",
         "type": "singleAttack"
       }
+    },
+    "vpp": {
+      "templates": ["slots"],
+      "framework": {
+        "control": 0,
+        "pool": 0
+      },
+      "description": "<p></p>"
     }
   }
 }
