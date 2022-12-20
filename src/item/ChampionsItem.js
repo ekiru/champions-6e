@@ -291,7 +291,7 @@ export default class ChampionsItem extends Item {
   }
 
   async _preCreate(data) {
-    if (this.type === "multipower" && data?.system?.framework?.slots) {
+    if (this.#isFramework() && data?.system?.framework?.slots) {
       const collection = this.#parentCollectionForFramework();
       for (const slot of Object.values(data.system.framework.slots)) {
         if ("powers" in slot) {
@@ -305,7 +305,7 @@ export default class ChampionsItem extends Item {
   }
 
   _onCreate(data, options, user) {
-    if (this.type === "multipower" && user === game.userId) {
+    if (this.#isFramework() && user === game.userId) {
       const collection = this.#parentCollectionForFramework();
       for (const slot of Object.values(this.system.framework.slots)) {
         for (const powerId of slot.powers) {
@@ -321,7 +321,7 @@ export default class ChampionsItem extends Item {
   }
 
   async _preDelete() {
-    if (this.type === "multipower") {
+    if (this.#isFramework()) {
       // we delete the powers as well.
       const powers = [];
       for (const slot of Object.values(this.system.framework.slots)) {
@@ -625,11 +625,12 @@ export default class ChampionsItem extends Item {
     }
   }
 
+  #isFramework() {
+    return this.type === "multipower" || this.type === "vpp";
+  }
+
   #parentCollectionForFramework() {
-    assert.precondition(
-      this.type === "multipower" || this.type === "vpp",
-      "Not a framework"
-    );
+    assert.precondition(this.#isFramework(), "Not a framework");
     if (this.parent) {
       return this.parent.items;
     } else {

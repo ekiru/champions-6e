@@ -463,6 +463,45 @@ export function register(system, quench) {
           expect(this.vpp.asVPP.slots).to.have.lengthOf(0);
         });
       });
+
+      describe("A new standalone vpp with slots", function () {
+        beforeEach("create the powers and vpp", async function () {
+          await build
+            .at(this, "morphStr")
+            .power()
+            .named("Morph STR")
+            .withCustomType("STR")
+            .build();
+          await build
+            .at(this, "morphDex")
+            .power()
+            .named("Morph DEX")
+            .withCustomType("DEX")
+            .build();
+          await build
+            .at(this, "morph")
+            .vpp()
+            .named("Morph")
+            .withSlot(this.morphStr)
+            .withSlot(this.morphDex)
+            .build();
+
+          await waitOneMoment();
+        });
+
+        it("should contain two slots", function () {
+          const vpp = this.morph.asVPP;
+          expect(vpp.slots).to.have.lengthOf(2);
+          expect(vpp.slots[0]).to.have.nested.property(
+            "power.name",
+            "Morph STR"
+          );
+          expect(vpp.slots[1]).to.have.nested.property(
+            "power.name",
+            "Morph DEX"
+          );
+        });
+      });
     },
     { displayName: `${system}: VPP items` }
   );
