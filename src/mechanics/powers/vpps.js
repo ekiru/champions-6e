@@ -179,6 +179,9 @@ export class VPP extends Framework {
       if (slot.fullCost > this.control) {
         warnings.push(Warning.slotIsTooBigForControl(slot));
       }
+      if (slot.allocatedCost > slot.fullCost) {
+        warnings.push(Warning.slotHasTooManyPointsAllocated(slot));
+      }
     }
 
     return warnings;

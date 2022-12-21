@@ -635,6 +635,7 @@ describe("Variable Power Pools", function () {
         description: "Demonic fire powers",
         slots: [
           new VPPSlot({
+            id: "firewhip",
             power: new Power("Fire Whip", {
               type: StandardPowerType.get("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
@@ -645,6 +646,7 @@ describe("Variable Power Pools", function () {
             realCost: 20,
           }),
           new VPPSlot({
+            id: "firewall",
             power: new Power("Firewall", {
               type: StandardPowerType.get("Barrier"),
               summary: "3 DEF Barrier",
@@ -663,6 +665,46 @@ describe("Variable Power Pools", function () {
         "More real points are allocated than fit in the framework's pool"
       );
       expect(vpp.warnings[0]).toHaveProperty("scope", WarningScope.Framework);
+    });
+
+    it("should warn if more points are allocated to a slot than it's defined to have", function () {
+      const vpp = new VPP("Hellfire", {
+        control: 50,
+        pool: 50,
+        description: "Demonic fire powers",
+        slots: [
+          new VPPSlot({
+            id: "firewhip",
+            power: new Power("Fire Whip", {
+              type: StandardPowerType.get("Entangle"),
+              summary: "Entangle 2d6 BODY, 2 DEF",
+              description: "Lasso a foe in a whip of hell fire",
+            }),
+            allocatedCost: 30,
+            fullCost: 20,
+            realCost: 20,
+          }),
+          new VPPSlot({
+            id: "firewall",
+            power: new Power("Firewall", {
+              type: StandardPowerType.get("Barrier"),
+              summary: "3 DEF Barrier",
+              description: "Throw up a wall of fire to bar the way",
+            }),
+            allocatedCost: 10,
+            fullCost: 30,
+            realCost: 30,
+          }),
+        ],
+      });
+
+      expect(vpp.warnings).toHaveLength(1);
+      expect(vpp.warnings[0]).toHaveProperty(
+        "message",
+        "This slot has more points allocated to it than it can use"
+      );
+      expect(vpp.warnings[0]).toHaveProperty("scope", WarningScope.Slot);
+      expect(vpp.warnings[0]).toHaveProperty("slotId", "firewhip");
     });
   });
 });
