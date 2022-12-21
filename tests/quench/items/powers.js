@@ -1,7 +1,7 @@
 import { StandardPowerType } from "../../../src/mechanics/power.js";
 import { Slot, SlotType } from "../../../src/mechanics/powers/frameworks.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
-import { VPP } from "../../../src/mechanics/powers/vpps.js";
+import { VPP, VPPSlot } from "../../../src/mechanics/powers/vpps.js";
 import { AssertionError } from "../../../src/util/assert.js";
 import * as build from "../helpers/build.js";
 import { openItemSheet } from "../helpers/sheets.js";
@@ -500,6 +500,123 @@ export function register(system, quench) {
             "power.name",
             "Morph DEX"
           );
+        });
+      });
+
+      describe("Adding powers to a VPP", function () {
+        describe("that is standalone", function () {
+          beforeEach(async function () {
+            await build.at(this).vpp().build();
+          });
+
+          it("should require that the powers be standalone too", async function () {
+            await build.at(this).character().build();
+            await build.at(this).power().ownedBy(this.character).build();
+            let error;
+            try {
+              await this.vpp.addPower(this.power);
+            } catch (e) {
+              error = e;
+            }
+            expect(error)
+              .to.be.an.instanceof(AssertionError)
+              .and.to.have.a.property("message")
+              .that.matches(/must not have an owner/);
+          });
+
+          it("should add the power to the framework", async function () {
+            await build.at(this).power().build();
+
+            await this.vpp.addPower(this.power);
+
+            expect(this.vpp.asVPP.slots).to.deep.equal([
+              new VPPSlot({
+                id: this.power.id,
+                power: this.power.asPower,
+                active: false,
+                type: SlotType.Variable,
+                allocatedCost: 0,
+                fullCost: 0,
+                realCost: 0,
+                allocatedRealCost: 0,
+              }),
+            ]);
+          });
+
+          it("should mark the power as belonging to the framework", async function () {
+            await build.at(this).power().build();
+
+            await this.vpp.addPower(this.power);
+
+            expect(this.power.system.power.framework).to.equal(this.vpp.id);
+          });
+        });
+
+        describe("that belongs to an actor", function () {
+          beforeEach(async function () {
+            await build.at(this).character().build();
+            await build.at(this).vpp().ownedBy(this.character).build();
+          });
+
+          it("should require that the powers belong to an actor", async function () {
+            await build.at(this).power().build();
+            let error;
+            try {
+              await this.vpp.addPower(this.power);
+            } catch (e) {
+              error = e;
+            }
+            expect(error)
+              .to.be.an.instanceof(AssertionError)
+              .and.to.have.a.property("message")
+              .that.matches(/must belong to the same actor/);
+          });
+
+          it("should require that the powers belong to the same actor", async function () {
+            await build
+              .at(this, "somebodyElse")
+              .character()
+              .named("Somebody else")
+              .build();
+            await build.at(this).power().ownedBy(this.somebodyElse).build();
+            let error;
+            try {
+              await this.vpp.addPower(this.power);
+            } catch (e) {
+              error = e;
+            }
+            expect(error)
+              .to.be.an.instanceof(AssertionError)
+              .and.to.have.a.property("message")
+              .that.matches(/must belong to the same actor/);
+          });
+
+          it("should add the power to the framework", async function () {
+            await build.at(this).power().ownedBy(this.vpp.parent).build();
+
+            await this.vpp.addPower(this.power);
+
+            expect(this.vpp.asVPP.slots).to.deep.equal([
+              new VPPSlot({
+                id: this.power.id,
+                power: this.power.asPower,
+                active: false,
+                type: SlotType.Variable,
+                allocatedCost: 0,
+                fullCost: 0,
+                realCost: 0,
+                allocatedRealCost: 0,
+              }),
+            ]);
+          });
+
+          it("should mark the power as belonging to the framework", async function () {
+            await build.at(this).power().ownedBy(this.vpp.parent).build();
+
+            await this.vpp.addPower(this.power);
+
+            expect(this.power.system.power.framework).to.equal(this.vpp.id);
+          });
         });
       });
     },

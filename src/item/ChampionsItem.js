@@ -30,6 +30,13 @@ const SKILL_SCHEMA = {
   ],
 };
 
+const VPP_SCHEMA = {
+  numberFields: [
+    { path: "system.framework.control", default: 0 },
+    { path: "system.framework.pool", default: 0 },
+  ],
+};
+
 export default class ChampionsItem extends Item {
   /**
    * Converts an attack item to the Attack domain class.
@@ -146,7 +153,7 @@ export default class ChampionsItem extends Item {
    */
   async addPower(power) {
     assert.precondition(
-      this.type === "multipower",
+      this.#isFramework(),
       "Powers can only be added to power frameworks"
     );
     assert.precondition(
@@ -174,6 +181,7 @@ export default class ChampionsItem extends Item {
             fixed: true,
             fullCost: 0,
             allocatedCost: 0,
+            realCost: 0,
             powers: [power.id],
           },
         },
@@ -185,8 +193,8 @@ export default class ChampionsItem extends Item {
 
   async changeSlotAllocation(slotId, allocatedCost) {
     assert.precondition(
-      this.type === "multipower",
-      "Powers can only be added to power frameworks"
+      this.#isFramework(),
+      "Slots are only part of power frameworks"
     );
     assert.precondition(
       slotId in this.system.framework.slots,
@@ -211,7 +219,7 @@ export default class ChampionsItem extends Item {
   async deactivateSlot(slotId) {
     assert.precondition(
       this.type === "multipower",
-      "Powers can only be added to power frameworks"
+      "Fixed slots are only part of multipowers"
     );
     assert.precondition(
       slotId in this.system.framework.slots,
@@ -255,10 +263,7 @@ export default class ChampionsItem extends Item {
    * @async
    */
   async removePower(power) {
-    assert.precondition(
-      this.type === "multipower",
-      "Only frameworks contain powers"
-    );
+    assert.precondition(this.#isFramework(), "Only frameworks contain powers");
     assert.precondition(
       power.type === "power",
       "Only powers can be part of a framework"
@@ -349,6 +354,9 @@ export default class ChampionsItem extends Item {
       case "skill":
         schema = SKILL_SCHEMA;
         break;
+      case "vpp":
+        schema = VPP_SCHEMA;
+        break;
       default:
         assert.notYetImplemented();
     }
@@ -367,6 +375,8 @@ export default class ChampionsItem extends Item {
         break;
       case "skill":
         this.#preUpdateSkill(changes);
+        break;
+      case "vpp":
         break;
       default:
         assert.notYetImplemented();
