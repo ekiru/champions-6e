@@ -283,4 +283,36 @@ export class Framework {
     this.id = id;
     this.description = description;
   }
+
+  display() {
+    const slotWarnings = new Map();
+    const frameworkWarnings = [];
+    for (const warning of this.warnings) {
+      if (warning.scope === WarningScope.Framework) {
+        frameworkWarnings.push(warning.message);
+      } else if (warning.scope === WarningScope.Slot) {
+        if (!warning.slotId) {
+          console.log("slot warning with no slot ID", warning);
+          continue;
+        }
+        if (!slotWarnings.has(warning.slotId)) {
+          slotWarnings.set(warning.slotId, []);
+        }
+        slotWarnings.get(warning.slotId).push(warning.message);
+      } else {
+        assert.notYetImplemented();
+      }
+    }
+
+    const { id, name } = this;
+    const slots = this.slots.map((slot) =>
+      slot.display(slotWarnings.get(slot.id))
+    );
+    return {
+      id,
+      name,
+      slots,
+      warnings: frameworkWarnings?.join("\n"),
+    };
+  }
 }

@@ -1,11 +1,5 @@
 import * as assert from "../../util/assert.js";
-import {
-  Framework,
-  Slot,
-  SlotType,
-  Warning,
-  WarningScope,
-} from "./frameworks.js";
+import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
 
 export class Multipower extends Framework {
   get allocatedReserve() {
@@ -82,37 +76,11 @@ export class Multipower extends Framework {
   }
 
   display() {
-    const slotWarnings = new Map();
-    const frameworkWarnings = [];
-    for (const warning of this.warnings) {
-      if (warning.scope === WarningScope.Framework) {
-        frameworkWarnings.push(warning.message);
-      } else if (warning.scope === WarningScope.Slot) {
-        if (!warning.slotId) {
-          console.log("slot warning with no slot ID", warning);
-          continue;
-        }
-        if (!slotWarnings.has(warning.slotId)) {
-          slotWarnings.set(warning.slotId, []);
-        }
-        slotWarnings.get(warning.slotId).push(warning.message);
-      } else {
-        assert.notYetImplemented();
-      }
-    }
-
-    const { id, name, allocatedReserve, reserve } = this;
-    const slots = this.slots.map((slot) =>
-      slot.display(slotWarnings.get(slot.id))
-    );
-    return {
-      id,
-      name,
+    const { allocatedReserve, reserve } = this;
+    return Object.assign(super.display(), {
       allocatedReserve,
       reserve,
-      slots,
-      warnings: frameworkWarnings?.join("\n"),
-    };
+    });
   }
 
   #validate() {
