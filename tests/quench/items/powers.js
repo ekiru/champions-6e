@@ -622,4 +622,32 @@ export function register(system, quench) {
     },
     { displayName: `${system}: VPP items` }
   );
+
+  quench.registerBatch(
+    `${system}.items.frameworks.vpps.sheet`,
+    function ({ describe, it, expect, afterEach, beforeEach }) {
+      afterEach(build.afterEach);
+
+      describe("VPP sheets", function () {
+        beforeEach(async function () {
+          await build.at(this).vpp().build();
+          this.sheet = await openItemSheet(this.vpp);
+        });
+
+        describe("clicking the Add Slot button", async function () {
+          beforeEach(async function () {
+            this.sheet.find(".add-slot").click();
+            await waitOneMoment();
+            await this.vpp.sheet.render();
+          });
+
+          it("should add a new slot with a new power to the sheet", async function () {
+            const vpp = this.vpp.asVPP;
+            expect(vpp.slots).to.have.lengthOf(1);
+          });
+        });
+      });
+    },
+    { displayName: `${system}: VPP sheets` }
+  );
 }

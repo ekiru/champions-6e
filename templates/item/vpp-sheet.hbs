@@ -1,0 +1,74 @@
+<form class="{{cssClass}} item framework {{item.type}}" autocomplete="off">
+  <header>
+    <img
+      src="{{item.img}}"
+      data-edit="img"
+      title="{{item.name}}"
+      height="64"
+      width="64"
+    />
+    <div class="name">
+      <input type="text" id="name" name="name" value="{{item.name}}" />
+    </div>
+  </header>
+
+  <div class="control">
+    {{field attributes.control}}
+  </div>
+  <div class="pool">
+    {{field attributes.pool}}
+  </div>
+
+  <nav class="tabs">
+    <a class="item" data-tab="slots">Slots</a>
+    <a class="item" data-tab="description">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab slots" data-tab="slots">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Power</th>
+            <th>Summary</th>
+            <th>Active Points</th>
+            <th>Real Cost</th>
+            <th><a class="add-slot">
+                <i class="fas fa-plus"></i>
+                Add Slot
+              </a></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each slots}}
+            <tr class="embedded-item" data-item-id="{{display.power.id}}">
+              {{partial "item/partials/power-data.hbs" display.power}}
+              <td>
+                {{#with attributes.fullCost}}
+                  <input type="number" value="{{value}}" name="{{path}}" />
+                {{/with}}
+              </td>
+              <td>
+                {{#with attributes.realCost}}
+                  <input type="number" value="{{value}}" name="{{path}}" />
+                {{/with}}
+              </td>
+              <td class="item-controls">
+                <a class="item-control item-edit" title="Edit Power">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="item-control item-delete" title="Delete Power">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab notes flexcol" data-tab="description">
+      {{field bio.description editable=editable}}
+    </div>
+  </section>
+</form>

@@ -3,14 +3,15 @@ import ChampionsItem from "./item/ChampionsItem.js";
 import CharacterSheet from "./actor/CharacterSheet.js";
 import AttackSheet from "./item/AttackSheet.js";
 import ManeuverSheet from "./item/ManeuverSheet.js";
+import MultipowerSheet from "./item/MultipowerSheet.js";
+import PowerSheet from "./item/PowerSheet.js";
+import VPPSheet from "./item/VPPSheet.js";
 import SkillSheet from "./item/SkillSheet.js";
 import ChampionsCombat from "./documents/ChampionsCombat.js";
 import EuclideanRuler from "./documents/EuclideanRuler.js";
 import ChampionsCombatTracker from "./sheets/ChampionsCombatTracker.js";
 
 import "./activeEffects.js"; // for Hooks
-import PowerSheet from "./item/PowerSheet.js";
-import MultipowerSheet from "./item/MultipowerSheet.js";
 
 // Register Quench tests if it's available.
 Hooks.on("quenchReady", async function (quench) {
@@ -55,6 +56,11 @@ Hooks.once("init", function () {
   Items.registerSheet("champions-6e", SkillSheet, {
     label: "Champions Skill",
     types: ["skill"],
+    makeDefault: true,
+  });
+  Items.registerSheet("champions-6e", VPPSheet, {
+    label: "Champions VPP",
+    types: ["vpp"],
     makeDefault: true,
   });
 });
