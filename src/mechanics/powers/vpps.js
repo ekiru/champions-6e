@@ -5,6 +5,9 @@ import { Power } from "../power.js";
 
 export class VPPSlot extends Slot {
   get allocatedRealCost() {
+    if (this.fullCost === 0) {
+      return 0;
+    }
     return favouringLower((this.realCost * this.allocatedCost) / this.fullCost);
   }
 
@@ -56,6 +59,14 @@ export class VPPSlot extends Slot {
       power: Power.fromItem(power),
     });
     return slot;
+  }
+
+  display(warnings) {
+    const { realCost, allocatedRealCost } = this;
+    return Object.assign(super.display(warnings), {
+      realCost,
+      allocatedRealCost,
+    });
   }
 }
 
@@ -150,6 +161,11 @@ export class VPP extends Framework {
       pool,
       slots,
     });
+  }
+
+  display() {
+    const { control, pool, allocatedPool } = this;
+    return Object.assign(super.display(), { control, pool, allocatedPool });
   }
 
   #validate() {

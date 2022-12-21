@@ -428,6 +428,7 @@ export default class CharacterSheet extends ActorSheet {
     context.multipowers = character.multipowers.map((multipower) =>
       multipower.display()
     );
+    context.vpps = character.vpps.map((vpp) => vpp.display());
 
     context.effects = [];
     for (const effect of this.actor.effects) {

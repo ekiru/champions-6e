@@ -463,7 +463,7 @@
             </thead>
             <tbody>
               {{#each slots}}
-                <tr class="multipower-slot">
+                <tr class="framework-slot">
                   <td>{{type}}</td>
                   {{partial "item/partials/power-data.hbs" power}}
                   <td class="slot-status">
@@ -507,6 +507,125 @@
                         /
                         <input disabled type="number" value="{{fullCost}}" />
                       {{/if}}
+                    {{/if}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/each}}
+      </section>
+
+      <section class="vpps">
+        <p>
+          <a class="item-create" data-type="vpp">
+            <i class="fas fa-plus"></i>
+            Add VPP
+          </a>
+        </p>
+        {{#each vpps}}
+          <table class="vpp framework" data-item-id="{{id}}">
+            <caption>
+              <b>VPP:</b>
+              {{name}}
+              {{#if warnings}}
+                <span class="pool warning" title="{{warnings}}">
+                  {{allocatedPool}}
+                  /
+                  {{pool}}
+                </span>
+
+                <span class="control warning" title="{{warnings}}">
+                  <b>Control:</b>
+                  {{control}}
+                </span>
+              {{else}}
+                <span class="pool">
+                  {{allocatedPool}}
+                  /
+                  {{pool}}
+                </span>
+                <span class="control">
+                  <b>Control:</b>
+                  {{control}}
+                </span>
+              {{/if}}
+              <span class="item-controls">
+                <a class="item-control item-edit" title="Edit Framework">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="item-control item-delete" title="Delete Framework">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </span>
+            </caption>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Power</th>
+                <th>Summary</th>
+                <th>AP</th>
+                <th>Real</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each slots}}
+                <tr class="framework-slot">
+                  {{partial "item/partials/power-data.hbs" power}}
+                  <td class="slot-status">
+                    {{#if warnings}}
+                      <span class="warning" title="{{warnings}}">
+                        <input
+                          class="slot-allocated-cost"
+                          type="number"
+                          value="{{allocatedCost}}"
+                          data-slot-id="{{id}}"
+                          min="0"
+                          max="{{fullCost}}"
+                        />
+                        /
+                        <input disabled type="number" value="{{fullCost}}" />
+                      </span>
+                    {{else}}
+                      <input
+                        class="slot-allocated-cost"
+                        type="number"
+                        value="{{allocatedCost}}"
+                        data-slot-id="{{id}}"
+                        min="0"
+                        max="{{fullCost}}"
+                      />
+                      /
+                      <input disabled type="number" value="{{fullCost}}" />
+                    {{/if}}
+                  </td>
+                  <td class="slot-status">
+                    {{#if warnings}}
+                      <span class="warning" title="{{warnings}}">
+                        <input
+                          class="slot-allocated-real-cost"
+                          type="number"
+                          value="{{allocatedRealCost}}"
+                          data-slot-id="{{id}}"
+                          min="0"
+                          max="{{realCost}}"
+                          disabled
+                        />
+                        /
+                        <input disabled type="number" value="{{realCost}}" />
+                      </span>
+                    {{else}}
+                      <input
+                        class="slot-allocated-real-cost"
+                        type="number"
+                        value="{{allocatedRealCost}}"
+                        data-slot-id="{{id}}"
+                        min="0"
+                        max="{{realCost}}"
+                        disabled
+                      />
+                      /
+                      <input disabled type="number" value="{{realCost}}" />
                     {{/if}}
                   </td>
                 </tr>

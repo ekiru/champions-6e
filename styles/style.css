@@ -77,7 +77,7 @@ details.modifier {
   background-color: red;
 }
 
-tr.multipower-slot > td.slot-status input[type="number"] {
+tr.framework-slot > td.slot-status input[type="number"] {
   width: auto;
 }
 

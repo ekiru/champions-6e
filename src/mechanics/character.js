@@ -8,6 +8,7 @@ import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import { Power, PowerCategory, StandardPowerType } from "./power.js";
 import { Multipower } from "./powers/multipowers.js";
+import { VPP } from "./powers/vpps.js";
 
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
   new MovementMode("Running", {
@@ -61,6 +62,7 @@ export class Character {
   #characteristics = new Map();
   #multipowers = [];
   #powers = [];
+  #vpps = [];
   #movementModes = [];
 
   constructor(
@@ -70,6 +72,7 @@ export class Character {
       movementModes = DEFAULT_MOVEMENT_MODES,
       multipowers = [],
       powers = [],
+      vpps = [],
     } = {}
   ) {
     assert.precondition(
@@ -90,6 +93,9 @@ export class Character {
     }
     for (const framework of multipowers) {
       this.#multipowers.push(framework);
+    }
+    for (const framework of vpps) {
+      this.#vpps.push(framework);
     }
     for (const power of powers) {
       this.#powers.push(power);
@@ -120,9 +126,12 @@ export class Character {
     }
     const multipowers = [];
     const powers = [];
+    const vpps = [];
     for (const item of items) {
       if (item.type === "multipower") {
         multipowers.push(item.asMultipower);
+      } else if (item.type === "vpp") {
+        vpps.push(item.asVPP);
       } else if (item.type === "power") {
         const power = item.asPower;
         if (!item.system.power.framework) {
@@ -135,6 +144,7 @@ export class Character {
       movementModes,
       multipowers,
       powers,
+      vpps,
     });
   }
 
@@ -158,6 +168,15 @@ export class Character {
    */
   get powers() {
     return this.#powers;
+  }
+
+  /**
+   * Retrieves the character's VPPs.
+   *
+   * @type {VPP[]}
+   */
+  get vpps() {
+    return this.#vpps;
   }
 
   /**
