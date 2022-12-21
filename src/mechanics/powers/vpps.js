@@ -170,11 +170,17 @@ export class VPP extends Framework {
 
   #validate() {
     const warnings = [];
+
+    if (this.allocatedPool > this.pool) {
+      warnings.push(Warning.tooManyRealPointsAllocated());
+    }
+
     for (const slot of this.slots) {
       if (slot.fullCost > this.control) {
         warnings.push(Warning.slotIsTooBigForControl(slot));
       }
     }
+
     return warnings;
   }
 }

@@ -614,7 +614,7 @@ describe("Variable Power Pools", function () {
             }),
             allocatedCost: 0,
             fullCost: 50,
-            realCost: 50,
+            realCost: 25,
           }),
         ],
       });
@@ -626,6 +626,43 @@ describe("Variable Power Pools", function () {
       );
       expect(vpp.warnings[0]).toHaveProperty("scope", WarningScope.Slot);
       expect(vpp.warnings[0]).toHaveProperty("slotId", "firewall");
+    });
+
+    it("should warn if the total allocated real points exceeds the pool size", function () {
+      const vpp = new VPP("Hellfire", {
+        control: 50,
+        pool: 20,
+        description: "Demonic fire powers",
+        slots: [
+          new VPPSlot({
+            power: new Power("Fire Whip", {
+              type: StandardPowerType.get("Entangle"),
+              summary: "Entangle 2d6 BODY, 2 DEF",
+              description: "Lasso a foe in a whip of hell fire",
+            }),
+            allocatedCost: 15,
+            fullCost: 20,
+            realCost: 20,
+          }),
+          new VPPSlot({
+            power: new Power("Firewall", {
+              type: StandardPowerType.get("Barrier"),
+              summary: "3 DEF Barrier",
+              description: "Throw up a wall of fire to bar the way",
+            }),
+            allocatedCost: 10,
+            fullCost: 30,
+            realCost: 30,
+          }),
+        ],
+      });
+
+      expect(vpp.warnings).toHaveLength(1);
+      expect(vpp.warnings[0]).toHaveProperty(
+        "message",
+        "More real points are allocated than fit in the framework's pool"
+      );
+      expect(vpp.warnings[0]).toHaveProperty("scope", WarningScope.Framework);
     });
   });
 });

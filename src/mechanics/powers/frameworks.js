@@ -88,6 +88,20 @@ export class Warning {
     });
   }
 
+  /**
+   * Warns that too many total real points are allocated for the framework's pool.
+   *
+   * @returns {Warning} The warning.
+   */
+  static tooManyRealPointsAllocated() {
+    return new Warning({
+      message:
+        "More real points are allocated than fit in the framework's pool",
+      scope: WarningScope.Framework,
+      slotId: undefined,
+    });
+  }
+
   constructor({ message, scope, slotId }) {
     this.message = message;
     this.scope = scope;
