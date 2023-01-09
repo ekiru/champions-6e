@@ -1,4 +1,5 @@
 import * as assert from "../../util/assert.js";
+import { Enum } from "../../util/enum.js";
 import { TaggedNumber } from "../../util/tagged-number.js";
 
 export class PowerModifier {
@@ -139,5 +140,80 @@ export class PowerLimitation extends PowerModifier {
       "Limitations cannot have positive values"
     );
     this.value = new AdvantageOrLimitationValue(this.value);
+  }
+}
+
+/**
+ * Defines the scope to which a framework modifier applies.
+ *
+ * @property {symbol} FrameworkOnly applies only to the control/reserve cost.
+ * @property {symbol} FrameworkAndSlots applies to both the control/reserve cost and
+ * any slots.
+ * @property {symbol} SlotsOnly applies only to the slots.
+ * @constant {Enum}
+ */
+export const FrameworkModifierScope = new Enum([
+  "FrameworkOnly, FrameworkAndSlots, SlotsOnly",
+]);
+
+export class FrameworkModifier {
+  #modifier;
+
+  /**
+   * The scope to which the modifier applies.
+   *
+   * @type {FrameworkModifierScope}
+   */
+  scope;
+
+  /**
+   * An identifier for the modifier.
+   *
+   * @type {string?}
+   */
+  get id() {
+    return this.#modifier.id;
+  }
+
+  /**
+   * The name of the modifier
+   *
+   * @type {string}
+   */
+  get name() {
+    return this.#modifier.name;
+  }
+
+  /**
+   * The value of the modifier
+   *
+   * @type {number}
+   */
+  get value() {
+    return this.#modifier.value;
+  }
+
+  /**
+   * A short summary of the modifier, to be shown on the character sheet when a user
+   * expands the modifier.
+   *
+   * @type {string}
+   */
+  get summary() {
+    return this.#modifier.summary;
+  }
+
+  /**
+   * A long-form description of the modifier.
+   *
+   * @type {string}
+   */
+  get description() {
+    return this.#modifier.description;
+  }
+
+  constructor(modifier, scope) {
+    this.#modifier = modifier;
+    this.scope = scope;
   }
 }

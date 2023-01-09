@@ -1,6 +1,8 @@
 // eslint-env jest
 
 import {
+  FrameworkModifier,
+  FrameworkModifierScope,
   PowerAdder,
   PowerAdvantage,
   PowerLimitation,
@@ -143,5 +145,35 @@ describe("Power Modifiers", function () {
         advantage
       );
     });
+  });
+});
+
+describe("Framework modifiers", function () {
+  const baseModifier = new PowerAdvantage("Reduced Endurance", {
+    id: "redend",
+    value: 0.5,
+    summary: "0 END cost",
+    description: "<p>No END cost at all for the power.</p>",
+  });
+
+  it("should forward properties to the base modifier", function () {
+    const modifier = new FrameworkModifier(
+      baseModifier,
+      FrameworkModifierScope.SlotsOnly
+    );
+
+    expect(modifier.name).toBe(baseModifier.name);
+    expect(modifier.id).toBe(baseModifier.id);
+    expect(modifier.value).toBe(baseModifier.value);
+    expect(modifier.summary).toBe(baseModifier.summary);
+    expect(modifier.description).toBe(baseModifier.description);
+  });
+
+  it("should expose the scope", function () {
+    const modifier = new FrameworkModifier(
+      baseModifier,
+      FrameworkModifierScope.SlotsOnly
+    );
+    expect(modifier).toHaveProperty("scope", FrameworkModifierScope.SlotsOnly);
   });
 });
