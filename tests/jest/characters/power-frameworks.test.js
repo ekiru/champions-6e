@@ -10,6 +10,10 @@ import {
   SlotType,
   WarningScope,
 } from "../../../src/mechanics/powers/frameworks.js";
+import {
+  FrameworkModifier,
+  PowerLimitation,
+} from "../../../src/mechanics/powers/modifiers.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
 import { VPP, VPPSlot } from "../../../src/mechanics/powers/vpps.js";
 
@@ -53,6 +57,27 @@ describe("Multipowers", function () {
       expect(
         new Multipower(name, { description, reserve, slots: [fireball] })
       ).toHaveProperty("slots", [fireball]);
+    });
+
+    it("has no modifiers by default", function () {
+      expect(new Multipower(name, { description, reserve })).toHaveProperty(
+        "modifiers",
+        []
+      );
+    });
+
+    it("exposes any modifiers it was created with", function () {
+      const focus = new FrameworkModifier(
+        new PowerLimitation("OIF", {
+          summary: "Obvious Inaccessible Focus",
+          value: -0.5,
+          id: "oif",
+          description: "",
+        })
+      );
+      expect(
+        new Multipower(name, { description, reserve, modifiers: [focus] })
+      ).toHaveProperty("modifiers", [focus]);
     });
   });
 
@@ -349,6 +374,7 @@ describe("Variable Power Pools", function () {
     const control = 30;
     const pool = 60;
     const slots = [];
+    const modifiers = [];
 
     it("must have a name", function () {
       expect(() => new VPP(null, {})).toThrow(
@@ -358,22 +384,27 @@ describe("Variable Power Pools", function () {
 
     it("must have an integral pool", function () {
       expect(
-        () => new VPP(name, { control, pool: "30", slots, description })
+        () =>
+          new VPP(name, { control, pool: "30", slots, modifiers, description })
       ).toThrow(new Error("pool must be an integer"));
     });
 
     it("must have an integral control", function () {
       expect(
-        () => new VPP(name, { control: "60", pool, slots, description })
+        () =>
+          new VPP(name, { control: "60", pool, slots, modifiers, description })
       ).toThrow(new Error("control must be an integer"));
     });
 
     it("should expose its properties", function () {
-      expect(new VPP(name, { control, pool, slots, description })).toEqual({
+      expect(
+        new VPP(name, { control, pool, slots, modifiers, description })
+      ).toEqual({
         name,
         control,
         pool,
         slots,
+        modifiers,
         description,
         id: undefined,
         warnings: [],

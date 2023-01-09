@@ -1,6 +1,7 @@
 import * as assert from "../../util/assert.js";
 import { Enum } from "../../util/enum.js";
 import { Power } from "../power.js";
+import { FrameworkModifier } from "./modifiers.js";
 
 /**
  * The scope to which a warning applies.
@@ -282,7 +283,14 @@ export class Framework {
    */
   description;
 
-  constructor(name, { id, description }) {
+  /**
+   * Modifiers that apply at the framework-level.
+   *
+   * @type {FrameworkModifier[]}
+   */
+  modifiers;
+
+  constructor(name, { id, description, modifiers = [] }) {
     assert.precondition(typeof name === "string", "name must be a string");
     assert.precondition(
       id === undefined || typeof id === "string",
@@ -296,6 +304,7 @@ export class Framework {
     this.name = name;
     this.id = id;
     this.description = description;
+    this.modifiers = modifiers;
   }
 
   display() {
