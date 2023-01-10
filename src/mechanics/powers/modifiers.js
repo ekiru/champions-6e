@@ -153,7 +153,9 @@ export class PowerLimitation extends PowerModifier {
  * @constant {Enum}
  */
 export const FrameworkModifierScope = new Enum([
-  "FrameworkOnly, FrameworkAndSlots, SlotsOnly",
+  "FrameworkOnly",
+  "FrameworkAndSlots",
+  "SlotsOnly",
 ]);
 
 export class FrameworkModifier {
@@ -215,5 +217,28 @@ export class FrameworkModifier {
   constructor(modifier, scope) {
     this.#modifier = modifier;
     this.scope = scope;
+  }
+
+  static fromItemData({ id, scope, type, modifier: modifierData }) {
+    assert.precondition(
+      scope in FrameworkModifierScope,
+      `unrecognized scope ${scope}`
+    );
+    let modifierClass;
+    switch (type) {
+      case "advantage":
+        modifierClass = PowerAdvantage;
+        break;
+      case "limitation":
+        modifierClass = PowerLimitation;
+        break;
+      default:
+        assert.that(type !== "adder", "Frameworks cannot have adders");
+        assert.notYetImplemented(
+          `unrecognized framework modifier type ${type}`
+        );
+    }
+    const modifier = modifierClass.fromItemData({ id, ...modifierData });
+    return new FrameworkModifier(modifier, FrameworkModifierScope[scope]);
   }
 }

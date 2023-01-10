@@ -338,4 +338,13 @@ export class Framework {
       warnings: frameworkWarnings?.join("\n"),
     };
   }
+
+  static modifiersFromItemData(rawModifiers) {
+    const modifiers = [];
+    for (const [id, rawModifier] of Object.entries(rawModifiers)) {
+      const modifier = FrameworkModifier.fromItemData({ id, ...rawModifier });
+      modifiers.push(modifier);
+    }
+    return modifiers;
+  }
 }

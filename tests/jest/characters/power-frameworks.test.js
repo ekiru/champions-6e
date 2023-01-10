@@ -12,6 +12,7 @@ import {
 } from "../../../src/mechanics/powers/frameworks.js";
 import {
   FrameworkModifier,
+  FrameworkModifierScope,
   PowerLimitation,
 } from "../../../src/mechanics/powers/modifiers.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
@@ -136,6 +137,18 @@ describe("Multipowers", function () {
           system: {
             framework: {
               reserve: 60,
+              modifiers: {
+                a: {
+                  scope: "SlotsOnly",
+                  type: "advantage",
+                  modifier: {
+                    name: "Reduced Endurance Cost",
+                    value: +0.5,
+                    summary: "0 END cost",
+                    description: "<p></p>",
+                  },
+                },
+              },
               slots: {
                 a: {
                   active: true,
@@ -171,6 +184,16 @@ describe("Multipowers", function () {
       expect(mp.slots[1]).toHaveProperty("type", SlotType.Fixed);
       expect(mp.slots[1]).toHaveProperty("fullCost", 0);
       expect(mp.slots[1]).toHaveProperty("allocatedCost", 0);
+
+      expect(mp.modifiers).toHaveLength(1);
+      expect(mp.modifiers[0]).toBeInstanceOf(FrameworkModifier);
+      expect(mp.modifiers[0]).toHaveProperty("name", "Reduced Endurance Cost");
+      expect(mp.modifiers[0]).toHaveProperty("id", "a");
+      expect(+mp.modifiers[0].value).toEqual(+0.5);
+      expect(mp.modifiers[0]).toHaveProperty(
+        "scope",
+        FrameworkModifierScope.SlotsOnly
+      );
     });
   });
 

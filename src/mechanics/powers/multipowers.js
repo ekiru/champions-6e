@@ -50,7 +50,7 @@ export class Multipower extends Framework {
       id,
       name,
       system: {
-        framework: { reserve, slots: rawSlots },
+        framework: { reserve, modifiers: rawModifiers, slots: rawSlots },
         description,
       },
     },
@@ -67,10 +67,12 @@ export class Multipower extends Framework {
       });
       slots.push(slot);
     }
+    const modifiers = Framework.modifiersFromItemData(rawModifiers);
     return new Multipower(name, {
       description,
       id,
       reserve,
+      modifiers,
       slots,
     });
   }
