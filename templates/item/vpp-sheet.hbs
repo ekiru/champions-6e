@@ -21,6 +21,7 @@
 
   <nav class="tabs">
     <a class="item" data-tab="slots">Slots</a>
+    <a class="item" data-tab="modifiers">Modifiers</a>
     <a class="item" data-tab="description">Description</a>
   </nav>
 
@@ -66,6 +67,9 @@
           {{/each}}
         </tbody>
       </table>
+    </div>
+    <div class="tab modifiers" data-tab="modifiers">
+      {{partial "item/partials/framework-modifiers.hbs" this}}
     </div>
     <div class="tab notes flexcol" data-tab="description">
       {{field bio.description editable=editable}}

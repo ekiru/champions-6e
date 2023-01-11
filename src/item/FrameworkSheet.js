@@ -8,8 +8,13 @@ import {
   defaultModifierData,
   modifierDataForSheet,
 } from "../sheets/modifier-helper.js";
+import { registerPartial } from "../sheets/partial-helper.js";
 import * as assert from "../util/assert.js";
 import { randomId } from "../util/identifiers.js";
+
+Hooks.once("init", function () {
+  registerPartial("item/partials/framework-modifiers.hbs");
+});
 
 export default class FrameworkSheet extends ItemSheet {
   static get frameworkType() {

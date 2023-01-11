@@ -1,0 +1,113 @@
+<table class="advantages">
+  <thead>
+    <tr>
+      <th>Scope</th>
+      <th>Advantage</th>
+      <th>Value</th>
+      <th>Damage?</th>
+      <th>Summary</th>
+      <th>Description</th>
+      <th></th></tr>
+  </thead>
+  <tbody>
+    {{#each modifiers.advantages}}
+      <tr>
+        <td>
+          <select name="{{scope.path}}">
+            {{selectOptions scope.options selected=scope.value}}
+          </select>
+        </td>
+        <td><input
+            type="text"
+            value="{{name.value}}"
+            name="{{name.path}}"
+          /></td>
+        <td><input
+            type="number"
+            value="{{value.value}}"
+            name="{{value.path}}"
+          /></td>
+        <td><input
+            type="checkbox"
+            {{checked increasesDamage.value}}
+            name="{{increasesDamage.path}}"
+          /></td>
+        <td><input
+            type="text"
+            value="{{summary.value}}"
+            name="{{summary.path}}"
+          /></td>
+        <td>
+          {{editor
+            description.value
+            target=description.path
+            button=true
+            editable=true
+          }}
+        </td>
+        <td><a
+            class="modifier-delete"
+            data-id="{{id}}"
+            data-type="advantage"
+            title="Delete Modifier"
+          ><i class="fas fa-trash"></i></a></td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<p><a class="modifier-create" data-type="advantage"><i class="fas fa-plus"></i>
+    Add Advantage</a></p>
+
+<table class="limitations">
+  <thead>
+    <tr>
+      <th>Scope</th>
+      <th>Limitation</th>
+      <th>Value</th>
+      <th>Summary</th>
+      <th>Description</th>
+      <th></th></tr>
+  </thead>
+  <tbody>
+    {{#each modifiers.limitations}}
+      <tr>
+        <td>
+          <select name="{{scope.path}}">
+            {{selectOptions scope.options selected=scope.value}}
+          </select>
+        </td>
+        <td><input
+            type="text"
+            value="{{name.value}}"
+            name="{{name.path}}"
+          /></td>
+        <td><input
+            type="number"
+            value="{{value.value}}"
+            name="{{value.path}}"
+          /></td>
+        <td><input
+            type="text"
+            value="{{summary.value}}"
+            name="{{summary.path}}"
+          /></td>
+        <td>
+          {{editor
+            description.value
+            target=description.path
+            button=true
+            editable=true
+          }}
+        </td>
+        <td><a
+            class="modifier-delete"
+            data-id="{{id}}"
+            data-type="limitation"
+            title="Delete Modifier"
+          ><i class="fas fa-trash"></i></a></td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<p><a class="modifier-create" data-type="limitation"><i class="fas fa-plus"></i>
+    Add Limitation</a></p>
