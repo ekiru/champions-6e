@@ -1,5 +1,15 @@
+import {
+  FrameworkModifierScope,
+  PowerAdvantage,
+  PowerLimitation,
+} from "../mechanics/powers/modifiers.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
+import {
+  defaultModifierData,
+  modifierDataForSheet,
+} from "../sheets/modifier-helper.js";
 import * as assert from "../util/assert.js";
+import { randomId } from "../util/identifiers.js";
 
 export default class FrameworkSheet extends ItemSheet {
   static get frameworkType() {
@@ -37,6 +47,42 @@ export default class FrameworkSheet extends ItemSheet {
     context.bio = {
       description: await fields.html("Description", "system.description"),
     };
+
+    context.modifiers = {
+      advantages: [],
+      limitations: [],
+    };
+    for (const modifier of framework.modifiers) {
+      const underlying = modifier.modifier;
+      const basePath = `system.framework.modifiers.${modifier.id}`;
+      let data, destination;
+      if (underlying instanceof PowerAdvantage) {
+        data = await modifierDataForSheet(
+          "advantages",
+          underlying,
+          basePath + ".modifier"
+        );
+        destination = context.modifiers.advantages;
+      } else if (underlying instanceof PowerLimitation) {
+        data = await modifierDataForSheet(
+          "limitations",
+          underlying,
+          basePath + ".modifier"
+        );
+        destination = context.modifiers.limitations;
+      } else {
+        assert.notYetImplemented("unrecognized modifier type for framework");
+      }
+      destination.push(
+        foundry.utils.mergeObject(data, {
+          scope: fields.selection("", `${basePath}.scope`, {
+            FrameworkOnly: "Framework Only",
+            FrameworkAndSlots: "Framework and Slots",
+            SlotsOnly: "Slots Only",
+          }),
+        })
+      );
+    }
 
     context.slots = framework.slots.map((slot) => ({
       attributes: this.getSlotAttributes(slot),
@@ -85,6 +131,25 @@ export default class FrameworkSheet extends ItemSheet {
           await item.removePower(power);
           power.delete();
         });
+    });
+
+    html.find(".modifier-create").click(function () {
+      const { type } = this.dataset;
+      const id = randomId(item.system.framework.modifiers);
+
+      item.update({
+        system: {
+          framework: {
+            modifiers: {
+              [id]: {
+                scope: FrameworkModifierScope.FrameworkOnly.description,
+                type,
+                modifier: defaultModifierData(),
+              },
+            },
+          },
+        },
+      });
     });
   }
 }

@@ -214,6 +214,15 @@ export class FrameworkModifier {
     return this.#modifier.description;
   }
 
+  /**
+   * The underlying modifier.
+   *
+   * @type {PowerModifier}
+   */
+  get modifier() {
+    return this.#modifier;
+  }
+
   constructor(modifier, scope) {
     this.#modifier = modifier;
     this.scope = scope;

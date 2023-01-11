@@ -1,6 +1,10 @@
 import { StandardPowerType } from "../mechanics/power.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
-import * as assert from "../util/assert.js";
+import {
+  defaultModifierData,
+  modifierDataForSheet,
+} from "../sheets/modifier-helper.js";
+import { randomId } from "../util/identifiers.js";
 
 export default class PowerSheet extends ItemSheet {
   /** @override */
@@ -68,9 +72,7 @@ export default class PowerSheet extends ItemSheet {
     }
     for (const advantage of power.advantages) {
       context.modifiers.advantages.push(
-        await this.#modifierData("advantages", advantage, {
-          increasesDamage: advantage.increasesDamage,
-        })
+        await this.#modifierData("advantages", advantage)
       );
     }
     for (const limitation of power.limitations) {
@@ -93,23 +95,10 @@ export default class PowerSheet extends ItemSheet {
     html.find(".modifier-create").click(function () {
       const { type } = this.dataset;
       const existing = item.system.power[type];
-      let id;
-      let i = 0;
-      do {
-        id = foundry.utils.randomID();
-        assert.precondition(
-          i++ < 10,
-          "extremely unlucky generation of 10 duplicate randomIDs..."
-        );
-      } while (id in existing);
+      const id = randomId(existing);
 
       item.update({
-        [`system.power.${type}.${id}`]: {
-          name: "New Modifier",
-          value: 0,
-          summary: "",
-          description: "<p></p>",
-        },
+        [`system.power.${type}.${id}`]: defaultModifierData(),
       });
     });
 
@@ -122,35 +111,8 @@ export default class PowerSheet extends ItemSheet {
     });
   }
 
-  async #modifierData(type, modifier, extraFields = {}) {
+  async #modifierData(type, modifier) {
     const basePath = `system.power.${type}.${modifier.id}`;
-    const result = {
-      id: modifier.id,
-      name: {
-        path: `${basePath}.name`,
-        value: modifier.name,
-      },
-      value: {
-        path: `${basePath}.value`,
-        value: modifier.value,
-      },
-      summary: {
-        path: `${basePath}.summary`,
-        value: modifier.summary,
-      },
-      description: {
-        path: `${basePath}.description`,
-        value: await TextEditor.enrichHTML(modifier.description, {
-          async: true,
-        }),
-      },
-    };
-    for (const [field, value] of Object.entries(extraFields)) {
-      result[field] = {
-        path: `${basePath}.${field}`,
-        value: value,
-      };
-    }
-    return result;
+    return await modifierDataForSheet(type, modifier, basePath);
   }
 }
