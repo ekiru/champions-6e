@@ -137,7 +137,7 @@ export class VPP extends Framework {
       id,
       name,
       system: {
-        framework: { control, pool, slots: rawSlots },
+        framework: { control, pool, modifiers: rawModifiers, slots: rawSlots },
         description,
       },
     },
@@ -153,12 +153,14 @@ export class VPP extends Framework {
       });
       slots.push(slot);
     }
+    const modifiers = Framework.modifiersFromItemData(rawModifiers);
 
     return new VPP(name, {
       id,
       description,
       control,
       pool,
+      modifiers,
       slots,
     });
   }
