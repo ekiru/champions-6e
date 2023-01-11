@@ -492,6 +492,7 @@ describe("Variable Power Pools", function () {
             framework: {
               control: 30,
               pool: 60,
+              modifiers: {},
               slots: {
                 a: {
                   powers: ["001"],
