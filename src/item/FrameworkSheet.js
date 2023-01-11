@@ -151,5 +151,13 @@ export default class FrameworkSheet extends ItemSheet {
         },
       });
     });
+
+    html.find(".modifier-delete").click(function () {
+      const { id } = this.dataset;
+      const removeModifier = {
+        system: { framework: { modifiers: { [`-=${id}`]: null } } },
+      };
+      item.update(removeModifier);
+    });
   }
 }
