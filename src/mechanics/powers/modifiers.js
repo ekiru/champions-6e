@@ -105,6 +105,9 @@ export class PowerAdder extends PowerModifier {
 
 class AdvantageOrLimitationValue extends TaggedNumber {
   _tagNumber(ordinary) {
+    if (ordinary == "0") {
+      return this.constructor.zeroString;
+    }
     let s = ordinary;
     s = s.replace(/\.5$/, "½");
     s = s.replace(/\.25$/, "¼");
@@ -112,6 +115,23 @@ class AdvantageOrLimitationValue extends TaggedNumber {
     s = s.replace(/^(-?)0/, "$1");
     const prefix = s.startsWith("-") ? "" : "+";
     return prefix + s;
+  }
+
+  static get zeroString() {
+    assert.abstract(AdvantageOrLimitationValue, "zeroString");
+    return "0";
+  }
+}
+
+class AdvantageValue extends AdvantageOrLimitationValue {
+  static get zeroString() {
+    return "+0";
+  }
+}
+
+class LimitationValue extends AdvantageOrLimitationValue {
+  static get zeroString() {
+    return "-0";
   }
 }
 
@@ -129,7 +149,7 @@ export class PowerAdvantage extends PowerModifier {
       "Advantages cannot have negative values"
     );
     this.increasesDamage = increasesDamage ?? false;
-    this.value = new AdvantageOrLimitationValue(this.value);
+    this.value = new AdvantageValue(this.value);
   }
 
   toItemData() {
@@ -147,7 +167,7 @@ export class PowerLimitation extends PowerModifier {
       this.value <= 0,
       "Limitations cannot have positive values"
     );
-    this.value = new AdvantageOrLimitationValue(this.value);
+    this.value = new LimitationValue(this.value);
   }
 }
 
