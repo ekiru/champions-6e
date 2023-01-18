@@ -278,4 +278,23 @@ export class FrameworkModifier {
     const modifier = modifierClass.fromItemData({ id, ...modifierData });
     return new FrameworkModifier(modifier, FrameworkModifierScope[scope]);
   }
+
+  display() {
+    const display = this.#modifier.display();
+    display.note = `${this.#displayScope()} modifier from framework`;
+    return display;
+  }
+
+  #displayScope() {
+    switch (this.scope) {
+      case FrameworkModifierScope.FrameworkOnly:
+        return "framework-only";
+      case FrameworkModifierScope.FrameworkAndSlots:
+        return "framework-and-slots";
+      case FrameworkModifierScope.SlotsOnly:
+        return "slots-only";
+      default:
+        assert.notYetImplemented(`unhandled scope ${this.scope.description}`);
+    }
+  }
 }

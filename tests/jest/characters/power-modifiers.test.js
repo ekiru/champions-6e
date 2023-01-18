@@ -184,4 +184,15 @@ describe("Framework modifiers", function () {
     );
     expect(modifier).toHaveProperty("scope", FrameworkModifierScope.SlotsOnly);
   });
+
+  it("should annotate the base modifier's display() with the scope in a note property", function () {
+    const modifier = new FrameworkModifier(
+      baseModifier,
+      FrameworkModifierScope.SlotsOnly
+    );
+    expect(modifier.display()).toEqual({
+      ...baseModifier.display(),
+      note: "slots-only modifier from framework",
+    });
+  });
 });

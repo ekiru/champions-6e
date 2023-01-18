@@ -10,6 +10,8 @@ import {
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
 import {
+  FrameworkModifier,
+  FrameworkModifierScope,
   PowerAdder,
   PowerAdvantage,
   PowerLimitation,
@@ -345,6 +347,81 @@ describe("Power", function () {
         "name",
         "Must Pass Through Intervening Space"
       );
+    });
+  });
+
+  describe("withFrameworkModifiers", function () {
+    const power = new Power("Geokinesis", {
+      type: StandardPowerType.get("Telekinesis"),
+      summary: "Telekinesis 80 STR",
+      description: "<p>Move earth and rocks at your will</p>",
+      adders: [
+        new PowerAdder("Fine Manipulation", {
+          value: +10,
+          summary: "",
+          description:
+            "Allows doing fine manipulations on a successful roll of 9 + (active points)/5 or less. Affected by Range Modifier",
+        }),
+      ],
+      limitations: [
+        new PowerLimitation("Only works on earth", {
+          value: -0.5,
+          summary: "Only affects earth, stone, etc.",
+          description: "",
+        }),
+      ],
+    });
+
+    const concentration = new FrameworkModifier(
+      new PowerLimitation("Concentration", {
+        value: -0.5,
+        summary:
+          "0 DCV, no more than 2 m movement per phase, no other actions, PER roll at -3 to notice nearby events",
+        description: "",
+      }),
+      FrameworkModifierScope.SlotsOnly
+    );
+    const reducedEnd = new FrameworkModifier(
+      new PowerAdvantage("½ END Cost", {
+        value: +0.25,
+        summary: "",
+        description: "",
+      }),
+      FrameworkModifierScope.FrameworkAndSlots
+    );
+    const frameworkOnlyRequiredRoll = new FrameworkModifier(
+      new PowerLimitation("11- roll to change allocations", {
+        value: -0.5,
+        description: "",
+        summary: "-1 to roll per 10 active points",
+      }),
+      FrameworkModifierScope.FrameworkOnly
+    );
+
+    it("should add modifiers to the correct type of modifier", function () {
+      const frameworkPower = power.withFrameworkModifiers([
+        concentration,
+        reducedEnd,
+      ]);
+      expect(frameworkPower.adders).toHaveLength(1);
+      expect(frameworkPower.advantages).toHaveLength(1);
+      expect(frameworkPower.limitations).toHaveLength(2);
+    });
+
+    it("should add framework modifiers at the end", function () {
+      const frameworkPower = power.withFrameworkModifiers([concentration]);
+      expect(frameworkPower.limitations[1].name).toEqual(concentration.name);
+    });
+
+    it("should not add framework only modifiers", function () {
+      const frameworkPower = power.withFrameworkModifiers([
+        concentration,
+        reducedEnd,
+        frameworkOnlyRequiredRoll,
+      ]);
+      expect(frameworkPower.adders).toHaveLength(1);
+      expect(frameworkPower.advantages).toHaveLength(1);
+      expect(frameworkPower.limitations).toHaveLength(2);
     });
   });
 

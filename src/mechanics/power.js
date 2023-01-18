@@ -1,15 +1,20 @@
 import * as assert from "../util/assert.js";
 import { Enum } from "../util/enum.js";
-import { compareBy } from "../util/sort.js";
+import { compareByLexically } from "../util/sort.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import {
+  FrameworkModifier,
+  FrameworkModifierScope,
   PowerAdder,
   PowerAdvantage,
   PowerLimitation,
 } from "./powers/modifiers.js";
 
-const compareByName = compareBy((mod) => mod.name);
+const compareByNameWithFrameworkModifiersLast = compareByLexically(
+  (mod) => mod instanceof FrameworkModifier,
+  (mod) => mod.name
+);
 
 /**
  * Identifies a category of powers with special handling.
@@ -139,6 +144,23 @@ export class CustomPowerType extends PowerType {
   }
 }
 
+/**
+ * Tests that a modifier is of the appropriate type.
+ *
+ * Framework modifiers count as the type of their underlying modifier.
+ *
+ * @private
+ * @param {any} modifier The modifier to test.
+ * @param {Function} cls The expected PowerModifier subclass.
+ * @returns {boolean} Whether the modifier is that type of modifier.
+ */
+function isModifier(modifier, cls) {
+  return (
+    modifier instanceof cls ||
+    (modifier instanceof FrameworkModifier && modifier.modifier instanceof cls)
+  );
+}
+
 export class Power {
   #adders = [];
   #advantages = [];
@@ -196,28 +218,28 @@ export class Power {
 
     for (const adder of adders) {
       assert.precondition(
-        adder instanceof PowerAdder,
+        isModifier(adder, PowerAdder),
         "adder for Power must be PowerAdder"
       );
       this.#adders.push(adder);
     }
     for (const advantage of advantages) {
       assert.precondition(
-        advantage instanceof PowerAdvantage,
+        isModifier(advantage, PowerAdvantage),
         "advantage for Power must be PowerAdvantage"
       );
       this.#advantages.push(advantage);
     }
     for (const limitation of limitations) {
       assert.precondition(
-        limitation instanceof PowerLimitation,
+        isModifier(limitation, PowerLimitation),
         "limitation for Power must be PowerLimitation"
       );
       this.#limitations.push(limitation);
     }
-    this.#adders.sort(compareByName);
-    this.#advantages.sort(compareByName);
-    this.#limitations.sort(compareByName);
+    this.#adders.sort(compareByNameWithFrameworkModifiersLast);
+    this.#advantages.sort(compareByNameWithFrameworkModifiersLast);
+    this.#limitations.sort(compareByNameWithFrameworkModifiersLast);
   }
 
   static fromItem({ id, name, system, type }) {
@@ -263,6 +285,46 @@ export class Power {
       limitations,
       summary,
       description,
+    });
+  }
+
+  /**
+   * Creates a version of the Power augmented with modifiers from its framework.
+   *
+   * @param {FrameworkModifier[]} frameworkModifiers Modifiers from the framework
+   * @returns {Power} The modified power
+   */
+  withFrameworkModifiers(frameworkModifiers) {
+    const { id, type, summary, description } = this;
+    const categories = this.#categories;
+    const adders = this.#adders.slice();
+    const advantages = this.#advantages.slice();
+    const limitations = this.#limitations.slice();
+
+    for (const modifier of frameworkModifiers) {
+      if (modifier.scope === FrameworkModifierScope.FrameworkOnly) {
+        continue; // Framework Only modifiers don't get added.
+      }
+      if (isModifier(modifier, PowerAdder)) {
+        adders.push(modifier);
+      } else if (isModifier(modifier, PowerAdvantage)) {
+        advantages.push(modifier);
+      } else if (isModifier(modifier, PowerLimitation)) {
+        limitations.push(modifier);
+      } else {
+        assert.notYetImplemented(`unrecognized modifier type for ${modifier}`);
+      }
+    }
+
+    return new Power(this.name, {
+      id,
+      type,
+      summary,
+      description,
+      categories,
+      adders,
+      advantages,
+      limitations,
     });
   }
 
