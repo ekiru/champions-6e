@@ -428,29 +428,35 @@
         {{#each multipowers}}
           <table class="multipower framework" data-item-id="{{id}}">
             <caption>
-              <b>Multipower:</b>
-              {{name}}
-              {{#if warnings}}
-                <span class="reserve warning" title="{{warnings}}">
-                  {{allocatedReserve}}
-                  /
-                  {{reserve}}
+              <div>
+                <b>Multipower:</b>
+                {{name}}
+                {{#if warnings}}
+                  <span class="reserve warning" title="{{warnings}}">
+                    {{allocatedReserve}}
+                    /
+                    {{reserve}}
+                  </span>
+                {{else}}
+                  <span class="reserve">
+                    {{allocatedReserve}}
+                    /
+                    {{reserve}}
+                  </span>
+                {{/if}}
+                <span class="item-controls">
+                  <a class="item-control item-edit" title="Edit Framework">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a class="item-control item-delete" title="Delete Framework">
+                    <i class="fas fa-trash"></i>
+                  </a>
                 </span>
-              {{else}}
-                <span class="reserve">
-                  {{allocatedReserve}}
-                  /
-                  {{reserve}}
-                </span>
-              {{/if}}
-              <span class="item-controls">
-                <a class="item-control item-edit" title="Edit Framework">
-                  <i class="fas fa-edit"></i>
-                </a>
-                <a class="item-control item-delete" title="Delete Framework">
-                  <i class="fas fa-trash"></i>
-                </a>
-              </span>
+              </div>
+              {{partial
+                "actor/partials/framework-modifiers-summary.hbs"
+                modifiers
+              }}
             </caption>
             <thead>
               <tr>
@@ -526,38 +532,44 @@
         {{#each vpps}}
           <table class="vpp framework" data-item-id="{{id}}">
             <caption>
-              <b>VPP:</b>
-              {{name}}
-              {{#if warnings}}
-                <span class="pool warning" title="{{warnings}}">
-                  {{allocatedPool}}
-                  /
-                  {{pool}}
-                </span>
+              <div>
+                <b>VPP:</b>
+                {{name}}
+                {{#if warnings}}
+                  <span class="pool warning" title="{{warnings}}">
+                    {{allocatedPool}}
+                    /
+                    {{pool}}
+                  </span>
 
-                <span class="control warning" title="{{warnings}}">
-                  <b>Control:</b>
-                  {{control}}
+                  <span class="control warning" title="{{warnings}}">
+                    <b>Control:</b>
+                    {{control}}
+                  </span>
+                {{else}}
+                  <span class="pool">
+                    {{allocatedPool}}
+                    /
+                    {{pool}}
+                  </span>
+                  <span class="control">
+                    <b>Control:</b>
+                    {{control}}
+                  </span>
+                {{/if}}
+                <span class="item-controls">
+                  <a class="item-control item-edit" title="Edit Framework">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a class="item-control item-delete" title="Delete Framework">
+                    <i class="fas fa-trash"></i>
+                  </a>
                 </span>
-              {{else}}
-                <span class="pool">
-                  {{allocatedPool}}
-                  /
-                  {{pool}}
-                </span>
-                <span class="control">
-                  <b>Control:</b>
-                  {{control}}
-                </span>
-              {{/if}}
-              <span class="item-controls">
-                <a class="item-control item-edit" title="Edit Framework">
-                  <i class="fas fa-edit"></i>
-                </a>
-                <a class="item-control item-delete" title="Delete Framework">
-                  <i class="fas fa-trash"></i>
-                </a>
-              </span>
+              </div>
+              {{partial
+                "actor/partials/framework-modifiers-summary.hbs"
+                modifiers
+              }}
             </caption>
             <thead>
               <tr>

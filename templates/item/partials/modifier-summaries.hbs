@@ -1,0 +1,9 @@
+{{#each this}}
+  {{#if summary}}
+    <details class="modifier">
+      <summary>{{name}} ({{value}})</summary>
+      {{summary}}
+    </details>{{else}}
+    <span class="modifier">{{name}} ({{value}})</span>{{/if}}{{#unless @last}};
+  {{/unless}}
+{{/each}}

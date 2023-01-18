@@ -1,14 +1,7 @@
 <td>{{name}}</td>
 <td>{{type}}</td>
 <td>
-  {{summary}}{{#each modifiers}};
-    {{#if summary}}
-      <details class="modifier">
-        <summary>{{name}} ({{value}})</summary>
-        {{summary}}
-      </details>
-    {{else}}
-      <span class="modifier">{{name}} ({{value}})</span>
-    {{/if}}
-  {{/each}}
+  {{summary}}{{#if modifiers}};
+    {{partial "item/partials/modifier-summaries.hbs" modifiers}}
+  {{/if}}
 </td>

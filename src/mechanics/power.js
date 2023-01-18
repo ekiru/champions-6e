@@ -295,11 +295,7 @@ export class Power {
   display() {
     const { id, name, summary } = this;
     const type = this.type.name;
-    const modifiers = this.modifiers.map(({ name, value, summary }) => ({
-      name,
-      value: value.toString(),
-      summary,
-    }));
+    const modifiers = this.modifiers.map((modifier) => modifier.display());
     return { id, name, type, summary, modifiers };
   }
 

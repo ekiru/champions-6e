@@ -74,6 +74,14 @@ export class PowerModifier {
       description: this.description,
     };
   }
+
+  display() {
+    return {
+      name: this.name,
+      value: this.value.toString(),
+      summary: this.summary,
+    };
+  }
 }
 
 class AdderValue extends TaggedNumber {

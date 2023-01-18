@@ -1,0 +1,18 @@
+{{#if frameworkOnly}}
+  <div>
+    <b>Framework Only:</b>
+    {{partial "item/partials/modifier-summaries.hbs" frameworkOnly}}
+  </div>
+{{/if}}
+{{#if frameworkAndSlots}}
+  <div>
+    <b>Framework and Slots:</b>
+    {{partial "item/partials/modifier-summaries.hbs" frameworkAndSlots}}
+  </div>
+{{/if}}
+{{#if slotsOnly}}
+  <div>
+    <b>Slots Only:</b>
+    {{partial "item/partials/modifier-summaries.hbs" slotsOnly}}
+  </div>
+{{/if}}

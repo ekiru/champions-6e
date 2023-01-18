@@ -111,6 +111,8 @@ function getManeuver(dataset, actor) {
 }
 
 Hooks.once("init", function () {
+  registerPartial("actor/partials/framework-modifiers-summary.hbs");
+  registerPartial("item/partials/modifier-summaries.hbs");
   registerPartial("item/partials/power-data.hbs");
 });
 

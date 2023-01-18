@@ -331,9 +331,21 @@ export class Framework {
     const slots = this.slots.map((slot) =>
       slot.display(slotWarnings.get(slot.id))
     );
+    const modifiers = {
+      frameworkOnly: [],
+      frameworkAndSlots: [],
+      slotsOnly: [],
+    };
+    for (const modifier of this.modifiers) {
+      const scope = modifier.scope.description.replace(/^[A-Z]/, (first) =>
+        first.toLowerCase()
+      );
+      modifiers[scope].push(modifier.modifier.display());
+    }
     return {
       id,
       name,
+      modifiers,
       slots,
       warnings: frameworkWarnings?.join("\n"),
     };
