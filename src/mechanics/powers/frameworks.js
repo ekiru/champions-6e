@@ -359,4 +359,18 @@ export class Framework {
     }
     return modifiers;
   }
+
+  /**
+   * Adds framework modifiers to slots
+   *
+   * @protected
+   * @param {Slot[]} slots The slots
+   * @returns {Slot[]} The slots, with framework modifiers added
+   */
+  _applyModifiersToSlots(slots) {
+    for (const slot of slots) {
+      slot.power = slot.power.withFrameworkModifiers(this.modifiers);
+    }
+    return slots;
+  }
 }

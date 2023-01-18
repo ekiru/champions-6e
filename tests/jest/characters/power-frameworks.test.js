@@ -56,8 +56,20 @@ describe("Multipowers", function () {
         description: "<p>Shoot out an explosive ball of fire.</p>",
       });
       expect(
-        new Multipower(name, { description, reserve, slots: [fireball] })
-      ).toHaveProperty("slots", [fireball]);
+        new Multipower(name, {
+          description,
+          reserve,
+          slots: [
+            new Slot({
+              power: fireball,
+              active: false,
+              allocatedCost: 0,
+              type: SlotType.Fixed,
+              fullCost: 30,
+            }),
+          ],
+        })
+      ).toHaveProperty("slots[0].power", fireball);
     });
 
     it("has no modifiers by default", function () {
@@ -194,6 +206,10 @@ describe("Multipowers", function () {
         "scope",
         FrameworkModifierScope.SlotsOnly
       );
+
+      // slots get framework modifiers
+      expect(mp.slots[0].power.advantages).toEqual([mp.modifiers[0]]);
+      expect(mp.slots[1].power.advantages).toEqual([mp.modifiers[0]]);
     });
   });
 

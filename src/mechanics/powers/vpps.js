@@ -128,7 +128,7 @@ export class VPP extends Framework {
 
     this.control = control;
     this.pool = pool;
-    this.slots = slots;
+    this.slots = this._applyModifiersToSlots(slots);
     this.warnings = this.#validate();
   }
 

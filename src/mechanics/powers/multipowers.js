@@ -40,7 +40,7 @@ export class Multipower extends Framework {
     );
 
     this.reserve = reserve;
-    this.slots = slots;
+    this.slots = this._applyModifiersToSlots(slots);
 
     this.warnings = this.#validate();
   }
