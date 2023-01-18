@@ -1,9 +1,10 @@
 {{#each this}}
   {{#if summary}}
-    <details class="modifier">
-      <summary>{{name}} ({{value}})</summary>
+    <details class="modifier" title="{{note}}">
+      <summary>{{name}} ({{value}}){{#if note}}*{{/if}}</summary>
       {{summary}}
     </details>{{else}}
-    <span class="modifier">{{name}} ({{value}})</span>{{/if}}{{#unless @last}};
+    <span class="modifier" title="{{note}}">{{name}}
+      ({{value}}){{#if note}}*{{/if}}</span>{{/if}}{{#unless @last}};
   {{/unless}}
 {{/each}}

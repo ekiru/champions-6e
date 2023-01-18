@@ -1,7 +1,7 @@
 <td>{{name}}</td>
 <td>{{type}}</td>
 <td>
-  {{summary}}{{#if modifiers}};
+  {{summary}}{{#if modifiers}}{{#if summary}};{{/if}}
     {{partial "item/partials/modifier-summaries.hbs" modifiers}}
   {{/if}}
 </td>
