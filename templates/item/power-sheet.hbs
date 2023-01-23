@@ -36,6 +36,11 @@
             {{field this}}
           {{/each}}
         </p>
+        {{#if categories.attack.value}}
+          <section class="category attack">
+            <h3>Attack Power</h3>
+          </section>
+        {{/if}}
         {{#if categories.movement.value}}
           <section class="category movement">
             <h3>Movement Power</h3>

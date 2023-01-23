@@ -47,6 +47,7 @@ export default class PowerSheet extends ItemSheet {
       summary: fields.text("Summary", "system.summary"),
     };
     context.categories = {
+      attack: fields.checkbox("Attack", "system.power.categories.attack"),
       movement: fields.checkbox("Movement", "system.power.categories.movement"),
     };
     context.movement = {
