@@ -50,26 +50,23 @@ describe("Power Modifiers", function () {
       });
     };
 
-    it("must be a non-negative integer for an adder", function () {
-      expect(() => create(PowerAdder, -1)).toThrow(
-        "Adders cannot have negative values"
-      );
+    it("must be an integer for an adder", function () {
       expect(() => create(PowerAdder, 1.5)).toThrow(
         "Adders cannot have fractional values"
       );
     });
 
-    it("must be non-negative for an Advantage", function () {
-      expect(() => create(PowerAdvantage, -1)).toThrow(
-        "Advantages cannot have negative values"
-      );
+    it("is never negative for an adder", function () {
+      expect(+create(PowerAdder, -1).value).toBe(+1);
+    });
+
+    it("is always non-negative for an Advantage", function () {
+      expect(+create(PowerAdvantage, -1).value).toBe(+1);
       expect(() => create(PowerAdvantage, 0.5)).not.toThrow();
     });
 
-    it("must be non-positive for a Limitation", function () {
-      expect(() => create(PowerLimitation, +1)).toThrow(
-        "Limitations cannot have positive values"
-      );
+    it("is always non-positive for a Limitation", function () {
+      expect(+create(PowerLimitation, +1).value).toBe(-1);
       expect(() => create(PowerLimitation, -0.5)).not.toThrow();
     });
 

@@ -93,12 +93,13 @@ class AdderValue extends TaggedNumber {
 export class PowerAdder extends PowerModifier {
   constructor(...args) {
     super(...args);
-
-    assert.precondition(this.value >= 0, "Adders cannot have negative values");
     assert.precondition(
       Number.isInteger(this.value),
       "Adders cannot have fractional values"
     );
+    if (this.value < 0) {
+      this.value = Math.abs(this.value);
+    }
     this.value = new AdderValue(this.value);
   }
 }
@@ -144,10 +145,9 @@ export class PowerAdvantage extends PowerModifier {
       increasesDamage === undefined || typeof increasesDamage === "boolean",
       "increasesDamage must be a boolean if present"
     );
-    assert.precondition(
-      this.value >= 0,
-      "Advantages cannot have negative values"
-    );
+    if (this.value < 0) {
+      this.value = Math.abs(this.value);
+    }
     this.increasesDamage = increasesDamage ?? false;
     this.value = new AdvantageValue(this.value);
   }
@@ -163,10 +163,9 @@ export class PowerLimitation extends PowerModifier {
   constructor(...args) {
     super(...args);
 
-    assert.precondition(
-      this.value <= 0,
-      "Limitations cannot have positive values"
-    );
+    if (this.value > 0) {
+      this.value = -this.value;
+    }
     this.value = new LimitationValue(this.value);
   }
 }
