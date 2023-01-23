@@ -143,6 +143,25 @@ export function register(system, quench) {
             await waitOneMoment();
             expect(this.power.asPower.adders).to.have.lengthOf(0);
           });
+
+          it("should gracefully handle advantages with negative values", async function () {
+            this.sheet
+              .find("a.modifier-create[data-type='advantages']")
+              .click();
+            await waitOneMoment();
+            this.sheet
+              .find(
+                "table.advantages > tbody > tr:first-child > td:nth-child(2) > input"
+              )
+              .val("-2");
+            await this.power.sheet.submit();
+            const power = this.power.asPower;
+            expect(power.advantages).to.have.lengthOf(1);
+            expect(power.advantages[0].value.valueOf()).to.equal(+2);
+
+            // make sure we can still open the sheet
+            await openItemSheet(this.power);
+          });
         });
       });
     },
