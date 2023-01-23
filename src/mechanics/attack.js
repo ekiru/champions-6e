@@ -155,12 +155,36 @@ export class Attack {
     );
     assert.precondition(id !== undefined, "Item without an id.");
 
-    const ocv = characteristicByName(system.cv.offensive);
-    const dcv = characteristicByName(system.cv.defensive);
-    const damage = Damage.fromDice(system.damage.dice, system.damage.apPerDie);
-    const damageType = DamageType[system.damage.type.toUpperCase()];
-    const defense = system.defense.value;
-    const description = system.description;
+    return Attack.fromItemData(name, system, id);
+  }
+
+  /**
+   * Parses an attack from the data that would be in an attack item's system data.
+   *
+   * This exists mostly to support embedding attack data in e.g. powers.
+   *
+   * @param {string} name The attack's name
+   * @param {object} data The attack's data.
+   * @param {string} data.cv.offensive The characteristic to use as OCV for
+   * the attack.
+   * @param {string} data.cv.defensive The characteristic to use as DCV for
+   * the attack.
+   * @param {number} data.damage.dice The number of dice to roll.
+   * @param {number} data.damage.apPerDie The number of AP an additional die costs.
+   * @param {"NORMAL"|"KILLING"|"EFFECT"} data.damage.type The type of damage done by
+   * the attack.
+   * @param {string} data.defense.value The defense that the damage applies against.
+   * @param {string} [data.description] HTML description of the attack.
+   * @param {string} [id] An optional ID for the attack.
+   * @returns {Attack} The attack.
+   */
+  static fromItemData(name, data, id = undefined) {
+    const ocv = characteristicByName(data.cv.offensive);
+    const dcv = characteristicByName(data.cv.defensive);
+    const damage = Damage.fromDice(data.damage.dice, data.damage.apPerDie);
+    const damageType = DamageType[data.damage.type.toUpperCase()];
+    const defense = data.defense.value;
+    const description = data.description ?? "";
     return new Attack(name, {
       id,
       ocv,
