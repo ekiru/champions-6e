@@ -451,6 +451,27 @@ describe("Power", function () {
     ).toThrow("unrecognized category");
   });
 
+  describe("Attack Powers", function () {
+    const powerName = "Zap";
+    const incidentalData = {
+      id: "abcdef",
+      type: StandardPowerType.get("Blast"),
+      summary: "",
+      description: "",
+    };
+
+    it("should have the attack category", function () {
+      const power = new Power(powerName, {
+        ...incidentalData,
+        categories: {
+          [PowerCategory.ATTACK]: {},
+        },
+      });
+
+      expect(power.hasCategory(PowerCategory.ATTACK)).toBe(true);
+    });
+  });
+
   describe("Movement Powers", function () {
     const powerName = "Blink";
     const incidentalData = {

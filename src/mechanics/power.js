@@ -23,7 +23,7 @@ const compareByNameWithFrameworkModifiersLast = compareByLexically(
  * @property {symbol} MOVEMENT Powers that provide the character with new modes of
  * movement.
  */
-export const PowerCategory = new Enum(["MOVEMENT"]);
+export const PowerCategory = new Enum(["ATTACK", "MOVEMENT"]);
 
 export class PowerType {
   get name() {
@@ -367,6 +367,9 @@ export class Power {
 
   #prepareCategoryData(category, raw) {
     switch (category) {
+      case PowerCategory.ATTACK: {
+        return {};
+      }
       case PowerCategory.MOVEMENT: {
         const mode = new MovementMode(this.name, {
           id: this.id,
