@@ -1,5 +1,10 @@
 import { DEFENSE_TYPES } from "../mechanics/damage.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
+import { registerPartial } from "../sheets/partial-helper.js";
+
+Hooks.once("init", async function () {
+  await registerPartial("item/partials/attack-attributes.hbs");
+});
 
 export default class AttackSheet extends ItemSheet {
   /** @override */

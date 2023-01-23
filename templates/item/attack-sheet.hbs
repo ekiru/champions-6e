@@ -19,22 +19,7 @@
 
   <section class="sheet-body">
     <div class="tab attributes" data-tab="attributes">
-      <p>
-        {{field attributes.cv.offensive}}
-        {{field attributes.cv.defensive}}
-      </p>
-      <p>
-        {{field attributes.damage.dice}}
-      </p>
-      <p>
-        {{field attributes.damage.type}}
-      </p>
-      <p>
-        {{field attributes.damage.apPerDie}}
-      </p>
-      <p>
-        {{field attributes.defense}}
-      </p>
+      {{partial "item/partials/attack-attributes.hbs" attributes}}
     </div>
     <div class="tab notes flexcol" data-tab="description">
       {{field bio.description editable=editable}}
