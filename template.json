@@ -106,6 +106,20 @@
         "categories": {
           "movement": false
         },
+        "attack": {
+          "cv": {
+            "defensive": "dcv",
+            "offensive": "ocv"
+          },
+          "damage": {
+            "apPerDie": 5,
+            "dice": 2,
+            "type": "normal"
+          },
+          "defense": {
+            "value": ""
+          }
+        },
         "movement": {
           "distance": {
             "value": 0,

@@ -240,7 +240,22 @@ describe("Power", function () {
           power: {
             type,
             categories: {
+              attack: true,
               movement: true,
+            },
+            attack: {
+              cv: {
+                defensive: "dcv",
+                offensive: "ocv",
+              },
+              damage: {
+                apPerDie: 5,
+                dice: 2,
+                type: "normal",
+              },
+              defense: {
+                value: "Energy",
+              },
             },
             movement: {
               distance: {
@@ -320,6 +335,8 @@ describe("Power", function () {
           distance: new ModifiableValue(40, 0),
         })
       );
+      expect(power.hasCategory(PowerCategory.ATTACK)).toBe(true);
+      expect(power).toHaveProperty("attack.damage", new Damage(2, 5));
     });
 
     it("exposes its adders", function () {

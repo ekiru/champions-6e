@@ -260,7 +260,8 @@ export class Power {
         const categoryId = PowerCategory[category.toUpperCase()];
         categories[categoryId] = parseCategoryDataFromItem(
           category,
-          system.power[category]
+          system.power[category],
+          { name, id }
         );
       }
     }
@@ -415,12 +416,15 @@ export class Power {
  *
  * @param {"movement"} category The name of the category.
  * @param {object} data The data stored in the item for the category.
+ * @param {object} power Metadata about the power.
+ * @param {string} power.name The power's name.
+ * @param {string?} power.id The power's id.
  * @returns {object} The data to be passed to the Power constructor for the category.
  */
-function parseCategoryDataFromItem(category, data) {
+function parseCategoryDataFromItem(category, data, { name, id }) {
   switch (category) {
     case "attack":
-      return Attack.fromItemData("", data, "");
+      return Attack.fromItemData(name, data, id);
     case "movement":
       return {
         distance: new ModifiableValue(
