@@ -1,6 +1,7 @@
 import * as assert from "../util/assert.js";
 import { Enum } from "../util/enum.js";
 import { compareByLexically } from "../util/sort.js";
+import { Attack } from "./attack.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import {
@@ -336,6 +337,17 @@ export class Power {
     return this.#advantages;
   }
 
+  /**
+   * The attack data for an attack Power.
+   *
+   * @type {Attack}
+   */
+  get attack() {
+    const attack = this.#categories.get(PowerCategory.ATTACK);
+    assert.precondition(attack !== undefined);
+    return attack;
+  }
+
   get categories() {
     return Array.from(this.#categories.keys());
   }
@@ -368,7 +380,19 @@ export class Power {
   #prepareCategoryData(category, raw) {
     switch (category) {
       case PowerCategory.ATTACK: {
-        return {};
+        assert.precondition(
+          raw instanceof Attack,
+          "Power data for the attack category must be an Attack"
+        );
+        assert.precondition(
+          raw.name === this.name,
+          "the Attack for an attack power must have the same name as the power"
+        );
+        assert.precondition(
+          raw.id === this.id,
+          "the Attack for an attack power must have the same id as the power"
+        );
+        return raw;
       }
       case PowerCategory.MOVEMENT: {
         const mode = new MovementMode(this.name, {
@@ -395,6 +419,8 @@ export class Power {
  */
 function parseCategoryDataFromItem(category, data) {
   switch (category) {
+    case "attack":
+      return Attack.fromItemData("", data, "");
     case "movement":
       return {
         distance: new ModifiableValue(

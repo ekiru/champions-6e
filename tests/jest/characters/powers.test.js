@@ -1,5 +1,8 @@
 /* eslint-env jest */
 
+import { Attack, DamageType } from "../../../src/mechanics/attack.js";
+import { DCV, OCV } from "../../../src/mechanics/characteristics.js";
+import { Damage } from "../../../src/mechanics/damage.js";
 import { ModifiableValue } from "../../../src/mechanics/modifiable-value.js";
 import { MovementMode } from "../../../src/mechanics/movement-mode.js";
 import {
@@ -459,16 +462,69 @@ describe("Power", function () {
       summary: "",
       description: "",
     };
+    const attackData = {
+      id: "abcdef",
+      ocv: OCV,
+      dcv: DCV,
+      damage: new Damage(1, 10, 0.5),
+      damageType: DamageType.NORMAL,
+      defense: "Physical",
+      description: "",
+    };
 
     it("should have the attack category", function () {
       const power = new Power(powerName, {
         ...incidentalData,
         categories: {
-          [PowerCategory.ATTACK]: {},
+          [PowerCategory.ATTACK]: new Attack(powerName, attackData),
         },
       });
 
       expect(power.hasCategory(PowerCategory.ATTACK)).toBe(true);
+    });
+
+    it("must have valid attack data", function () {
+      expect(
+        () =>
+          new Power(powerName, {
+            ...incidentalData,
+            categories: { [PowerCategory.ATTACK]: attackData },
+          })
+      ).toThrow("must be an Attack");
+    });
+
+    it("must have the name and ID of the power", function () {
+      expect(
+        () =>
+          new Power(powerName, {
+            ...incidentalData,
+            categories: {
+              [PowerCategory.ATTACK]: new Attack("Blink", attackData),
+            },
+          })
+      ).toThrow("must have the same name as the power");
+      expect(
+        () =>
+          new Power(powerName, {
+            ...incidentalData,
+            categories: {
+              [PowerCategory.ATTACK]: new Attack(
+                powerName,
+                Object.assign({}, attackData, { id: "green" })
+              ),
+            },
+          })
+      ).toThrow("must have the same id as the power");
+    });
+
+    it("should have an Attack", function () {
+      const power = new Power(powerName, {
+        ...incidentalData,
+        categories: {
+          [PowerCategory.ATTACK]: new Attack(powerName, attackData),
+        },
+      });
+      expect(power.attack).toBeInstanceOf(Attack);
     });
   });
 
