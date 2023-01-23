@@ -5,6 +5,7 @@ import {
   modifierDataForSheet,
 } from "../sheets/modifier-helper.js";
 import { randomId } from "../util/identifiers.js";
+import { attackAttributes } from "./AttackSheet.js";
 
 export default class PowerSheet extends ItemSheet {
   /** @override */
@@ -50,6 +51,7 @@ export default class PowerSheet extends ItemSheet {
       attack: fields.checkbox("Attack", "system.power.categories.attack"),
       movement: fields.checkbox("Movement", "system.power.categories.movement"),
     };
+    context.attack = attackAttributes(fields, "system.power.attack");
     context.movement = {
       distance: {
         value: fields.number(

@@ -39,6 +39,7 @@
         {{#if categories.attack.value}}
           <section class="category attack">
             <h3>Attack Power</h3>
+            {{partial "item/partials/attack-attributes.hbs" attack}}
           </section>
         {{/if}}
         {{#if categories.movement.value}}
