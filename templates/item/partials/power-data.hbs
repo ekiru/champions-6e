@@ -5,3 +5,19 @@
     {{partial "item/partials/modifier-summaries.hbs" modifiers}}
   {{/if}}
 </td>
+<td>
+  {{#each categories as |data category|}}
+    {{#unless @first}}
+      /
+    {{/unless}}
+    {{#if (eq category "attack")}}
+      {{data.dice}}
+    {{else if (eq category "movement")}}
+      {{data.distance}}
+      m
+    {{else}}
+      INVALID CATEGORY
+      {{category}}
+    {{/if}}
+  {{/each}}
+</td>

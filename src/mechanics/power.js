@@ -177,6 +177,7 @@ export class Power {
       summary,
       description,
       categories = {},
+      _categories = undefined,
       adders = [],
       advantages = [],
       limitations = [],
@@ -203,18 +204,26 @@ export class Power {
     this.summary = summary;
     this.description = description;
 
-    for (const category of Reflect.ownKeys(categories)) {
-      const unrecognizedCategoryMessage = `unrecognized category ${category.toString()}`;
+    if (_categories) {
       assert.precondition(
-        typeof category === "symbol",
-        unrecognizedCategoryMessage
+        _categories instanceof Map,
+        "_categories must be a Map if present"
       );
-      assert.precondition(
-        PowerCategory.has(category),
-        unrecognizedCategoryMessage
-      );
-      const data = this.#prepareCategoryData(category, categories[category]);
-      this.#categories.set(category, data);
+      this.#categories = _categories;
+    } else {
+      for (const category of Reflect.ownKeys(categories)) {
+        const unrecognizedCategoryMessage = `unrecognized category ${category.toString()}`;
+        assert.precondition(
+          typeof category === "symbol",
+          unrecognizedCategoryMessage
+        );
+        assert.precondition(
+          PowerCategory.has(category),
+          unrecognizedCategoryMessage
+        );
+        const data = this.#prepareCategoryData(category, categories[category]);
+        this.#categories.set(category, data);
+      }
     }
 
     for (const adder of adders) {
@@ -298,7 +307,7 @@ export class Power {
    */
   withFrameworkModifiers(frameworkModifiers) {
     const { id, type, summary, description } = this;
-    const categories = this.#categories;
+    const _categories = this.#categories;
     const adders = this.#adders.slice();
     const advantages = this.#advantages.slice();
     const limitations = this.#limitations.slice();
@@ -323,7 +332,7 @@ export class Power {
       type,
       summary,
       description,
-      categories,
+      _categories,
       adders,
       advantages,
       limitations,
@@ -371,7 +380,18 @@ export class Power {
     const { id, name, summary } = this;
     const type = this.type.name;
     const modifiers = this.modifiers.map((modifier) => modifier.display());
-    return { id, name, type, summary, modifiers };
+    const categories = {};
+    if (this.hasCategory(PowerCategory.ATTACK)) {
+      categories.attack = {
+        dice: this.attack.damage.diceString,
+      };
+    }
+    if (this.hasCategory(PowerCategory.MOVEMENT)) {
+      categories.movement = {
+        distance: this.movementMode.distance.total,
+      };
+    }
+    return { id, name, type, summary, modifiers, categories };
   }
 
   hasCategory(category) {
