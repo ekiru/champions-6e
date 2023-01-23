@@ -92,6 +92,7 @@ export class Attack {
     );
 
     this.name = name;
+    this.id = id;
     this.ocv = ocv;
     this.dcv = dcv;
     this.damage = damage;
