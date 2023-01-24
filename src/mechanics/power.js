@@ -34,6 +34,7 @@ export class PowerType {
 }
 
 const STANDARD_POWER_TYPES = new Map();
+const STANDARD_POWER_CATEGORIES = new Map();
 
 export class StandardPowerType extends PowerType {
   #power;
@@ -64,10 +65,23 @@ export class StandardPowerType extends PowerType {
   get name() {
     return this.#power.description;
   }
+
+  get categories() {
+    return STANDARD_POWER_CATEGORIES.get(this.#power);
+  }
 }
 
-for (const power of StandardPowerType.Powers) {
+for (const data of POWER_DATA) {
+  const power = StandardPowerType.Powers[data.name];
   STANDARD_POWER_TYPES.set(power.description, new StandardPowerType(power));
+
+  const categories = new Set();
+  for (let name of data.categories) {
+    name = name.toUpperCase();
+    assert.that(name in PowerCategory, `no such category ${name}`);
+    categories.add(PowerCategory[name]);
+  }
+  STANDARD_POWER_CATEGORIES.set(power, Object.freeze(categories));
 }
 
 export class CustomPowerType extends PowerType {
