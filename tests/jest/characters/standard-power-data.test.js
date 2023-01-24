@@ -27,5 +27,21 @@ describe("Standard Power metadata", function () {
       expectAttack("Mind Scan");
       expectAttack("Telepathy");
     });
+
+    it("all powers with a distance should count as Movement powers", function () {
+      const expectMovement = (name) => {
+        const power = StandardPowerType.get(name);
+        expect(power.categories.has(PowerCategory.MOVEMENT)).toBe(true);
+      };
+
+      expectMovement("Flight");
+      expectMovement("Knockback Resistance");
+      expectMovement("Leaping");
+      expectMovement("Running");
+      expectMovement("Stretching");
+      expectMovement("Swimming");
+      expectMovement("Swinging");
+      expectMovement("Teleportation");
+    });
   });
 });
