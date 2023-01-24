@@ -2,6 +2,7 @@ import * as assert from "../util/assert.js";
 import { Enum } from "../util/enum.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
+import { POWER_DATA } from "./data/power-data.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import {
@@ -42,70 +43,7 @@ export class StandardPowerType extends PowerType {
     this.#power = power;
   }
 
-  static Powers = new Enum([
-    "Absorption",
-    "Aid",
-    "Barrier",
-    "Blast",
-    "Cannot Be Stunned",
-    "Change Environment",
-    "Characteristics",
-    "Clairsentience",
-    "Clinging",
-    "Damage Negation",
-    "Damage Reduction",
-    "Darkness",
-    "Deflection",
-    "Density Increase",
-    "Desolidification",
-    "Dispel",
-    "Does not Bleed",
-    "Drain",
-    "Duplication",
-    "Endurance Reserve",
-    "Enhanced Senses",
-    "Entangle",
-    "Extra-Dimensional Movement",
-    "Extra Limbs",
-    "FTL Travel",
-    "Flash",
-    "Flash Defense",
-    "Flight",
-    "Growth",
-    "Hand-To-Hand Attack",
-    "Healing",
-    "Images",
-    "Invisibility",
-    "Killing Attack",
-    "Knockback Resistance",
-    "Leaping",
-    "Life Support",
-    "Luck",
-    "Mental Blast",
-    "Mental Illusions",
-    "Mind Control",
-    "Mind Link",
-    "Mind Scan",
-    "Multiform",
-    "No Hit Locations",
-    "Power Defense",
-    "Reflection",
-    "Regeneration",
-    "Resistant Protection",
-    "Running",
-    "Shape Shift",
-    "Shrinking",
-    "Skills",
-    "Stretching",
-    "Summon",
-    "Swimming",
-    "Swinging",
-    "Takes No STUN",
-    "Telekinesis",
-    "Teleportation",
-    "Transform",
-    "Tunneling",
-  ]);
+  static Powers = new Enum(POWER_DATA.map(({ name }) => name));
 
   static POWER_NAMES = (function () {
     const result = {};
