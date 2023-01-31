@@ -177,6 +177,14 @@ export class Power {
         this.#categories.set(category, data);
       }
     }
+    if (type instanceof StandardPowerType) {
+      for (const category of type.categories) {
+        assert.precondition(
+          this.#categories.has(category),
+          `missing data for ${category.description} category`
+        );
+      }
+    }
 
     for (const adder of adders) {
       assert.precondition(

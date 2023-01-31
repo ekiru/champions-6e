@@ -51,7 +51,7 @@ describe("Multipowers", function () {
 
     it("exposes any slots it was created with", function () {
       const fireball = new Power("Fireball", {
-        type: StandardPowerType.get("Blast"),
+        type: new CustomPowerType("Blast"),
         summary: "3d6 Explosion 16m",
         description: "<p>Shoot out an explosive ball of fire.</p>",
       });
@@ -106,7 +106,7 @@ describe("Multipowers", function () {
           type: "power",
           system: {
             power: {
-              type: { isStandard: true, name: "Killing Attack" },
+              type: { isStandard: false, name: "Killing Attack" },
               categories: {},
               adders: {},
               advantages: {},
@@ -221,7 +221,7 @@ describe("Multipowers", function () {
         slots: [
           new Slot({
             power: new Power("Allure", {
-              type: StandardPowerType.get("Mind Control"),
+              type: new CustomPowerType("Mind Control"),
               summary: "Mind Control 12d6 only to approach the singer",
               description: "Lure people in with your mind control",
             }),
@@ -231,7 +231,7 @@ describe("Multipowers", function () {
           }),
           new Slot({
             power: new Power("Beguile", {
-              type: StandardPowerType.get("Mental Illusions"),
+              type: new CustomPowerType("Mental Illusions"),
               summary: "Mental Illusions 12d6",
               description:
                 "Enchant your listeners into perceiving what you wish",
@@ -266,7 +266,7 @@ describe("Multipowers", function () {
         slots: [
           new Slot({
             power: new Power("Relaxing Aroma", {
-              type: StandardPowerType.get("Drain"),
+              type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6 no end cost",
               description: "A relaxing floral scent that puts people to sleep",
             }),
@@ -276,7 +276,7 @@ describe("Multipowers", function () {
           }),
           new Slot({
             power: new Power("Choking Pollen", {
-              type: StandardPowerType.get("Blast"),
+              type: new CustomPowerType("Blast"),
               summary: "Blast 4d6 NND vs life support",
               description: "Choke people with your pollen",
             }),
@@ -297,7 +297,7 @@ describe("Multipowers", function () {
           new Slot({
             id: "relaxingaroma",
             power: new Power("Relaxing Aroma", {
-              type: StandardPowerType.get("Drain"),
+              type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6 no end cost",
               description: "A relaxing floral scent that puts people to sleep",
             }),
@@ -308,7 +308,7 @@ describe("Multipowers", function () {
           new Slot({
             id: "chokingpollen",
             power: new Power("Choking Pollen", {
-              type: StandardPowerType.get("Blast"),
+              type: new CustomPowerType("Blast"),
               summary: "Blast 4d6 NND vs life support",
               description: "Choke people with your pollen",
             }),
@@ -335,7 +335,7 @@ describe("Multipowers", function () {
           new Slot({
             id: "relaxingaroma",
             power: new Power("Relaxing Aroma", {
-              type: StandardPowerType.get("Drain"),
+              type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6",
               description: "A relaxing floral scent that puts people to sleep",
             }),
@@ -346,7 +346,7 @@ describe("Multipowers", function () {
           new Slot({
             id: "chokingpollen",
             power: new Power("Choking Pollen", {
-              type: StandardPowerType.get("Blast"),
+              type: new CustomPowerType("Blast"),
               summary: "Blast 4d6 NND vs life support",
               description: "Choke people with your pollen",
             }),
@@ -373,7 +373,7 @@ describe("Multipowers", function () {
           new Slot({
             id: "relaxingaroma",
             power: new Power("Relaxing Aroma", {
-              type: StandardPowerType.get("Drain"),
+              type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6 no end cost",
               description: "A relaxing floral scent that puts people to sleep",
             }),
@@ -384,7 +384,7 @@ describe("Multipowers", function () {
           new Slot({
             id: "chokingpollen",
             power: new Power("Choking Pollen", {
-              type: StandardPowerType.get("Blast"),
+              type: new CustomPowerType("Blast"),
               summary: "Blast 3d6 NND vs life support",
               description: "Choke people with your pollen",
             }),
@@ -463,7 +463,7 @@ describe("Variable Power Pools", function () {
           type: "power",
           system: {
             power: {
-              type: { isStandard: true, name: "Killing Attack" },
+              type: { isStandard: false, name: "Killing Attack" },
               categories: {},
               adders: {},
               advantages: {},
@@ -567,7 +567,7 @@ describe("Variable Power Pools", function () {
         slots: [
           new VPPSlot({
             power: new Power("Fire Whip", {
-              type: StandardPowerType.get("Entangle"),
+              type: new CustomPowerType("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
@@ -601,7 +601,7 @@ describe("Variable Power Pools", function () {
         slots: [
           new VPPSlot({
             power: new Power("Fire Whip", {
-              type: StandardPowerType.get("Entangle"),
+              type: new CustomPowerType("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
@@ -635,7 +635,7 @@ describe("Variable Power Pools", function () {
         slots: [
           new VPPSlot({
             power: new Power("Fire Whip", {
-              type: StandardPowerType.get("Entangle"),
+              type: new CustomPowerType("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
@@ -668,7 +668,7 @@ describe("Variable Power Pools", function () {
           new VPPSlot({
             id: "firewhip",
             power: new Power("Fire Whip", {
-              type: StandardPowerType.get("Entangle"),
+              type: new CustomPowerType("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
@@ -708,7 +708,7 @@ describe("Variable Power Pools", function () {
           new VPPSlot({
             id: "firewhip",
             power: new Power("Fire Whip", {
-              type: StandardPowerType.get("Entangle"),
+              type: new CustomPowerType("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
@@ -747,7 +747,7 @@ describe("Variable Power Pools", function () {
           new VPPSlot({
             id: "firewhip",
             power: new Power("Fire Whip", {
-              type: StandardPowerType.get("Entangle"),
+              type: new CustomPowerType("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
@@ -782,7 +782,7 @@ describe("Variable Power Pools", function () {
 
 describe("Slots", function () {
   const power = new Power("Shift", {
-    type: StandardPowerType.get("Flight"),
+    type: new CustomPowerType("Flight"),
     summary: "",
     description: "",
     id: "e23fs",

@@ -220,7 +220,7 @@ describe("Power", function () {
         summary: "",
       };
       expect(() => {
-        new Power(name, { type: StandardPowerType.get("Blast"), ...args });
+        new Power(name, { type: StandardPowerType.get("Transform"), ...args });
         new Power(name, { type: new CustomPowerType("Blast"), ...args });
       }).not.toThrow();
     });
@@ -446,7 +446,7 @@ describe("Power", function () {
   });
 
   describe("Categories", function () {
-    it("by default powers shouldn't have any categories", function () {
+    it("by default custom powers shouldn't have any categories", function () {
       expect(
         new Power("Allure", {
           type: new CustomPowerType("PRE"),
@@ -454,6 +454,17 @@ describe("Power", function () {
           description: "",
         }).categories
       ).toHaveLength(0);
+    });
+
+    it("should require the appropriate category data for standard power types", function () {
+      expect(
+        () =>
+          new Power("Blink", {
+            type: StandardPowerType.get("Teleportation"),
+            summary: "",
+            description: "",
+          })
+      ).toThrow("missing data for MOVEMENT category");
     });
   });
 

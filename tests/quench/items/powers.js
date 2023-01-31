@@ -35,6 +35,13 @@ export function register(system, quench) {
                     isStandard: true,
                     name: "Flight",
                   },
+                  categories: { movement: true },
+                  movement: {
+                    distance: {
+                      value: 80,
+                      modifier: 0,
+                    },
+                  },
                 },
                 summary: "Flight 80m only along surfaces",
                 description: "<p>Run super fast from place to place!</p>",
