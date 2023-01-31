@@ -1,9 +1,10 @@
-import { StandardPowerType } from "../mechanics/power.js";
+import { PowerCategory, StandardPowerType } from "../mechanics/power.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
 import {
   defaultModifierData,
   modifierDataForSheet,
 } from "../sheets/modifier-helper.js";
+import * as assert from "../util/assert.js";
 import { randomId } from "../util/identifiers.js";
 import { attackAttributes } from "./AttackSheet.js";
 
@@ -47,10 +48,24 @@ export default class PowerSheet extends ItemSheet {
       },
       summary: fields.text("Summary", "system.summary"),
     };
+    const readonlyCheckboxesForStandardTypes = isStandard
+      ? { readonly: true }
+      : {};
     context.categories = {
-      attack: fields.checkbox("Attack", "system.power.categories.attack"),
-      movement: fields.checkbox("Movement", "system.power.categories.movement"),
+      attack: fields.checkbox(
+        "Attack",
+        "system.power.categories.attack",
+        readonlyCheckboxesForStandardTypes
+      ),
+      movement: fields.checkbox(
+        "Movement",
+        "system.power.categories.movement",
+        readonlyCheckboxesForStandardTypes
+      ),
     };
+    if (isStandard) {
+      this.#overrideCategoriesForStandardPowerType(power, context.categories);
+    }
     context.attack = attackAttributes(fields, "system.power.attack");
     context.movement = {
       distance: {
@@ -117,5 +132,11 @@ export default class PowerSheet extends ItemSheet {
   async #modifierData(type, modifier) {
     const basePath = `system.power.${type}.${modifier.id}`;
     return await modifierDataForSheet(type, modifier, basePath);
+  }
+
+  #overrideCategoriesForStandardPowerType(power, categories) {
+    assert.precondition(power.type instanceof StandardPowerType);
+    categories.attack.value = power.hasCategory(PowerCategory.ATTACK);
+    categories.movement.value = power.hasCategory(PowerCategory.MOVEMENT);
   }
 }

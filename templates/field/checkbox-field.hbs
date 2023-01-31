@@ -2,5 +2,5 @@
 {{#unless readonly}}
   <input name="{{path}}" type="checkbox" {{checked value}} />
 {{else}}
-  <span>{{value}}</span>
+  <input name="{{path}}" type="checkbox" {{checked value}} disabled />
 {{/unless}}
