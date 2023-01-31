@@ -227,10 +227,14 @@ describe("Power", function () {
   });
 
   describe("fromItem", function () {
-    const item = (type) => {
+    const item = (type, categories) => {
       type = type ?? {
         isStandard: true,
         name: "Teleportation",
+      };
+      categories = categories ?? {
+        attack: true,
+        movement: true,
       };
       return {
         id: "1234",
@@ -239,10 +243,7 @@ describe("Power", function () {
         system: {
           power: {
             type,
-            categories: {
-              attack: true,
-              movement: true,
-            },
+            categories,
             attack: {
               cv: {
                 defensive: "dcv",
@@ -325,18 +326,40 @@ describe("Power", function () {
       expect(power.type.name).toBe("Blink");
     });
 
-    it("has the appropriate categories", function () {
-      const power = Power.fromItem(item());
-      expect(power.hasCategory(PowerCategory.MOVEMENT)).toBe(true);
-      expect(power.movementMode).toEqual(
-        new MovementMode("Blink", {
-          id: power.id,
-          type: StandardPowerType.get("Teleportation"),
-          distance: new ModifiableValue(40, 0),
-        })
-      );
-      expect(power.hasCategory(PowerCategory.ATTACK)).toBe(true);
-      expect(power).toHaveProperty("attack.damage", new Damage(2, 5));
+    describe("categories", function () {
+      it("for a custom power type should be all those specified in the item data", function () {
+        const power = Power.fromItem(
+          item({ isStandard: false, name: "Teleportation" })
+        );
+        expect(power.hasCategory(PowerCategory.MOVEMENT)).toBe(true);
+        expect(power.movementMode).toEqual(
+          new MovementMode("Blink", {
+            id: power.id,
+            type: new CustomPowerType("Teleportation"),
+            distance: new ModifiableValue(40, 0),
+          })
+        );
+        expect(power.hasCategory(PowerCategory.ATTACK)).toBe(true);
+        expect(power).toHaveProperty("attack.damage", new Damage(2, 5));
+      });
+
+      it("for a standard power type should be exactly those appropriate to the power type", function () {
+        const power = Power.fromItem(
+          item(
+            { isStandard: true, name: "Teleportation" },
+            { movement: false, attack: true }
+          )
+        );
+        expect(power.hasCategory(PowerCategory.MOVEMENT)).toBe(true);
+        expect(power.movementMode).toEqual(
+          new MovementMode("Blink", {
+            id: power.id,
+            type: new CustomPowerType("Teleportation"),
+            distance: new ModifiableValue(40, 0),
+          })
+        );
+        expect(power.hasCategory(PowerCategory.ATTACK)).toBe(false);
+      });
     });
 
     it("exposes its adders", function () {

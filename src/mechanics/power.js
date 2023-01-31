@@ -225,8 +225,12 @@ export class Power {
     }
     const categories = {};
     for (const [category, present] of Object.entries(system.power.categories)) {
-      if (present) {
-        const categoryId = PowerCategory[category.toUpperCase()];
+      const categoryId = PowerCategory[category.toUpperCase()];
+      if (
+        present ||
+        (powerType instanceof StandardPowerType &&
+          powerType.categories.has(categoryId))
+      ) {
         categories[categoryId] = parseCategoryDataFromItem(
           category,
           system.power[category],
@@ -319,7 +323,11 @@ export class Power {
   }
 
   get categories() {
-    return Array.from(this.#categories.keys());
+    if (this.type instanceof StandardPowerType) {
+      return this.type.categories;
+    } else {
+      return Array.from(this.#categories.keys());
+    }
   }
 
   get limitations() {
@@ -355,7 +363,11 @@ export class Power {
   }
 
   hasCategory(category) {
-    return this.#categories.has(category);
+    if (this.type instanceof StandardPowerType) {
+      return this.type.categories.has(category);
+    } else {
+      return this.#categories.has(category);
+    }
   }
 
   #prepareCategoryData(category, raw) {
