@@ -338,6 +338,10 @@ export class Power {
     }
   }
 
+  get cost() {
+    return this.costOverride ?? 0;
+  }
+
   get limitations() {
     return this.#limitations;
   }

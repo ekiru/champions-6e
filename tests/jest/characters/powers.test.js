@@ -682,5 +682,24 @@ describe("Power", function () {
         expect(Power.fromItem(itemData)).toHaveProperty("costOverride", 20);
       });
     });
+
+    it("defaults to 0 for a custom power type with no override", function () {
+      const power = new Power("Charisma", {
+        type: new CustomPowerType("PRE"),
+        summary: "",
+        description: "",
+      });
+      expect(power).toHaveProperty("cost", 0);
+    });
+
+    it("can be overridden with costOverride", function () {
+      const power = new Power("Charisma", {
+        type: new CustomPowerType("PRE"),
+        summary: "+20 PRE",
+        description: "",
+        costOverride: 20,
+      });
+      expect(power).toHaveProperty("cost", 20);
+    });
   });
 });
