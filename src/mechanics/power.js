@@ -257,6 +257,7 @@ export class Power {
 
     const summary = system.summary;
     const description = system.description;
+    const costOverride = system.cost?.override;
     return new Power(name, {
       id,
       type: powerType,
@@ -266,6 +267,7 @@ export class Power {
       limitations,
       summary,
       description,
+      costOverride,
     });
   }
 

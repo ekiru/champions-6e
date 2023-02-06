@@ -66,6 +66,9 @@
           "modifiers": {},
           "slots": {}
         }
+      },
+      "cost": {
+        "cost": { "override": null }
       }
     },
     "attack": {
@@ -98,6 +101,7 @@
       "description": "<p></p>"
     },
     "power": {
+      "templates": ["cost"],
       "power": {
         "type": {
           "isStandard": false,

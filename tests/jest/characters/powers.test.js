@@ -654,6 +654,33 @@ describe("Power", function () {
         });
         expect(power).toHaveProperty("costOverride", 40);
       });
+
+      it("is parsed by fromItem", function () {
+        const itemData = {
+          id: "1234",
+          name: "Extend Tendrils",
+          type: "power",
+          system: {
+            power: {
+              type: { isStandard: true, name: "Stretching" },
+              categories: { movement: true },
+              movement: {
+                distance: {
+                  value: 20,
+                  modifier: 0,
+                },
+              },
+              adders: {},
+              advantages: {},
+              limitations: {},
+            },
+            cost: { override: 20 },
+            summary: "Stretching 20m",
+            description: "<p></p>",
+          },
+        };
+        expect(Power.fromItem(itemData)).toHaveProperty("costOverride", 20);
+      });
     });
   });
 });
