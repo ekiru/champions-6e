@@ -630,4 +630,30 @@ describe("Power", function () {
       );
     });
   });
+
+  describe("costs", function () {
+    describe("costOverride", function () {
+      const powerData = {
+        type: StandardPowerType.get("Stretching"),
+        summary: "",
+        description: "",
+        categories: {
+          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(40) },
+        },
+      };
+
+      it("defaults to null", function () {
+        const power = new Power("Extend Tendrils", powerData);
+        expect(power).toHaveProperty("costOverride", null);
+      });
+
+      it("can be specified in the constructor", function () {
+        const power = new Power("Extend Tendrils", {
+          ...powerData,
+          costOverride: 40,
+        });
+        expect(power).toHaveProperty("costOverride", 40);
+      });
+    });
+  });
 });

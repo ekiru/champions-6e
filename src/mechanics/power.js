@@ -128,6 +128,7 @@ export class Power {
       type,
       summary,
       description,
+      costOverride = null,
       categories = {},
       _categories = undefined,
       adders = [],
@@ -149,12 +150,17 @@ export class Power {
       typeof description === "string",
       "description must be a string"
     );
+    assert.precondition(
+      costOverride === null || typeof costOverride === "number",
+      "costOverride must be a number i fpresent"
+    );
 
     this.name = name;
     this.type = type;
     this.id = id;
     this.summary = summary;
     this.description = description;
+    this.costOverride = costOverride;
 
     if (_categories) {
       assert.precondition(
