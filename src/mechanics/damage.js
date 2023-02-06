@@ -1,5 +1,9 @@
 import * as assert from "../util/assert.js";
-import { calculateDC, diceForDCs } from "./damage/_damageClassTable.js";
+import {
+  calculateDC,
+  diceForDCs,
+  isKnownApPerDie,
+} from "./damage/_damageClassTable.js";
 
 export const DEFENSE_TYPES = Object.freeze({
   pd: "Physical",
@@ -56,6 +60,10 @@ export class Damage {
     this.#apPerDie = apPerDie;
 
     this.#dc = calculateDC(dice, apPerDie, adjustment);
+  }
+
+  static supportsApPerDie(apPerDie) {
+    return isKnownApPerDie(apPerDie);
   }
 
   static fromDCs(dc, apPerDie) {

@@ -77,5 +77,19 @@ describe("Power cost structures", function () {
       const boom = blast(2);
       expect(fivePer.costOf(boom)).toBe(10);
     });
+
+    it("should charge properly for partial dice for typical costs-per-die", function () {
+      const fifteenPer = new CostPerDie(15);
+      expect(fifteenPer.costOf(blast(2.5))).toBe(40);
+    });
+
+    it("should round partial dice up for Aid/Dispel", function () {
+      const aidCost = new CostPerDie(6);
+      const dispelCost = new CostPerDie(3);
+
+      expect(aidCost.costOf(blast(3.1))).toBe(aidCost.costOf(blast(4)));
+      expect(dispelCost.costOf(blast(2.5))).toBe(dispelCost.costOf(blast(3)));
+      expect(aidCost.costOf(blast(4))).toBe(24);
+    });
   });
 });

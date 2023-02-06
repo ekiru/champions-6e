@@ -148,7 +148,7 @@ export function calculateDC(dice, apPerDie, adjustment) {
  */
 export function diceForDCs(dc, apPerDie) {
   assert.precondition(
-    DC_TABLE.has(apPerDie),
+    isKnownApPerDie(apPerDie),
     `unsupported AP per die ${apPerDie}`
   );
   let dice = 0;
@@ -166,4 +166,15 @@ export function diceForDCs(dc, apPerDie) {
     }
   }
   return { dice, adjustment };
+}
+
+/**
+ * Checks if the AP-per-die value is recognized.
+ *
+ * @param {number} apPerDie The number of active points per die.
+ * @returns {boolean} `true` if damage class calculations support the AP-per-die
+ * value.
+ */
+export function isKnownApPerDie(apPerDie) {
+  return DC_TABLE.has(apPerDie);
 }

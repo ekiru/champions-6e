@@ -1,3 +1,4 @@
+import { Damage } from "../damage.js";
 import { Power, PowerCategory } from "../power.js";
 import { CostStructure } from "./cost-structure.js";
 
@@ -28,7 +29,12 @@ export class CostPerDie extends CostStructure {
    */
   costOf(power) {
     const attack = power.attack;
+    if (Damage.supportsApPerDie(this.#cost)) {
+      const copiedDamage = Damage.fromDice(attack.damage.dice, this.#cost);
 
-    return this.#cost * attack.damage.dice;
+      return copiedDamage.dc * 5;
+    } else {
+      return this.#cost * Math.ceil(attack.damage.dice);
+    }
   }
 }
