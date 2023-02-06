@@ -38,3 +38,34 @@ export class CostPerDie extends CostStructure {
     }
   }
 }
+
+/**
+ * Represents a game element whose cost is paid per meter of distance/movement.
+ */
+export class CostPerMeter extends CostStructure {
+  #cost;
+
+  constructor(costPerMeter) {
+    super();
+    this.#cost = costPerMeter;
+  }
+
+  static get expectedGameElement() {
+    return Power;
+  }
+
+  validate(power) {
+    return power instanceof Power && power.hasCategory(PowerCategory.MOVEMENT);
+  }
+
+  /**
+   * Calculates the cost of the power based on the cost-per-m and the distance.
+   *
+   * @param {Power} power The power.
+   * @returns {number} The base cost of the power.
+   */
+  costOf(power) {
+    const mode = power.movementMode;
+    return mode.distance.base * this.#cost;
+  }
+}

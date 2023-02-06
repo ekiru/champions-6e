@@ -2,7 +2,10 @@
 
 import { Attack, DamageType } from "../../../src/mechanics/attack.js";
 import { byName as characteristicByName } from "../../../src/mechanics/characteristics.js";
-import { CostPerDie } from "../../../src/mechanics/costs/power-costs.js";
+import {
+  CostPerDie,
+  CostPerMeter,
+} from "../../../src/mechanics/costs/power-costs.js";
 import { FixedCost } from "../../../src/mechanics/costs/universal-costs.js";
 import { Damage } from "../../../src/mechanics/damage.js";
 import { ModifiableValue } from "../../../src/mechanics/modifiable-value.js";
@@ -90,6 +93,32 @@ describe("Power cost structures", function () {
       expect(aidCost.costOf(blast(3.1))).toBe(aidCost.costOf(blast(4)));
       expect(dispelCost.costOf(blast(2.5))).toBe(dispelCost.costOf(blast(3)));
       expect(aidCost.costOf(blast(4))).toBe(24);
+    });
+  });
+
+  describe("Cost per m", function () {
+    it("should expect a power", function () {
+      expect(CostPerMeter.expectedGameElement).toBe(Power);
+    });
+
+    it("should expect the power to be a movement power", function () {
+      const onePerM = new CostPerMeter(1);
+      expect(onePerM.validate(blast(2))).toBe(false);
+      expect(onePerM.validate(flight(20))).toBe(true);
+    });
+
+    it("should multiply the cost by the meters of movement", function () {
+      const onePerM = new CostPerMeter(1);
+      const twoPerM = new CostPerMeter(2);
+
+      expect(onePerM.costOf(flight(20))).toBe(20);
+      expect(twoPerM.costOf(flight(30))).toBe(60);
+    });
+
+    it("should not charge for modifiers to the distance", function () {
+      const onePerM = new CostPerMeter(1);
+
+      expect(onePerM.costOf(flight(20, 10))).toBe(20);
     });
   });
 });
