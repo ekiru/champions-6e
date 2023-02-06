@@ -2,6 +2,8 @@ import * as assert from "../util/assert.js";
 import { Enum } from "../util/enum.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
+import { CostPerDie, CostPerMeter } from "./costs/power-costs.js";
+import { FixedCost } from "./costs/universal-costs.js";
 import { POWER_DATA } from "./data/power-data.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
@@ -35,6 +37,7 @@ export class PowerType {
 
 const STANDARD_POWER_TYPES = new Map();
 const STANDARD_POWER_CATEGORIES = new Map();
+const STANDARD_POWER_COST_STRUCTURES = new Map();
 
 export class StandardPowerType extends PowerType {
   #power;
@@ -69,6 +72,27 @@ export class StandardPowerType extends PowerType {
   get categories() {
     return STANDARD_POWER_CATEGORIES.get(this.#power);
   }
+
+  get costStructure() {
+    const cost = STANDARD_POWER_COST_STRUCTURES.get(this.#power);
+    if (cost) {
+      switch (cost.type) {
+        case "perDie":
+          return new CostPerDie(cost.perDie);
+        case "perMeter":
+          return new CostPerMeter(cost.perMeter);
+        case "fixed":
+          return new FixedCost(cost.fixed);
+        default:
+          assert.notYetImplemented(
+            `unrecognized cost structure type: ${cost.type}`
+          );
+          return null;
+      }
+    } else {
+      return null;
+    }
+  }
 }
 
 for (const data of POWER_DATA) {
@@ -82,6 +106,15 @@ for (const data of POWER_DATA) {
     categories.add(PowerCategory[name]);
   }
   STANDARD_POWER_CATEGORIES.set(power, Object.freeze(categories));
+
+  if (data.cost) {
+    const type = data.cost.type;
+    assert.that(
+      type === "perDie" || type === "perMeter" || type === "fixed",
+      `Unrecognized power cost type: ${data.cost.type}`
+    );
+  }
+  STANDARD_POWER_COST_STRUCTURES.set(power, data.cost);
 }
 
 export class CustomPowerType extends PowerType {

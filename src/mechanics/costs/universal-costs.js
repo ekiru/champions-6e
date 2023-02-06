@@ -18,6 +18,10 @@ export class FixedCost extends CostStructure {
     this.#points = points;
   }
 
+  get cost() {
+    return this.#points;
+  }
+
   static get expectedGameElement() {
     return Object;
   }

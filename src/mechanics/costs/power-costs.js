@@ -13,6 +13,10 @@ export class CostPerDie extends CostStructure {
     this.#cost = costPerDie;
   }
 
+  get costPerDie() {
+    return this.#cost;
+  }
+
   static get expectedGameElement() {
     return Power;
   }
@@ -48,6 +52,10 @@ export class CostPerMeter extends CostStructure {
   constructor(costPerMeter) {
     super();
     this.#cost = costPerMeter;
+  }
+
+  get costPerMeter() {
+    return this.#cost;
   }
 
   static get expectedGameElement() {
