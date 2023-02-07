@@ -375,6 +375,14 @@ export class Power {
     return this.costOverride ?? 0;
   }
 
+  get costStructure() {
+    if (this.type instanceof StandardPowerType) {
+      return this.type.costStructure;
+    } else {
+      return null;
+    }
+  }
+
   get limitations() {
     return this.#limitations;
   }

@@ -1,7 +1,16 @@
 /* eslint-env jest */
 
 import { Attack, DamageType } from "../../../src/mechanics/attack.js";
-import { DCV, OCV } from "../../../src/mechanics/characteristics.js";
+import {
+  byName as characteristicByName,
+  DCV,
+  OCV,
+} from "../../../src/mechanics/characteristics.js";
+import {
+  CostPerDie,
+  CostPerMeter,
+} from "../../../src/mechanics/costs/power-costs.js";
+import { FixedCost } from "../../../src/mechanics/costs/universal-costs.js";
 import { Damage } from "../../../src/mechanics/damage.js";
 import { ModifiableValue } from "../../../src/mechanics/modifiable-value.js";
 import { MovementMode } from "../../../src/mechanics/movement-mode.js";
@@ -700,6 +709,49 @@ describe("Power", function () {
         costOverride: 20,
       });
       expect(power).toHaveProperty("cost", 20);
+    });
+
+    describe("costStructure", function () {
+      const makePower = (type, categories = {}) =>
+        new Power("Do Stuff", {
+          summary: "",
+          description: "",
+          type,
+          categories,
+        });
+
+      it("is null for custom power types", function () {
+        expect(makePower(new CustomPowerType("Blast"))).toHaveProperty(
+          "costStructure",
+          null
+        );
+      });
+
+      it("is null for standard power types with complex costs", function () {
+        expect(
+          makePower(StandardPowerType.get("Endurance Reserve"))
+        ).toHaveProperty("costStructure", null);
+      });
+
+      it("should be based on the power type for simpler standard powers", function () {
+        const blast = makePower(StandardPowerType.get("Blast"), {
+          [PowerCategory.ATTACK]: new Attack("Do Stuff", {
+            ocv: characteristicByName("OCV"),
+            dcv: characteristicByName("DCV"),
+            damageType: DamageType.NORMAL,
+            damage: new Damage(5, 5),
+            defense: "",
+            description: "",
+          }),
+        });
+        const flight = makePower(StandardPowerType.get("Flight"), {
+          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(25) },
+        });
+        const deflection = makePower(StandardPowerType.get("Deflection"));
+        expect(blast.costStructure).toBeInstanceOf(CostPerDie);
+        expect(flight.costStructure).toBeInstanceOf(CostPerMeter);
+        expect(deflection.costStructure).toBeInstanceOf(FixedCost);
+      });
     });
   });
 });
