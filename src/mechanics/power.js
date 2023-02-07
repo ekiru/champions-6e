@@ -414,7 +414,7 @@ export class Power {
   }
 
   display() {
-    const { id, name, summary } = this;
+    const { id, name, summary, cost } = this;
     const type = this.type.name;
     const modifiers = this.modifiers.map((modifier) => modifier.display());
     const categories = {};
@@ -428,7 +428,7 @@ export class Power {
         distance: this.movementMode.distance.total,
       };
     }
-    return { id, name, type, summary, modifiers, categories };
+    return { id, name, type, summary, cost, modifiers, categories };
   }
 
   hasCategory(category) {

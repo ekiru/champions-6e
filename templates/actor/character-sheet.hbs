@@ -390,6 +390,7 @@
       <table>
         <thead>
           <tr>
+            <th>CP</th>
             <th>Name</th>
             <th>Power</th>
             <th>Summary</th>
@@ -405,6 +406,7 @@
         <tbody>
           {{#each powers}}
             <tr class="actor-item" data-item-id="{{id}}">
+              <td>{{cost}}</td>
               {{partial "item/partials/power-data.hbs" this}}
               <td class="item-controls">
                 <a class="item-control item-edit" title="Edit Power">
