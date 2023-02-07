@@ -74,6 +74,6 @@ export class CostPerMeter extends CostStructure {
    */
   costOf(power) {
     const mode = power.movementMode;
-    return mode.distance.base * this.#cost;
+    return Math.ceil(mode.distance.base * this.#cost);
   }
 }

@@ -120,5 +120,10 @@ describe("Power cost structures", function () {
 
       expect(onePerM.costOf(flight(20, 10))).toBe(20);
     });
+
+    it("should round up when a power that costs 1 CP per 2 m has an odd distance", function () {
+      const onePerTwoM = new CostPerMeter(0.5);
+      expect(onePerTwoM.costOf(flight(19))).toBe(10);
+    });
   });
 });
