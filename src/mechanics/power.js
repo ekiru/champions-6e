@@ -372,6 +372,22 @@ export class Power {
   }
 
   get cost() {
+    const costStructure = this.costStructure;
+    if (costStructure) {
+      assert.that(
+        this instanceof costStructure.constructor.expectedGameElement,
+        `this isn't the right type of game element for the cost structure: this=${this}, expected ${costStructure.constructor.expectedGameElement}`
+      );
+      if (costStructure.validate(this)) {
+        return costStructure.costOf(this);
+      } else {
+        console.log(
+          "Cost structure considered power invalid:",
+          costStructure,
+          this
+        );
+      }
+    }
     return this.costOverride ?? 0;
   }
 

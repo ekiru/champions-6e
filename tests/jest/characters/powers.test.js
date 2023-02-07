@@ -660,6 +660,18 @@ describe("Power", function () {
       expect(power).toHaveProperty("cost", 20);
     });
 
+    it("is based on the cost structure for standard powers", function () {
+      const flight = new Power("Wings", {
+        type: StandardPowerType.get("Flight"),
+        summary: "",
+        description: "",
+        categories: {
+          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(25) },
+        },
+      });
+      expect(flight).toHaveProperty("cost", 25);
+    });
+
     describe("costStructure", function () {
       const makePower = (type, categories = {}) =>
         new Power("Do Stuff", {
