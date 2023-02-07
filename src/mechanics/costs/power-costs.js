@@ -41,6 +41,10 @@ export class CostPerDie extends CostStructure {
       return this.#cost * Math.ceil(attack.damage.dice);
     }
   }
+
+  get summary() {
+    return `${this.#cost} CP per d6`;
+  }
 }
 
 /**
@@ -75,5 +79,9 @@ export class CostPerMeter extends CostStructure {
   costOf(power) {
     const mode = power.movementMode;
     return Math.ceil(mode.distance.base * this.#cost);
+  }
+
+  get summary() {
+    return `${this.#cost} CP per m`;
   }
 }

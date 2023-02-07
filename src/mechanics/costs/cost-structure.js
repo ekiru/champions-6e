@@ -43,4 +43,14 @@ export class CostStructure {
     gameElement;
     return 0;
   }
+
+  /**
+   * A string summarizing how the cost is calculated.
+   *
+   * @returns  {string} The summary.
+   */
+  get summary() {
+    assert.abstract(CostStructure, "summary");
+    return "";
+  }
 }

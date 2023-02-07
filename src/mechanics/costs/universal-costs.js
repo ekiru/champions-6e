@@ -35,4 +35,8 @@ export class FixedCost extends CostStructure {
     gameElement;
     return this.#points;
   }
+
+  get summary() {
+    return "";
+  }
 }

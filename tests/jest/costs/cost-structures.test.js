@@ -30,6 +30,10 @@ describe("Universal cost structures", function () {
     it("should require the cost to be a number", function () {
       expect(() => new FixedCost("5")).toThrow("cost must be a number");
     });
+
+    it("should summarize as the empty string", function () {
+      expect(new FixedCost(10).summary).toBe("");
+    });
   });
 });
 
@@ -94,6 +98,10 @@ describe("Power cost structures", function () {
       expect(dispelCost.costOf(blast(2.5))).toBe(dispelCost.costOf(blast(3)));
       expect(aidCost.costOf(blast(4))).toBe(24);
     });
+
+    it("should summarize as X CP per d6", function () {
+      expect(fivePer).toHaveProperty("summary", "5 CP per d6");
+    });
   });
 
   describe("Cost per m", function () {
@@ -124,6 +132,10 @@ describe("Power cost structures", function () {
     it("should round up when a power that costs 1 CP per 2 m has an odd distance", function () {
       const onePerTwoM = new CostPerMeter(0.5);
       expect(onePerTwoM.costOf(flight(19))).toBe(10);
+    });
+
+    it("should summarize as X CP per meter", function () {
+      expect(new CostPerMeter(2)).toHaveProperty("summary", "2 CP per m");
     });
   });
 });
