@@ -641,57 +641,6 @@ describe("Power", function () {
   });
 
   describe("costs", function () {
-    describe("costOverride", function () {
-      const powerData = {
-        type: StandardPowerType.get("Stretching"),
-        summary: "",
-        description: "",
-        categories: {
-          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(40) },
-        },
-      };
-
-      it("defaults to null", function () {
-        const power = new Power("Extend Tendrils", powerData);
-        expect(power).toHaveProperty("costOverride", null);
-      });
-
-      it("can be specified in the constructor", function () {
-        const power = new Power("Extend Tendrils", {
-          ...powerData,
-          costOverride: 40,
-        });
-        expect(power).toHaveProperty("costOverride", 40);
-      });
-
-      it("is parsed by fromItem", function () {
-        const itemData = {
-          id: "1234",
-          name: "Extend Tendrils",
-          type: "power",
-          system: {
-            power: {
-              type: { isStandard: true, name: "Stretching" },
-              categories: { movement: true },
-              movement: {
-                distance: {
-                  value: 20,
-                  modifier: 0,
-                },
-              },
-              adders: {},
-              advantages: {},
-              limitations: {},
-            },
-            cost: { override: 20 },
-            summary: "Stretching 20m",
-            description: "<p></p>",
-          },
-        };
-        expect(Power.fromItem(itemData)).toHaveProperty("costOverride", 20);
-      });
-    });
-
     it("defaults to 0 for a custom power type with no override", function () {
       const power = new Power("Charisma", {
         type: new CustomPowerType("PRE"),
@@ -751,6 +700,57 @@ describe("Power", function () {
         expect(blast.costStructure).toBeInstanceOf(CostPerDie);
         expect(flight.costStructure).toBeInstanceOf(CostPerMeter);
         expect(deflection.costStructure).toBeInstanceOf(FixedCost);
+      });
+    });
+
+    describe("costOverride", function () {
+      const powerData = {
+        type: StandardPowerType.get("Stretching"),
+        summary: "",
+        description: "",
+        categories: {
+          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(40) },
+        },
+      };
+
+      it("defaults to null", function () {
+        const power = new Power("Extend Tendrils", powerData);
+        expect(power).toHaveProperty("costOverride", null);
+      });
+
+      it("can be specified in the constructor", function () {
+        const power = new Power("Extend Tendrils", {
+          ...powerData,
+          costOverride: 40,
+        });
+        expect(power).toHaveProperty("costOverride", 40);
+      });
+
+      it("is parsed by fromItem", function () {
+        const itemData = {
+          id: "1234",
+          name: "Extend Tendrils",
+          type: "power",
+          system: {
+            power: {
+              type: { isStandard: true, name: "Stretching" },
+              categories: { movement: true },
+              movement: {
+                distance: {
+                  value: 20,
+                  modifier: 0,
+                },
+              },
+              adders: {},
+              advantages: {},
+              limitations: {},
+            },
+            cost: { override: 20 },
+            summary: "Stretching 20m",
+            description: "<p></p>",
+          },
+        };
+        expect(Power.fromItem(itemData)).toHaveProperty("costOverride", 20);
       });
     });
   });
