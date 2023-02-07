@@ -46,6 +46,12 @@ export default class PowerSheet extends ItemSheet {
             )
           : fields.text("Power", "system.power.type.name"),
       },
+      cost: {
+        override:
+          power.costStructure === null
+            ? fields.number("Cost", "system.cost.override")
+            : null,
+      },
       summary: fields.text("Summary", "system.summary"),
     };
     const readonlyCheckboxesForStandardTypes = isStandard

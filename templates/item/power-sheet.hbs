@@ -26,6 +26,11 @@
       <p>
         {{field attributes.type.name}}
       </p>
+      {{#if attributes.cost.override}}
+        <p>
+          {{field attributes.cost.override}}
+        </p>
+      {{/if}}
       <p>
         {{field attributes.summary}}
       </p>
