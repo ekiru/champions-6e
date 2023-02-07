@@ -30,6 +30,15 @@
         <p>
           {{field attributes.cost.override}}
         </p>
+      {{else}}
+        <p>
+          Cost:
+          {{attributes.cost.value}}
+          CP
+          {{#if attributes.cost.structure}}
+            ({{attributes.cost.structure}})
+          {{/if}}
+        </p>
       {{/if}}
       <p>
         {{field attributes.summary}}
