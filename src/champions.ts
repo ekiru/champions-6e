@@ -14,7 +14,7 @@ import ChampionsCombatTracker from "./sheets/ChampionsCombatTracker.js";
 import "./activeEffects.js"; // for Hooks
 
 // Register Quench tests if it's available.
-Hooks.on("quenchReady", async function (quench) {
+Hooks.on("quenchReady", async function (quench: any) {
   const { registerTests } = await import("../tests/quench/init.js");
   registerTests(quench);
 });
