@@ -1,0 +1,3 @@
+{
+  "testMatch": ["**/built/**/?(*.)+(spec|test).[tj]s?(x)"]
+}
