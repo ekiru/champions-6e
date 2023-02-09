@@ -2,12 +2,11 @@
   "name": "champions-6e",
   "version": "0.1.0",
   "type": "module",
-  "packageManager": "yarn@3.2.3",
   "private": true,
   "license": "GPL-3.0-or-later",
   "scripts": {
     "lint": "eslint .",
-    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test": "jest",
     "cucumber": "cucumber-js"
   },
   "devDependencies": {
