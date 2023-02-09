@@ -5,8 +5,9 @@
   "private": true,
   "license": "GPL-3.0-or-later",
   "scripts": {
+    "format-check": "prettier -c .",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "cucumber": "cucumber-js"
   },
   "devDependencies": {
