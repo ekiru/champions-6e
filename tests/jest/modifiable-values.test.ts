@@ -1,6 +1,7 @@
 // eslint-env jest
+import { describe, it, expect } from "@jest/globals";
 
-import { ModifiableValue } from "../../src/mechanics/modifiable-value.js";
+import { ModifiableValue } from "../../src/mechanics/modifiable-value";
 
 describe("ModifiableValue", function () {
   describe("constructor", function () {

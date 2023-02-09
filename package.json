@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@cucumber/cucumber": "^8.5.3",
+    "@jest/globals": "^29.4.2",
     "@league-of-foundry-developers/foundry-vtt-types": "^9.280.0",
     "@tsconfig/recommended": "^1.0.2",
     "eslint": "latest",
