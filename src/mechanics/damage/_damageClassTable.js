@@ -136,6 +136,8 @@ export function calculateDC(dice, apPerDie, adjustment) {
       }
     }
     return forFullDice + extra;
+  } else {
+    return undefined;
   }
 }
 
