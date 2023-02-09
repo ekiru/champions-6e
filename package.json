@@ -12,6 +12,8 @@
   },
   "devDependencies": {
     "@cucumber/cucumber": "^8.5.3",
+    "@league-of-foundry-developers/foundry-vtt-types": "^9.280.0",
+    "@tsconfig/recommended": "^1.0.2",
     "eslint": "latest",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.0.1",

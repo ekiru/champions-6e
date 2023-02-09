@@ -16,7 +16,7 @@
     }
   ],
 
-  "esmodules": ["src/champions.js"],
+  "esmodules": ["built/src/champions.js"],
   "styles": ["styles/style.css"],
 
   "languages": [
