@@ -1,10 +1,13 @@
 export class ModifiableValue {
-  constructor(base, modifier = +0) {
+  readonly base: number;
+  readonly modifier: number;
+
+  constructor(base: number, modifier: number = +0) {
     this.base = base;
     this.modifier = modifier;
   }
 
-  get total() {
+  get total(): number {
     return this.base + this.modifier;
   }
 }
