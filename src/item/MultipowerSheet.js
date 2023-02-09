@@ -2,7 +2,9 @@ import { SlotType } from "../mechanics/powers/frameworks.js";
 import FrameworkSheet from "./FrameworkSheet.js";
 
 export default class MultipowerSheet extends FrameworkSheet {
-  static frameworkType = "multipower";
+  static get frameworkType() {
+    return "multipower";
+  }
 
   get framework() {
     return this.item.asMultipower;

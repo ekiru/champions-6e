@@ -1,7 +1,9 @@
 import FrameworkSheet from "./FrameworkSheet.js";
 
 export default class VPPSheet extends FrameworkSheet {
-  static frameworkType = "vpp";
+  static get frameworkType() {
+    return "vpp";
+  }
 
   get framework() {
     return this.item.asVPP;
