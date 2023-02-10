@@ -1,21 +1,3 @@
-/**
- * Specifies data about a Power.
- *
- * @typedef {object} PowerData
- * @property {string} name The name of the power.
- * @property {string[]} categories Categories (according to the power class) to which
- * the power belongs.
- * @property {object} [cost] The cost structure of the power.
- * @property {"perDie"|"perMeter"|"fixed"} cost.type Which type of cost structure the
- * power has.
- * @property {number} [cost.perDie] The cost per die of a power.
- * @property {number} [cost.perMeter] The cost per meter of a power.
- * @property {number} [cost.fixed] The fixed cost of a power.
- */
-/**
- *
- * @constant {PowerData[]}
- */
 export const POWER_DATA = [
     { name: "Absorption", categories: [] },
     { name: "Aid", categories: ["attack"], cost: { type: "perDie", perDie: 6 } },
