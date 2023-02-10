@@ -29,7 +29,6 @@ import {
   PowerLimitation,
 } from "../../../src/mechanics/powers/modifiers.js";
 import * as assert from "../../../src/util/assert.js";
-import { Enum } from "../../../src/util/enum.js";
 
 /**
  * Verifies that the received object does not throw AbstractMethodErrors for any of
@@ -93,8 +92,8 @@ describe("PowerType", function () {
     });
 
     describe("Powers", function () {
-      it("is an Enum", function () {
-        expect(StandardPowerType.Powers).toBeInstanceOf(Enum);
+      it("is a Set", function () {
+        expect(StandardPowerType.Powers).toBeInstanceOf(Map);
       });
 
       it("has every power from CC 6E", function () {
@@ -164,7 +163,7 @@ describe("PowerType", function () {
         ];
         const found = [];
         for (const power of powers) {
-          if (StandardPowerType.Powers[power]) {
+          if (StandardPowerType.Powers.has(power)) {
             found.push(power);
           }
         }

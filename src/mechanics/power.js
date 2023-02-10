@@ -1,5 +1,4 @@
 import * as assert from "../util/assert.js";
-import { Enum } from "../util/enum.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
 import { CostPerDie, CostPerMeter } from "./costs/power-costs.js";
@@ -10,7 +9,7 @@ import {
   getPowerCategoryByName,
   isPowerCategory,
   PowerCategory as _PowerCategory,
-} from "./power-category";
+} from "./power-category.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import {
@@ -46,11 +45,11 @@ export class StandardPowerType extends PowerType {
     this.#power = power;
   }
 
-  static Powers = new Enum(POWER_DATA.map(({ name }) => name));
+  static Powers = new Map(POWER_DATA.map(({ name }) => [name, Symbol(name)]));
 
   static POWER_NAMES = (function () {
     const result = {};
-    for (const power of StandardPowerType.Powers) {
+    for (const power of StandardPowerType.Powers.values()) {
       result[power.description] = power.description;
     }
     return Object.freeze(result);
@@ -95,7 +94,7 @@ export class StandardPowerType extends PowerType {
 }
 
 for (const data of POWER_DATA) {
-  const power = StandardPowerType.Powers[data.name];
+  const power = StandardPowerType.Powers.get(data.name);
   STANDARD_POWER_TYPES.set(power.description, new StandardPowerType(power));
 
   const categories = new Set();

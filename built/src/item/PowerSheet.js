@@ -5,7 +5,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _PowerSheet_instances, _PowerSheet_modifierData, _PowerSheet_overrideCategoriesForStandardPowerType;
 import { StandardPowerType } from "../mechanics/power.js";
-import { PowerCategory } from "../mechanics/power-category";
+import { PowerCategory } from "../mechanics/power-category.js";
 import FieldBuilder from "../sheets/FieldBuilder.js";
 import { defaultModifierData, modifierDataForSheet, } from "../sheets/modifier-helper.js";
 import * as assert from "../util/assert.js";

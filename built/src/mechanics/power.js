@@ -11,13 +11,12 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _StandardPowerType_power, _CustomPowerType_name, _Power_instances, _Power_adders, _Power_advantages, _Power_limitations, _Power_categories, _Power_prepareCategoryData;
 import * as assert from "../util/assert.js";
-import { Enum } from "../util/enum.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
 import { CostPerDie, CostPerMeter } from "./costs/power-costs.js";
 import { FixedCost } from "./costs/universal-costs.js";
 import { POWER_DATA } from "./data/power-data.js";
-import { isPowerCategoryName, getPowerCategoryByName, isPowerCategory, PowerCategory as _PowerCategory, } from "./power-category";
+import { isPowerCategoryName, getPowerCategoryByName, isPowerCategory, PowerCategory as _PowerCategory, } from "./power-category.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerAdvantage, PowerLimitation, } from "./powers/modifiers.js";
@@ -68,16 +67,16 @@ export class StandardPowerType extends PowerType {
     }
 }
 _StandardPowerType_power = new WeakMap();
-StandardPowerType.Powers = new Enum(POWER_DATA.map(({ name }) => name));
+StandardPowerType.Powers = new Map(POWER_DATA.map(({ name }) => [name, Symbol(name)]));
 StandardPowerType.POWER_NAMES = (function () {
     const result = {};
-    for (const power of StandardPowerType.Powers) {
+    for (const power of StandardPowerType.Powers.values()) {
         result[power.description] = power.description;
     }
     return Object.freeze(result);
 })();
 for (const data of POWER_DATA) {
-    const power = StandardPowerType.Powers[data.name];
+    const power = StandardPowerType.Powers.get(data.name);
     STANDARD_POWER_TYPES.set(power.description, new StandardPowerType(power));
     const categories = new Set();
     for (let name of data.categories) {

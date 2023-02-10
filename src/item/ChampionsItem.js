@@ -423,6 +423,7 @@ export default class ChampionsItem extends Item {
       if (newType.isStandard && !oldType.isStandard) {
         const oldNameIsAStandardPower =
           oldType.name in StandardPowerType.POWER_NAMES;
+        console.log(StandardPowerType.POWER_NAMES);
         if (newType.name || !oldNameIsAStandardPower) {
           newType.name = newType.name ?? "Absorption";
         }
