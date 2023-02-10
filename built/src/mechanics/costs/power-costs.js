@@ -41,7 +41,7 @@ export class CostPerDie extends CostStructure {
         const attack = power.attack;
         if (Damage.supportsApPerDie(__classPrivateFieldGet(this, _CostPerDie_cost, "f"))) {
             const copiedDamage = Damage.fromDice(attack.damage.dice, __classPrivateFieldGet(this, _CostPerDie_cost, "f"));
-            return copiedDamage.dc * 5;
+            return (copiedDamage.dc ?? 0) * 5;
         }
         else {
             return __classPrivateFieldGet(this, _CostPerDie_cost, "f") * Math.ceil(attack.damage.dice);

@@ -6,15 +6,15 @@ import * as assert from "../../util/assert.js";
  * It will probably only need to really be an interface, but instanceof checks
  * are modestly useful.
  */
-export class CostStructure {
+export abstract class CostStructure<GameElement> {
   /**
    * The class representing the game elements to which this cost structure can apply.
    *
    * @type {Function}
    */
-  static get expectedGameElement() {
+  static get expectedGameElement(): Function {
     assert.abstract(CostStructure, "expectedGameElement");
-    return null;
+    return Object;
   }
 
   /**
@@ -23,11 +23,7 @@ export class CostStructure {
    * @param {any} gameElement The game element to validate.
    * @returns {boolean} `true` if the game element is valid for this cost structure.
    */
-  validate(gameElement) {
-    assert.abstract(CostStructure, "validate");
-    gameElement;
-    return false;
-  }
+  abstract validate(gameElement: GameElement): boolean;
 
   /**
    * Calculates the base cost of a game element.
@@ -38,19 +34,12 @@ export class CostStructure {
    * @param {any} gameElement The game element.
    * @returns {number} The base cost of the game element.
    */
-  costOf(gameElement) {
-    assert.abstract(CostStructure, "costOf");
-    gameElement;
-    return 0;
-  }
+  abstract costOf(gameElement: GameElement): number;
 
   /**
    * A string summarizing how the cost is calculated.
    *
    * @returns  {string} The summary.
    */
-  get summary() {
-    assert.abstract(CostStructure, "summary");
-    return "";
-  }
+  abstract get summary(): string;
 }

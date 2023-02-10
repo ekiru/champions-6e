@@ -5,10 +5,10 @@ import { CostStructure } from "./cost-structure.js";
 /**
  * Represents a game element whose cost is paid per d6 of effect/damage.
  */
-export class CostPerDie extends CostStructure {
+export class CostPerDie extends CostStructure<Power> {
   #cost;
 
-  constructor(costPerDie) {
+  constructor(costPerDie: number) {
     super();
     this.#cost = costPerDie;
   }
@@ -21,7 +21,7 @@ export class CostPerDie extends CostStructure {
     return Power;
   }
 
-  validate(power) {
+  validate(power: Power) {
     return power instanceof Power && power.hasCategory(PowerCategory.ATTACK);
   }
 
@@ -31,12 +31,12 @@ export class CostPerDie extends CostStructure {
    * @param {Power} power The power.
    * @returns {number} The base cost of the power.
    */
-  costOf(power) {
+  costOf(power: Power) {
     const attack = power.attack;
     if (Damage.supportsApPerDie(this.#cost)) {
       const copiedDamage = Damage.fromDice(attack.damage.dice, this.#cost);
 
-      return copiedDamage.dc * 5;
+      return (copiedDamage.dc ?? 0) * 5;
     } else {
       return this.#cost * Math.ceil(attack.damage.dice);
     }
@@ -50,10 +50,10 @@ export class CostPerDie extends CostStructure {
 /**
  * Represents a game element whose cost is paid per meter of distance/movement.
  */
-export class CostPerMeter extends CostStructure {
+export class CostPerMeter extends CostStructure<Power> {
   #cost;
 
-  constructor(costPerMeter) {
+  constructor(costPerMeter: number) {
     super();
     this.#cost = costPerMeter;
   }
@@ -66,7 +66,7 @@ export class CostPerMeter extends CostStructure {
     return Power;
   }
 
-  validate(power) {
+  validate(power: Power) {
     return power instanceof Power && power.hasCategory(PowerCategory.MOVEMENT);
   }
 
@@ -76,7 +76,7 @@ export class CostPerMeter extends CostStructure {
    * @param {Power} power The power.
    * @returns {number} The base cost of the power.
    */
-  costOf(power) {
+  costOf(power: Power) {
     const mode = power.movementMode;
     return Math.ceil(mode.distance.base * this.#cost);
   }

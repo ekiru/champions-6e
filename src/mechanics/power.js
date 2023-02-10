@@ -21,11 +21,16 @@ const compareByNameWithFrameworkModifiersLast = compareByLexically(
 );
 
 /**
+ * @typedef PowerCategoryEnum
+ * @augments {Enum}
+ * @property {symbol} ATTACK Powers that roll damage/effect dice.
+ * @property {symbol} MOVEMENT Powers that provide the character with new modes of
+ */
+
+/**
  * Identifies a category of powers with special handling.
  *
- * @constant {object}
- * @property {symbol} MOVEMENT Powers that provide the character with new modes of
- * movement.
+ * @type {PowerCategoryEnum}
  */
 export const PowerCategory = new Enum(["ATTACK", "MOVEMENT"]);
 

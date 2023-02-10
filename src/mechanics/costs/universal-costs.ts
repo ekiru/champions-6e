@@ -4,7 +4,7 @@ import * as assert from "../../util/assert.js";
 /**
  * Represents a game element with a fixed cost.
  */
-export class FixedCost extends CostStructure {
+export class FixedCost extends CostStructure<any> {
   #points;
 
   /**
@@ -12,7 +12,7 @@ export class FixedCost extends CostStructure {
    *
    * @param {number} points The base points which the element should always cost.
    */
-  constructor(points) {
+  constructor(points: number) {
     super();
     assert.precondition(typeof points == "number", "cost must be a number");
     this.#points = points;
@@ -26,12 +26,12 @@ export class FixedCost extends CostStructure {
     return Object;
   }
 
-  validate(gameElement) {
+  validate(gameElement: Object) {
     gameElement;
     return true;
   }
 
-  costOf(gameElement) {
+  costOf(gameElement: Object) {
     gameElement;
     return this.#points;
   }

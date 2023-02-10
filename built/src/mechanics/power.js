@@ -22,11 +22,15 @@ import { MovementMode } from "./movement-mode.js";
 import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerAdvantage, PowerLimitation, } from "./powers/modifiers.js";
 const compareByNameWithFrameworkModifiersLast = compareByLexically((mod) => mod instanceof FrameworkModifier, (mod) => mod.name);
 /**
+ * @typedef PowerCategoryEnum
+ * @augments {Enum}
+ * @property {symbol} ATTACK Powers that roll damage/effect dice.
+ * @property {symbol} MOVEMENT Powers that provide the character with new modes of
+ */
+/**
  * Identifies a category of powers with special handling.
  *
- * @constant {object}
- * @property {symbol} MOVEMENT Powers that provide the character with new modes of
- * movement.
+ * @type {PowerCategoryEnum}
  */
 export const PowerCategory = new Enum(["ATTACK", "MOVEMENT"]);
 export class PowerType {
