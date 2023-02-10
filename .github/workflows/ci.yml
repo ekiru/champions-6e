@@ -21,9 +21,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - name: Enables corepack to make yarn available
-        run: corepack enable
+      - name: clean install with NPM
+        run: npm ci
       - name: Run lints
-        run: yarn lint
+        run: npm lint
       - name: Run tests
-        run: yarn test
+        run: npm test
