@@ -23,6 +23,8 @@ jobs:
           node-version: 16.x
       - name: clean install with NPM
         run: npm ci
+      - name: Build the typescript
+        run: npm run build
       - name: Run lints
         run: npm run lint
       - name: Run tests
