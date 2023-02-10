@@ -17,22 +17,12 @@ import { Attack } from "./attack.js";
 import { CostPerDie, CostPerMeter } from "./costs/power-costs.js";
 import { FixedCost } from "./costs/universal-costs.js";
 import { POWER_DATA } from "./data/power-data.js";
+import { isPowerCategoryName, getPowerCategoryByName, isPowerCategory, PowerCategory as _PowerCategory, } from "./power-category";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerAdvantage, PowerLimitation, } from "./powers/modifiers.js";
 const compareByNameWithFrameworkModifiersLast = compareByLexically((mod) => mod instanceof FrameworkModifier, (mod) => mod.name);
-/**
- * @typedef PowerCategoryEnum
- * @augments {Enum}
- * @property {symbol} ATTACK Powers that roll damage/effect dice.
- * @property {symbol} MOVEMENT Powers that provide the character with new modes of
- */
-/**
- * Identifies a category of powers with special handling.
- *
- * @type {PowerCategoryEnum}
- */
-export const PowerCategory = new Enum(["ATTACK", "MOVEMENT"]);
+export const PowerCategory = _PowerCategory;
 export class PowerType {
     get name() {
         return assert.abstract(PowerType, "name");
@@ -92,8 +82,8 @@ for (const data of POWER_DATA) {
     const categories = new Set();
     for (let name of data.categories) {
         name = name.toUpperCase();
-        assert.that(name in PowerCategory, `no such category ${name}`);
-        categories.add(PowerCategory[name]);
+        assert.that(isPowerCategoryName(name), `no such category ${name}`);
+        categories.add(getPowerCategoryByName(name));
     }
     STANDARD_POWER_CATEGORIES.set(power, Object.freeze(categories));
     if (data.cost) {
@@ -154,7 +144,7 @@ export class Power {
             for (const category of Reflect.ownKeys(categories)) {
                 const unrecognizedCategoryMessage = `unrecognized category ${category.toString()}`;
                 assert.precondition(typeof category === "symbol", unrecognizedCategoryMessage);
-                assert.precondition(PowerCategory.has(category), unrecognizedCategoryMessage);
+                assert.precondition(isPowerCategory(category), unrecognizedCategoryMessage);
                 const data = __classPrivateFieldGet(this, _Power_instances, "m", _Power_prepareCategoryData).call(this, category, categories[category]);
                 __classPrivateFieldGet(this, _Power_categories, "f").set(category, data);
             }
@@ -191,7 +181,7 @@ export class Power {
         }
         const categories = {};
         for (const [category, present] of Object.entries(system.power.categories)) {
-            const categoryId = PowerCategory[category.toUpperCase()];
+            const categoryId = getPowerCategoryByName(category.toUpperCase());
             if (present ||
                 (powerType instanceof StandardPowerType &&
                     powerType.categories.has(categoryId))) {

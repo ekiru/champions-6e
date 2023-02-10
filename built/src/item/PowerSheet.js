@@ -4,7 +4,8 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _PowerSheet_instances, _PowerSheet_modifierData, _PowerSheet_overrideCategoriesForStandardPowerType;
-import { PowerCategory, StandardPowerType } from "../mechanics/power.js";
+import { StandardPowerType } from "../mechanics/power.js";
+import { PowerCategory } from "../mechanics/power-category";
 import FieldBuilder from "../sheets/FieldBuilder.js";
 import { defaultModifierData, modifierDataForSheet, } from "../sheets/modifier-helper.js";
 import * as assert from "../util/assert.js";

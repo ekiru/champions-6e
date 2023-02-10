@@ -5,7 +5,8 @@ import { CostPerDie, CostPerMeter, } from "../../../src/mechanics/costs/power-co
 import { FixedCost } from "../../../src/mechanics/costs/universal-costs.js";
 import { Damage } from "../../../src/mechanics/damage.js";
 import { ModifiableValue } from "../../../src/mechanics/modifiable-value.js";
-import { Power, PowerCategory, StandardPowerType, } from "../../../src/mechanics/power.js";
+import { Power, StandardPowerType } from "../../../src/mechanics/power.js";
+import { PowerCategory } from "../../../src/mechanics/power-category";
 describe("Universal cost structures", function () {
     describe("Fixed costs", function () {
         it("should consider any game element valid", function () {

@@ -9,7 +9,8 @@ import { compareBy } from "../util/sort.js";
 import { Characteristic, byName as characteristicByName, } from "./characteristics.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
-import { Power, PowerCategory, StandardPowerType } from "./power.js";
+import { Power, StandardPowerType } from "./power.js";
+import { PowerCategory } from "./power-category";
 import { Multipower } from "./powers/multipowers.js";
 import { VPP } from "./powers/vpps.js";
 const DEFAULT_MOVEMENT_MODES = Object.freeze([

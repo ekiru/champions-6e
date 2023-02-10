@@ -5,7 +5,8 @@ import { Character } from "../../src/mechanics/character.js";
 import { SPD, STR } from "../../src/mechanics/characteristics.js";
 import { ModifiableValue } from "../../src/mechanics/modifiable-value.js";
 import { MovementMode } from "../../src/mechanics/movement-mode.js";
-import { PowerCategory, StandardPowerType } from "../../src/mechanics/power.js";
+import { StandardPowerType } from "../../src/mechanics/power.js";
+import { PowerCategory } from "../../src/mechanics/power-category";
 
 describe("Characters", function () {
   describe("constructor", function () {

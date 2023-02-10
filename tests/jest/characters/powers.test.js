@@ -17,10 +17,10 @@ import { MovementMode } from "../../../src/mechanics/movement-mode.js";
 import {
   CustomPowerType,
   Power,
-  PowerCategory,
   PowerType,
   StandardPowerType,
 } from "../../../src/mechanics/power.js";
+import { PowerCategory } from "../../../src/mechanics/power-category";
 import {
   FrameworkModifier,
   FrameworkModifierScope,

@@ -1,4 +1,5 @@
-import { PowerCategory, StandardPowerType } from "../mechanics/power.js";
+import { StandardPowerType } from "../mechanics/power.js";
+import { PowerCategory } from "../mechanics/power-category";
 import FieldBuilder from "../sheets/FieldBuilder.js";
 import {
   defaultModifierData,

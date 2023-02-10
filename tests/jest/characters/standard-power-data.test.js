@@ -5,10 +5,8 @@ import {
   CostPerMeter,
 } from "../../../src/mechanics/costs/power-costs.js";
 import { FixedCost } from "../../../src/mechanics/costs/universal-costs.js";
-import {
-  PowerCategory,
-  StandardPowerType,
-} from "../../../src/mechanics/power.js";
+import { StandardPowerType } from "../../../src/mechanics/power.js";
+import { PowerCategory } from "../../../src/mechanics/power-category";
 
 describe("Standard Power metadata", function () {
   describe(".categories", function () {
