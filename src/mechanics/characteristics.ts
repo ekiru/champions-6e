@@ -112,7 +112,7 @@ STR.defineAttribute(
   function (str: number) {
     assert.precondition(Number.isInteger(str), "STR must be an integer");
     for (let i = 0; i < LIFTING_WEIGHT_TABLE.length; i++) {
-      const row = LIFTING_WEIGHT_TABLE[i];
+      const row = LIFTING_WEIGHT_TABLE[i]!;
       if (str === row[0]) {
         return {
           value: row[1],
@@ -121,7 +121,7 @@ STR.defineAttribute(
       } else if (str < row[0]) {
         // intermediate between multiples of 5
         assert.precondition(i > 0, "STR must exceed 0");
-        const lesser = LIFTING_WEIGHT_TABLE[i - 1];
+        const lesser = LIFTING_WEIGHT_TABLE[i - 1]!;
         const greater = row;
         switch (str % 5) {
           case 1:
@@ -152,7 +152,8 @@ STR.defineAttribute(
       }
     }
     // str > 100
-    const oneHundredRow = LIFTING_WEIGHT_TABLE[LIFTING_WEIGHT_TABLE.length - 1];
+    const oneHundredRow =
+      LIFTING_WEIGHT_TABLE[LIFTING_WEIGHT_TABLE.length - 1]!;
     return {
       value: oneHundredRow[1],
       unit: oneHundredRow[2] + "?",

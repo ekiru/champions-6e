@@ -24,7 +24,10 @@ class TableColumn {
         Object.freeze(this);
     }
     get(index) {
-        return this.table[index];
+        assert.precondition(index >= 0 && index < this.length, `index ${index} out of bounds`);
+        const entry = this.table[index];
+        assert.that(entry !== undefined);
+        return entry;
     }
     get length() {
         return this.table.length;
