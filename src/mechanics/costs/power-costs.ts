@@ -1,6 +1,6 @@
 import { Damage } from "../damage.js";
 import { Power } from "../power.js";
-import { PowerCategory } from "../power-category";
+import { PowerCategory } from "../power-category.js";
 import { CostStructure } from "./cost-structure.js";
 
 /**

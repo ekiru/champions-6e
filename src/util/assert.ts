@@ -1,10 +1,10 @@
 export class AssertionError extends Error {}
 
 export class AbstractMethodError extends AssertionError {
-  class;
-  method;
+  readonly class: string;
+  readonly method: string;
 
-  constructor(cls, method) {
+  constructor(cls: Function, method: string) {
     super(`Abstract method ${cls.name}.${method} called`);
     this.class = cls.name;
     this.method = method;
@@ -17,7 +17,7 @@ export class AbstractMethodError extends AssertionError {
  * @param {Function} cls The class which defines the abstract method.
  * @param {string} method The method name
  */
-export function abstract(cls, method) {
+export function abstract(cls: Function, method: string): never {
   throw new AbstractMethodError(cls, method);
 }
 
@@ -27,7 +27,7 @@ export function abstract(cls, method) {
  * @param {string?} message A message to use in the error.
  * @returns {never} Always throws.
  */
-export function notYetImplemented(message = undefined) {
+export function notYetImplemented(message?: string): never {
   throw new AssertionError(message ?? "not yet implemented");
 }
 
@@ -37,7 +37,10 @@ export function notYetImplemented(message = undefined) {
  * @param {boolean} condition Whether the precondition holds.
  * @param {string?} message A message to throw if the precondition fails.
  */
-export function precondition(condition, message = undefined) {
+export function precondition(
+  condition: boolean,
+  message?: string
+): asserts condition {
   message = message ?? "Precondition failed";
   if (!condition) {
     throw new AssertionError(message);
@@ -50,7 +53,7 @@ export function precondition(condition, message = undefined) {
  * @param {boolean} condition The condition to be asserted
  * @param {string?} message A message to be include in the error if the condition is false
  */
-export function that(condition, message = undefined) {
+export function that(condition: boolean, message?: string): asserts condition {
   if (!condition) {
     throw new AssertionError(message ?? "Assertion failed.");
   }

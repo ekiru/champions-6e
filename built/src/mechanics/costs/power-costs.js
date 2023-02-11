@@ -11,7 +11,8 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _CostPerDie_cost, _CostPerMeter_cost;
 import { Damage } from "../damage.js";
-import { Power, PowerCategory } from "../power.js";
+import { Power } from "../power.js";
+import { PowerCategory } from "../power-category.js";
 import { CostStructure } from "./cost-structure.js";
 /**
  * Represents a game element whose cost is paid per d6 of effect/damage.
