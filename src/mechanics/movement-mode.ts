@@ -3,7 +3,19 @@ import { ModifiableValue } from "./modifiable-value.js";
 import { PowerType } from "./power.js";
 
 export class MovementMode {
-  constructor(name, { id, type, distance }) {
+  readonly name: string;
+  readonly id?: string;
+  readonly type: PowerType;
+  readonly distance: ModifiableValue;
+
+  constructor(
+    name: string,
+    {
+      id,
+      type,
+      distance,
+    }: { id?: string; type: PowerType; distance: ModifiableValue }
+  ) {
     assert.precondition(typeof name === "string", "name must be a string");
     assert.precondition(
       id === undefined || typeof id === "string",
