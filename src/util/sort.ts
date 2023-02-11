@@ -1,12 +1,16 @@
 import * as assert from "./assert.js";
 
+export type Comparator<T> = (a: T, b: T) => number;
+
 /**
  * Creates a comparison function that compares by the result of keyFn.
  *
  * @param {function(any): any} keyFn A function that maps Array elements to the property to sort by.
  * @returns {function(any, any): number} A comparison function to pass to Array.prototype.sort()
  */
-export function compareBy(keyFn) {
+export function compareBy<Object>(
+  keyFn: (o: Object) => any
+): Comparator<Object> {
   return function (a, b) {
     const ka = keyFn(a);
     const kb = keyFn(b);
@@ -27,7 +31,9 @@ export function compareBy(keyFn) {
  * @param {Array<function(any): any>} keys A list of functions that maps Array elements to the property to sort by.
  * @returns {function(any, any): number} A comparison function to pass to Array.prototype.sort()
  */
-export function compareByLexically(...keys) {
+export function compareByLexically<Object>(
+  ...keys: ((o: Object) => any)[]
+): Comparator<Object> {
   assert.precondition(
     keys.length > 0,
     "compareByLexically needs at least one key function"
