@@ -1,11 +1,13 @@
 import * as assert from "../util/assert.js";
 
-const nameMapping = new Map();
+const nameMapping = new Map<string, Characteristic>();
 
 export class Characteristic {
-  #derivedAttributes;
+  readonly abbreviation: string;
+  readonly name: string;
+  #derivedAttributes: Map<string, Function>;
 
-  constructor(abbreviation, name) {
+  constructor(abbreviation: string, name: string) {
     this.abbreviation = abbreviation;
     this.name = name;
     nameMapping.set(abbreviation.toLowerCase(), this);
@@ -16,25 +18,25 @@ export class Characteristic {
     this.#derivedAttributes = new Map();
   }
 
-  defineAttribute(name, fn) {
+  defineAttribute(name: string, fn: Function) {
     this.#derivedAttributes.set(name, fn);
   }
 
-  derivedAttributes(value) {
-    const result = {};
+  derivedAttributes(value: number): Record<string, any> {
+    const result: Record<string, any> = {};
     for (const [name, fn] of this.#derivedAttributes.entries()) {
       result[name] = fn(value);
     }
     return result;
   }
 
-  targetNumber(value) {
+  targetNumber(value: number): number {
     return Math.round(9 + value / 5);
   }
 }
 
 export class RollableCharacteristic extends Characteristic {
-  constructor(abbreviation, name) {
+  constructor(abbreviation: string, name: string) {
     super(abbreviation, name);
     Object.defineProperty(this, "isRollable", {
       configurable: false,
@@ -51,7 +53,7 @@ export class RollableCharacteristic extends Characteristic {
  * @returns {Characteristic} The characteristic, or undefined if there is no such
  * characteristic.
  */
-export function byName(name) {
+export function byName(name: string): Characteristic | undefined {
   return nameMapping.get(name.toLowerCase());
 }
 
@@ -63,7 +65,7 @@ export function byName(name) {
  * @param {number} points The amount of points of the characteristic
  * @returns {number} The number of dice of effect.
  */
-function characteristicEffectDice(points) {
+function characteristicEffectDice(points: number): number {
   const wholeDice = Math.floor(points / 5);
   if (points % 5 >= 3) {
     return wholeDice + 0.5;
@@ -77,7 +79,7 @@ STR.defineAttribute(
   "system.characteristics.str.hthDamage",
   characteristicEffectDice
 );
-const LIFTING_WEIGHT_TABLE = [
+const LIFTING_WEIGHT_TABLE: [str: number, weight: number, unit: string][] = [
   // STR weight unit
   [0, 0, "kg"],
   [1, 8, "kg"],
@@ -105,55 +107,58 @@ const LIFTING_WEIGHT_TABLE = [
   [95, 12500, "tons"],
   [100, 25000, "tons"],
 ];
-STR.defineAttribute("system.characteristics.str.liftingWeight", function (str) {
-  assert.precondition(Number.isInteger(str), "STR must be an integer");
-  for (let i = 0; i < LIFTING_WEIGHT_TABLE.length; i++) {
-    const row = LIFTING_WEIGHT_TABLE[i];
-    if (str === row[0]) {
-      return {
-        value: row[1],
-        unit: row[2],
-      };
-    } else if (str < row[0]) {
-      // intermediate between multiples of 5
-      assert.precondition(i > 0, "STR must exceed 0");
-      const lesser = LIFTING_WEIGHT_TABLE[i - 1];
-      const greater = row;
-      switch (str % 5) {
-        case 1:
-        case 2:
-          return {
-            value: lesser[1],
-            unit: lesser[2],
-          };
-        case 3:
-          if (lesser[2] === greater[2]) {
+STR.defineAttribute(
+  "system.characteristics.str.liftingWeight",
+  function (str: number) {
+    assert.precondition(Number.isInteger(str), "STR must be an integer");
+    for (let i = 0; i < LIFTING_WEIGHT_TABLE.length; i++) {
+      const row = LIFTING_WEIGHT_TABLE[i];
+      if (str === row[0]) {
+        return {
+          value: row[1],
+          unit: row[2],
+        };
+      } else if (str < row[0]) {
+        // intermediate between multiples of 5
+        assert.precondition(i > 0, "STR must exceed 0");
+        const lesser = LIFTING_WEIGHT_TABLE[i - 1];
+        const greater = row;
+        switch (str % 5) {
+          case 1:
+          case 2:
             return {
-              value: (lesser[1] + greater[1]) / 2,
+              value: lesser[1],
               unit: lesser[2],
             };
-          } else {
-            assert.that(lesser[2] === "kg" && greater[2] === "tons");
+          case 3:
+            if (lesser[2] === greater[2]) {
+              return {
+                value: (lesser[1] + greater[1]) / 2,
+                unit: lesser[2],
+              };
+            } else {
+              assert.that(lesser[2] === "kg" && greater[2] === "tons");
+              return {
+                value: (lesser[1] + greater[1] * 1000) / 2,
+                unit: "kg",
+              };
+            }
+          case 4:
             return {
-              value: (lesser[1] + greater[1] * 1000) / 2,
-              unit: "kg",
+              value: greater[1],
+              unit: greater[2],
             };
-          }
-        case 4:
-          return {
-            value: greater[1],
-            unit: greater[2],
-          };
+        }
       }
     }
+    // str > 100
+    const oneHundredRow = LIFTING_WEIGHT_TABLE[LIFTING_WEIGHT_TABLE.length - 1];
+    return {
+      value: oneHundredRow[1],
+      unit: oneHundredRow[2] + "?",
+    };
   }
-  // str > 100
-  const oneHundredRow = LIFTING_WEIGHT_TABLE[LIFTING_WEIGHT_TABLE.length - 1];
-  return {
-    value: oneHundredRow[1],
-    unit: oneHundredRow[2] + "?",
-  };
-});
+);
 
 export const DEX = new RollableCharacteristic("DEX", "Dexterity");
 export const CON = new RollableCharacteristic("CON", "Constiution");
@@ -186,15 +191,15 @@ const SPEED_CHART = new Map(
     [10, [2, 3, 4, 5, 6, 8, 9, 10, 11, 12]],
     [11, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
     [12, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
-  ].map(([k, v]) => [k, Object.freeze(v)])
+  ].map(([k, v]) => [k, Object.freeze(v)]) as [spd: number, phases: number[]][]
 );
 export const SPD = new Characteristic("SPD", "Speed");
-SPD.defineAttribute("system.phases", function (spd) {
+SPD.defineAttribute("system.phases", function (spd: number): number[] {
   assert.precondition(spd >= 0);
   if (spd > 12) {
     spd = 12;
   }
-  return SPEED_CHART.get(spd);
+  return SPEED_CHART.get(spd)!;
 });
 
 export const PD = new Characteristic("PD", "Physical Defense");
