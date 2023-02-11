@@ -9,7 +9,13 @@ const DamageRollDie = Object.freeze({
 });
 
 class TableColumn {
-  constructor(period, table) {
+  readonly period: number;
+  readonly table;
+
+  constructor(
+    period: number,
+    table: (number | { dice: number; adjustment?: number })[]
+  ) {
     this.period = period;
     this.table = Object.freeze(
       table.map((entry) => {
@@ -28,7 +34,7 @@ class TableColumn {
     Object.freeze(this);
   }
 
-  get(index) {
+  get(index: number) {
     return this.table[index];
   }
 
@@ -114,15 +120,19 @@ const DC_TABLE = new Map([
  * @returns {number?} The number of DCs for the roll, or undefined if we don't
  * recognize the AP per die.
  */
-export function calculateDC(dice, apPerDie, adjustment) {
-  if (DC_TABLE.has(apPerDie)) {
+export function calculateDC(
+  dice: number,
+  apPerDie: number,
+  adjustment: number
+): number | undefined {
+  const column = DC_TABLE.get(apPerDie);
+  if (column !== undefined) {
     const forFullDice = (dice * apPerDie) / 5;
     let extra = 0;
     if (adjustment !== DamageRollDie.Full) {
       if (apPerDie === 5) {
         extra = 0.5;
       } else {
-        const column = DC_TABLE.get(apPerDie);
         for (let i = 0; i < column.length; i++) {
           if (column.get(i).adjustment === adjustment) {
             extra = i + 1;
@@ -148,7 +158,10 @@ export function calculateDC(dice, apPerDie, adjustment) {
  * @param {number} apPerDie How many AP a single dice of damage costs for the power
  * @returns {object} The `dice` and any `adjustment` to roll for the DCs.
  */
-export function diceForDCs(dc, apPerDie) {
+export function diceForDCs(
+  dc: number,
+  apPerDie: number
+): { dice: number; adjustment: number } {
   assert.precondition(
     isKnownApPerDie(apPerDie),
     `unsupported AP per die ${apPerDie}`
@@ -159,10 +172,10 @@ export function diceForDCs(dc, apPerDie) {
     dice = Math.floor(dc);
     adjustment = dc - dice;
   } else if (dc > 0) {
-    const column = DC_TABLE.get(apPerDie);
+    const column = DC_TABLE.get(apPerDie)!;
     const entry = column.get((dc - 1) % column.length);
     dice = Math.floor((dc * column.period) / column.length);
-    adjustment = entry.adjustment;
+    adjustment = entry.adjustment ?? 0;
     if (entry.adjustment === DamageRollDie.MinusOne) {
       dice += 1;
     }
@@ -177,6 +190,6 @@ export function diceForDCs(dc, apPerDie) {
  * @returns {boolean} `true` if damage class calculations support the AP-per-die
  * value.
  */
-export function isKnownApPerDie(apPerDie) {
+export function isKnownApPerDie(apPerDie: number) {
   return DC_TABLE.has(apPerDie);
 }

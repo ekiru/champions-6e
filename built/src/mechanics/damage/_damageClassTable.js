@@ -107,7 +107,8 @@ const DC_TABLE = new Map([
  * recognize the AP per die.
  */
 export function calculateDC(dice, apPerDie, adjustment) {
-    if (DC_TABLE.has(apPerDie)) {
+    const column = DC_TABLE.get(apPerDie);
+    if (column !== undefined) {
         const forFullDice = (dice * apPerDie) / 5;
         let extra = 0;
         if (adjustment !== DamageRollDie.Full) {
@@ -115,7 +116,6 @@ export function calculateDC(dice, apPerDie, adjustment) {
                 extra = 0.5;
             }
             else {
-                const column = DC_TABLE.get(apPerDie);
                 for (let i = 0; i < column.length; i++) {
                     if (column.get(i).adjustment === adjustment) {
                         extra = i + 1;
@@ -150,7 +150,7 @@ export function diceForDCs(dc, apPerDie) {
         const column = DC_TABLE.get(apPerDie);
         const entry = column.get((dc - 1) % column.length);
         dice = Math.floor((dc * column.period) / column.length);
-        adjustment = entry.adjustment;
+        adjustment = entry.adjustment ?? 0;
         if (entry.adjustment === DamageRollDie.MinusOne) {
             dice += 1;
         }
