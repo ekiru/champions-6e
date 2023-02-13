@@ -52,11 +52,11 @@ class AdderValue extends TaggedNumber {
     }
 }
 export class PowerAdder extends PowerModifier {
-    constructor(...args) {
-        super(...args);
+    constructor(name, data) {
+        super(name, data);
         assert.precondition(Number.isInteger(this.value), "Adders cannot have fractional values");
         if (this.value < 0) {
-            this.value = Math.abs(this.value);
+            this.value = Math.abs(+this.value);
         }
         this.value = new AdderValue(this.value);
     }
@@ -64,7 +64,7 @@ export class PowerAdder extends PowerModifier {
 class AdvantageOrLimitationValue extends TaggedNumber {
     _tagNumber(ordinary) {
         if (ordinary == "0") {
-            return this.constructor.zeroString;
+            return this.zeroString;
         }
         let s = ordinary;
         s = s.replace(/\.5$/, "½");
@@ -74,18 +74,18 @@ class AdvantageOrLimitationValue extends TaggedNumber {
         const prefix = s.startsWith("-") ? "" : "+";
         return prefix + s;
     }
-    static get zeroString() {
+    get zeroString() {
         assert.abstract(AdvantageOrLimitationValue, "zeroString");
         return "0";
     }
 }
 class AdvantageValue extends AdvantageOrLimitationValue {
-    static get zeroString() {
+    get zeroString() {
         return "+0";
     }
 }
 class LimitationValue extends AdvantageOrLimitationValue {
-    static get zeroString() {
+    get zeroString() {
         return "-0";
     }
 }
@@ -95,20 +95,21 @@ export class PowerAdvantage extends PowerModifier {
         const { increasesDamage } = data;
         assert.precondition(increasesDamage === undefined || typeof increasesDamage === "boolean", "increasesDamage must be a boolean if present");
         if (this.value < 0) {
-            this.value = Math.abs(this.value);
+            this.value = Math.abs(+this.value);
         }
         this.increasesDamage = increasesDamage ?? false;
         this.value = new AdvantageValue(this.value);
     }
     toItemData() {
-        const data = super.toItemData();
-        data.increasesDamage = this.increasesDamage;
+        const data = Object.assign(super.toItemData(), {
+            increasesDamage: this.increasesDamage,
+        });
         return data;
     }
 }
 export class PowerLimitation extends PowerModifier {
-    constructor(...args) {
-        super(...args);
+    constructor(name, data) {
+        super(name, data);
         if (this.value > 0) {
             this.value = -this.value;
         }
@@ -185,7 +186,7 @@ export class FrameworkModifier {
         __classPrivateFieldSet(this, _FrameworkModifier_modifier, modifier, "f");
         this.scope = scope;
     }
-    static fromItemData({ id, scope, type, modifier: modifierData }) {
+    static fromItemData({ id, scope, type, modifier: modifierData, }) {
         assert.precondition(scope in FrameworkModifierScope, `unrecognized scope ${scope}`);
         let modifierClass;
         switch (type) {
@@ -203,9 +204,9 @@ export class FrameworkModifier {
         return new FrameworkModifier(modifier, FrameworkModifierScope[scope]);
     }
     display() {
-        const display = __classPrivateFieldGet(this, _FrameworkModifier_modifier, "f").display();
-        display.note = `${__classPrivateFieldGet(this, _FrameworkModifier_instances, "m", _FrameworkModifier_displayScope).call(this)} modifier from framework`;
-        return display;
+        return Object.assign(__classPrivateFieldGet(this, _FrameworkModifier_modifier, "f").display(), {
+            note: `${__classPrivateFieldGet(this, _FrameworkModifier_instances, "m", _FrameworkModifier_displayScope).call(this)} modifier from framework`,
+        });
     }
 }
 _FrameworkModifier_modifier = new WeakMap(), _FrameworkModifier_instances = new WeakSet(), _FrameworkModifier_displayScope = function _FrameworkModifier_displayScope() {

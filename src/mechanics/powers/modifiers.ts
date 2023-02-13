@@ -1,6 +1,24 @@
 import * as assert from "../../util/assert.js";
 import { Enum } from "../../util/enum.js";
+import { NumberLike } from "../../util/number-like.js";
 import { TaggedNumber } from "../../util/tagged-number.js";
+
+interface ModifierData {
+  id?: string;
+  value: NumberLike;
+  summary: string;
+  description: string;
+}
+
+interface ModifierItemData extends ModifierData {
+  name: string;
+}
+
+interface ModifierDisplay {
+  name: string;
+  value: string;
+  summary: string;
+}
 
 export class PowerModifier {
   /**
@@ -19,10 +37,8 @@ export class PowerModifier {
 
   /**
    * The value of the modifier
-   *
-   * @type {number}
    */
-  value;
+  value: NumberLike;
 
   /**
    * A short summary of the modifier, to be shown on the character sheet when a user
@@ -39,7 +55,7 @@ export class PowerModifier {
    */
   description;
 
-  constructor(name, { id, value, summary, description }) {
+  constructor(name: string, { id, value, summary, description }: ModifierData) {
     assert.precondition(
       id === undefined || typeof id === "string",
       "id must be a string if present"
@@ -61,11 +77,11 @@ export class PowerModifier {
     this.description = description;
   }
 
-  static fromItemData({ name, ...data }) {
+  static fromItemData({ name, ...data }: ModifierItemData) {
     return new this(name, data);
   }
 
-  toItemData() {
+  toItemData(): ModifierItemData {
     return {
       id: this.id,
       name: this.name,
@@ -85,29 +101,29 @@ export class PowerModifier {
 }
 
 class AdderValue extends TaggedNumber {
-  _tagNumber(ordinary) {
+  _tagNumber(ordinary: string) {
     return `+${ordinary} CP`;
   }
 }
 
 export class PowerAdder extends PowerModifier {
-  constructor(...args) {
-    super(...args);
+  constructor(name: string, data: ModifierData) {
+    super(name, data);
     assert.precondition(
       Number.isInteger(this.value),
       "Adders cannot have fractional values"
     );
     if (this.value < 0) {
-      this.value = Math.abs(this.value);
+      this.value = Math.abs(+this.value);
     }
     this.value = new AdderValue(this.value);
   }
 }
 
 class AdvantageOrLimitationValue extends TaggedNumber {
-  _tagNumber(ordinary) {
+  _tagNumber(ordinary: string) {
     if (ordinary == "0") {
-      return this.constructor.zeroString;
+      return this.zeroString;
     }
     let s = ordinary;
     s = s.replace(/\.5$/, "½");
@@ -118,26 +134,36 @@ class AdvantageOrLimitationValue extends TaggedNumber {
     return prefix + s;
   }
 
-  static get zeroString() {
+  get zeroString() {
     assert.abstract(AdvantageOrLimitationValue, "zeroString");
     return "0";
   }
 }
 
 class AdvantageValue extends AdvantageOrLimitationValue {
-  static get zeroString() {
+  get zeroString() {
     return "+0";
   }
 }
 
 class LimitationValue extends AdvantageOrLimitationValue {
-  static get zeroString() {
+  get zeroString() {
     return "-0";
   }
 }
 
+interface AdvantageData extends ModifierData {
+  increasesDamage?: boolean;
+}
+
+interface AdvantageItemData extends ModifierItemData {
+  increasesDamage: boolean;
+}
+
 export class PowerAdvantage extends PowerModifier {
-  constructor(name, data) {
+  readonly increasesDamage: boolean;
+
+  constructor(name: string, data: AdvantageData) {
     super(name, data);
 
     const { increasesDamage } = data;
@@ -146,22 +172,23 @@ export class PowerAdvantage extends PowerModifier {
       "increasesDamage must be a boolean if present"
     );
     if (this.value < 0) {
-      this.value = Math.abs(this.value);
+      this.value = Math.abs(+this.value);
     }
     this.increasesDamage = increasesDamage ?? false;
     this.value = new AdvantageValue(this.value);
   }
 
-  toItemData() {
-    const data = super.toItemData();
-    data.increasesDamage = this.increasesDamage;
+  toItemData(): AdvantageItemData {
+    const data: AdvantageItemData = Object.assign(super.toItemData(), {
+      increasesDamage: this.increasesDamage,
+    });
     return data;
   }
 }
 
 export class PowerLimitation extends PowerModifier {
-  constructor(...args) {
-    super(...args);
+  constructor(name: string, data: ModifierData) {
+    super(name, data);
 
     if (this.value > 0) {
       this.value = -this.value;
@@ -183,7 +210,19 @@ export const FrameworkModifierScope = new Enum([
   "FrameworkOnly",
   "FrameworkAndSlots",
   "SlotsOnly",
-]);
+]) as Enum &
+  Record<"FrameworkOnly" | "FrameworkAndSlots" | "SlotsOnly", symbol>;
+
+interface FrameworkModifierItemData {
+  id?: string;
+  scope: "FrameworkOnly" | "FrameworkAndSlots" | "SlotsOnly";
+  type: "advantage" | "limitation";
+  modifier: ModifierItemData | AdvantageItemData;
+}
+
+interface FrmaeworkModifierDisplay extends ModifierDisplay {
+  note: string;
+}
 
 export class FrameworkModifier {
   #modifier;
@@ -250,12 +289,17 @@ export class FrameworkModifier {
     return this.#modifier;
   }
 
-  constructor(modifier, scope) {
+  constructor(modifier: PowerModifier, scope: symbol) {
     this.#modifier = modifier;
     this.scope = scope;
   }
 
-  static fromItemData({ id, scope, type, modifier: modifierData }) {
+  static fromItemData({
+    id,
+    scope,
+    type,
+    modifier: modifierData,
+  }: FrameworkModifierItemData) {
     assert.precondition(
       scope in FrameworkModifierScope,
       `unrecognized scope ${scope}`
@@ -279,9 +323,9 @@ export class FrameworkModifier {
   }
 
   display() {
-    const display = this.#modifier.display();
-    display.note = `${this.#displayScope()} modifier from framework`;
-    return display;
+    return Object.assign(this.#modifier.display(), {
+      note: `${this.#displayScope()} modifier from framework`,
+    });
   }
 
   #displayScope() {
