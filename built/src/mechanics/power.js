@@ -9,7 +9,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _StandardPowerType_power, _CustomPowerType_name, _Power_instances, _Power_adders, _Power_advantages, _Power_limitations, _Power_categories, _Power_prepareCategoryData;
+var _StandardPowerType_power, _CustomPowerType_name, _Power_instances, _Power_adders, _Power_advantages, _Power_limitations, _Power_categories, _Power_prepareCategoryData, _Power_sumModifierValues;
 import * as assert from "../util/assert.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
@@ -19,7 +19,7 @@ import { POWER_DATA } from "./data/power-data.js";
 import { isPowerCategoryName, getPowerCategoryByName, isPowerCategory, PowerCategory as _PowerCategory, } from "./power-category.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
-import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerAdvantage, PowerLimitation, } from "./powers/modifiers.js";
+import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerAdvantage, PowerLimitation, PowerModifier, } from "./powers/modifiers.js";
 const compareByNameWithFrameworkModifiersLast = compareByLexically((mod) => mod instanceof FrameworkModifier, (mod) => mod.name);
 export const PowerCategory = _PowerCategory;
 export class PowerType {
@@ -248,8 +248,14 @@ export class Power {
     get adders() {
         return __classPrivateFieldGet(this, _Power_adders, "f");
     }
+    get adderTotal() {
+        return __classPrivateFieldGet(this, _Power_instances, "m", _Power_sumModifierValues).call(this, __classPrivateFieldGet(this, _Power_adders, "f"));
+    }
     get advantages() {
         return __classPrivateFieldGet(this, _Power_advantages, "f");
+    }
+    get advantageTotal() {
+        return __classPrivateFieldGet(this, _Power_instances, "m", _Power_sumModifierValues).call(this, __classPrivateFieldGet(this, _Power_advantages, "f"));
     }
     /**
      * The attack data for an attack Power.
@@ -292,6 +298,9 @@ export class Power {
     }
     get limitations() {
         return __classPrivateFieldGet(this, _Power_limitations, "f");
+    }
+    get limitationTotal() {
+        return __classPrivateFieldGet(this, _Power_instances, "m", _Power_sumModifierValues).call(this, __classPrivateFieldGet(this, _Power_limitations, "f"));
     }
     get modifiers() {
         return [].concat(this.adders, this.advantages, this.limitations);
@@ -355,6 +364,8 @@ _Power_adders = new WeakMap(), _Power_advantages = new WeakMap(), _Power_limitat
         default:
             assert.notYetImplemented(`Power category ${category.toString()} not yet supported`);
     }
+}, _Power_sumModifierValues = function _Power_sumModifierValues(modifiers) {
+    return modifiers.reduce((sum, mod) => sum + Math.abs(+mod.value), 0);
 };
 /**
  * Parses the data stored in a Power item for a category that the Power has.

@@ -18,6 +18,7 @@ import {
   PowerAdder,
   PowerAdvantage,
   PowerLimitation,
+  PowerModifier,
 } from "./powers/modifiers.js";
 
 const compareByNameWithFrameworkModifiersLast = compareByLexically(
@@ -346,8 +347,16 @@ export class Power {
     return this.#adders;
   }
 
+  get adderTotal() {
+    return this.#sumModifierValues(this.#adders);
+  }
+
   get advantages() {
     return this.#advantages;
+  }
+
+  get advantageTotal() {
+    return this.#sumModifierValues(this.#advantages);
   }
 
   /**
@@ -399,6 +408,10 @@ export class Power {
 
   get limitations() {
     return this.#limitations;
+  }
+
+  get limitationTotal() {
+    return this.#sumModifierValues(this.#limitations);
   }
 
   get modifiers() {
@@ -476,6 +489,16 @@ export class Power {
           `Power category ${category.toString()} not yet supported`
         );
     }
+  }
+
+  /**
+   * Sums an array of modifiers' values.
+   *
+   * @param {PowerModifier[]} modifiers The modifiers to sum
+   * @returns {number} The sum of the modifier's absolute values
+   */
+  #sumModifierValues(modifiers) {
+    return modifiers.reduce((sum, mod) => sum + Math.abs(+mod.value), 0);
   }
 }
 

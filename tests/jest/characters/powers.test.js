@@ -1,4 +1,5 @@
 /* eslint-env jest */
+import { describe, expect, it } from "@jest/globals";
 
 import { Attack, DamageType } from "../../../src/mechanics/attack.js";
 import {
@@ -640,128 +641,186 @@ describe("Power", function () {
   });
 
   describe("costs", function () {
-    it("defaults to 0 for a custom power type with no override", function () {
-      const power = new Power("Charisma", {
-        type: new CustomPowerType("PRE"),
-        summary: "",
-        description: "",
-      });
-      expect(power).toHaveProperty("cost", 0);
-    });
-
-    it("can be overridden with costOverride", function () {
-      const power = new Power("Charisma", {
-        type: new CustomPowerType("PRE"),
-        summary: "+20 PRE",
-        description: "",
-        costOverride: 20,
-      });
-      expect(power).toHaveProperty("cost", 20);
-    });
-
-    it("is based on the cost structure for standard powers", function () {
-      const flight = new Power("Wings", {
-        type: StandardPowerType.get("Flight"),
-        summary: "",
-        description: "",
-        categories: {
-          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(25) },
-        },
-      });
-      expect(flight).toHaveProperty("cost", 25);
-    });
-
-    describe("costStructure", function () {
-      const makePower = (type, categories = {}) =>
-        new Power("Do Stuff", {
+    describe("base cost", function () {
+      it("defaults to 0 for a custom power type with no override", function () {
+        const power = new Power("Charisma", {
+          type: new CustomPowerType("PRE"),
           summary: "",
           description: "",
-          type,
-          categories,
         });
-
-      it("is null for custom power types", function () {
-        expect(makePower(new CustomPowerType("Blast"))).toHaveProperty(
-          "costStructure",
-          null
-        );
+        expect(power).toHaveProperty("cost", 0);
       });
 
-      it("is null for standard power types with complex costs", function () {
-        expect(
-          makePower(StandardPowerType.get("Endurance Reserve"))
-        ).toHaveProperty("costStructure", null);
+      it("can be overridden with costOverride", function () {
+        const power = new Power("Charisma", {
+          type: new CustomPowerType("PRE"),
+          summary: "+20 PRE",
+          description: "",
+          costOverride: 20,
+        });
+        expect(power).toHaveProperty("cost", 20);
       });
 
-      it("should be based on the power type for simpler standard powers", function () {
-        const blast = makePower(StandardPowerType.get("Blast"), {
-          [PowerCategory.ATTACK]: new Attack("Do Stuff", {
-            ocv: characteristicByName("OCV"),
-            dcv: characteristicByName("DCV"),
-            damageType: DamageType.NORMAL,
-            damage: new Damage(5, 5),
-            defense: "",
+      it("is based on the cost structure for standard powers", function () {
+        const flight = new Power("Wings", {
+          type: StandardPowerType.get("Flight"),
+          summary: "",
+          description: "",
+          categories: {
+            [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(25) },
+          },
+        });
+        expect(flight).toHaveProperty("cost", 25);
+      });
+
+      describe("costStructure", function () {
+        const makePower = (type, categories = {}) =>
+          new Power("Do Stuff", {
+            summary: "",
             description: "",
-          }),
+            type,
+            categories,
+          });
+
+        it("is null for custom power types", function () {
+          expect(makePower(new CustomPowerType("Blast"))).toHaveProperty(
+            "costStructure",
+            null
+          );
         });
-        const flight = makePower(StandardPowerType.get("Flight"), {
-          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(25) },
+
+        it("is null for standard power types with complex costs", function () {
+          expect(
+            makePower(StandardPowerType.get("Endurance Reserve"))
+          ).toHaveProperty("costStructure", null);
         });
-        const deflection = makePower(StandardPowerType.get("Deflection"));
-        expect(blast.costStructure).toBeInstanceOf(CostPerDie);
-        expect(flight.costStructure).toBeInstanceOf(CostPerMeter);
-        expect(deflection.costStructure).toBeInstanceOf(FixedCost);
+
+        it("should be based on the power type for simpler standard powers", function () {
+          const blast = makePower(StandardPowerType.get("Blast"), {
+            [PowerCategory.ATTACK]: new Attack("Do Stuff", {
+              ocv: characteristicByName("OCV"),
+              dcv: characteristicByName("DCV"),
+              damageType: DamageType.NORMAL,
+              damage: new Damage(5, 5),
+              defense: "",
+              description: "",
+            }),
+          });
+          const flight = makePower(StandardPowerType.get("Flight"), {
+            [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(25) },
+          });
+          const deflection = makePower(StandardPowerType.get("Deflection"));
+          expect(blast.costStructure).toBeInstanceOf(CostPerDie);
+          expect(flight.costStructure).toBeInstanceOf(CostPerMeter);
+          expect(deflection.costStructure).toBeInstanceOf(FixedCost);
+        });
+      });
+
+      describe("costOverride", function () {
+        const powerData = {
+          type: StandardPowerType.get("Stretching"),
+          summary: "",
+          description: "",
+          categories: {
+            [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(40) },
+          },
+        };
+
+        it("defaults to null", function () {
+          const power = new Power("Extend Tendrils", powerData);
+          expect(power).toHaveProperty("costOverride", null);
+        });
+
+        it("can be specified in the constructor", function () {
+          const power = new Power("Extend Tendrils", {
+            ...powerData,
+            costOverride: 40,
+          });
+          expect(power).toHaveProperty("costOverride", 40);
+        });
+
+        it("is parsed by fromItem", function () {
+          const itemData = {
+            id: "1234",
+            name: "Extend Tendrils",
+            type: "power",
+            system: {
+              power: {
+                type: { isStandard: true, name: "Stretching" },
+                categories: { movement: true },
+                movement: {
+                  distance: {
+                    value: 20,
+                    modifier: 0,
+                  },
+                },
+                adders: {},
+                advantages: {},
+                limitations: {},
+              },
+              cost: { override: 20 },
+              summary: "Stretching 20m",
+              description: "<p></p>",
+            },
+          };
+          expect(Power.fromItem(itemData)).toHaveProperty("costOverride", 20);
+        });
       });
     });
 
-    describe("costOverride", function () {
+    describe("modifier totals", function () {
+      const powerName = "Love scent";
       const powerData = {
-        type: StandardPowerType.get("Stretching"),
-        summary: "",
+        type: new CustomPowerType("Detect"),
+        summary: "Detect Love",
         description: "",
-        categories: {
-          [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(40) },
-        },
+        costOverride: 20,
       };
 
-      it("defaults to null", function () {
-        const power = new Power("Extend Tendrils", powerData);
-        expect(power).toHaveProperty("costOverride", null);
+      it("should default to 0 if there are none", function () {
+        const power = new Power(powerName, powerData);
+        expect(power).toHaveProperty("adderTotal", 0);
+        expect(power).toHaveProperty("advantageTotal", 0);
+        expect(power).toHaveProperty("limitationTotal", 0);
       });
 
-      it("can be specified in the constructor", function () {
-        const power = new Power("Extend Tendrils", {
+      it("should sum the values of the modifiers", function () {
+        const power = new Power(powerName, {
           ...powerData,
-          costOverride: 40,
+          adders: [
+            new PowerAdder("360-degree perception", {
+              value: +5,
+              summary: "",
+              description: "",
+            }),
+            new PowerAdder("Discriminatory", {
+              value: +5,
+              summary: "",
+              description: "",
+            }),
+          ],
         });
-        expect(power).toHaveProperty("costOverride", 40);
+
+        expect(power).toHaveProperty("adderTotal", 10);
       });
 
-      it("is parsed by fromItem", function () {
-        const itemData = {
-          id: "1234",
-          name: "Extend Tendrils",
-          type: "power",
-          system: {
-            power: {
-              type: { isStandard: true, name: "Stretching" },
-              categories: { movement: true },
-              movement: {
-                distance: {
-                  value: 20,
-                  modifier: 0,
-                },
-              },
-              adders: {},
-              advantages: {},
-              limitations: {},
-            },
-            cost: { override: 20 },
-            summary: "Stretching 20m",
-            description: "<p></p>",
-          },
-        };
-        expect(Power.fromItem(itemData)).toHaveProperty("costOverride", 20);
+      it("should use the absolute values of limitations", function () {
+        const power = new Power(powerName, {
+          ...powerData,
+          limitations: [
+            new PowerLimitation("No Direction", {
+              value: -0.5,
+              summary: "",
+              description: "",
+            }),
+            new PowerLimitation("Requires a Roll", {
+              value: -0.5,
+              summary: "11-",
+              description: "",
+            }),
+          ],
+        });
+        expect(power).toHaveProperty("limitationTotal", +1);
       });
     });
   });
