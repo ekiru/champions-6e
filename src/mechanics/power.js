@@ -1,4 +1,5 @@
 import * as assert from "../util/assert.js";
+import * as round from "../util/round.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
 import { CostPerDie, CostPerMeter } from "./costs/power-costs.js";
@@ -341,6 +342,17 @@ export class Power {
       advantages,
       limitations,
     });
+  }
+
+  /**
+   * The cost in Active Points (including advantages and adders) of the power.
+   *
+   * @type {number}
+   */
+  get activeCost() {
+    return round.favouringLower(
+      (this.baseCost + this.adderTotal) * (1 + this.advantageTotal)
+    );
   }
 
   get adders() {

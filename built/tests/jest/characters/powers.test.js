@@ -620,6 +620,75 @@ describe("Power", function () {
                 });
             });
         });
+        describe("active cost", function () {
+            const powerName = "Lightweight Telekinesis";
+            const powerData = {
+                type: StandardPowerType.get("Telekinesis"),
+                summary: "30 STR",
+                description: "",
+                costOverride: 45,
+            };
+            it("should equal the base cost if there are no modifiers", function () {
+                const power = new Power(powerName, powerData);
+                expect(power).toHaveProperty("activeCost", 45);
+            });
+            it("should include advantages", function () {
+                const power = new Power(powerName, {
+                    ...powerData,
+                    advantages: [
+                        new PowerAdvantage("No Endurance Cost", {
+                            description: "",
+                            summary: "",
+                            value: +0.5,
+                        }),
+                        new PowerAdvantage("Line of Sight", {
+                            description: "",
+                            summary: "",
+                            value: +0.5,
+                        }),
+                    ],
+                });
+                expect(power).toHaveProperty("activeCost", 90);
+            });
+            it("applies adders before advantages", function () {
+                const power = new Power(powerName, {
+                    ...powerData,
+                    adders: [
+                        new PowerAdder("Fine Manipulation", {
+                            description: "",
+                            summary: "",
+                            value: +10,
+                        }),
+                    ],
+                    advantages: [
+                        new PowerAdvantage("No Endurance Cost", {
+                            description: "",
+                            summary: "",
+                            value: +0.5,
+                        }),
+                        new PowerAdvantage("Line of Sight", {
+                            description: "",
+                            summary: "",
+                            value: +0.5,
+                        }),
+                    ],
+                });
+                expect(power).toHaveProperty("activeCost", 110);
+            });
+            it("should round x.5 down", function () {
+                const power = new Power(powerName, {
+                    ...powerData,
+                    advantages: [
+                        new PowerAdvantage("No Endurance Cost", {
+                            description: "",
+                            summary: "",
+                            value: +0.5,
+                        }),
+                    ],
+                });
+                expect(power).toHaveProperty("activeCost", 67);
+            });
+        });
         describe("modifier totals", function () {
             const powerName = "Love scent";
             const powerData = {
