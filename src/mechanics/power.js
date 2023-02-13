@@ -370,15 +370,7 @@ export class Power {
     return attack;
   }
 
-  get categories() {
-    if (this.type instanceof StandardPowerType) {
-      return this.type.categories;
-    } else {
-      return Array.from(this.#categories.keys());
-    }
-  }
-
-  get cost() {
+  get baseCost() {
     const costStructure = this.costStructure;
     if (costStructure) {
       assert.that(
@@ -396,6 +388,14 @@ export class Power {
       }
     }
     return this.costOverride ?? 0;
+  }
+
+  get categories() {
+    if (this.type instanceof StandardPowerType) {
+      return this.type.categories;
+    } else {
+      return Array.from(this.#categories.keys());
+    }
   }
 
   get costStructure() {
@@ -425,7 +425,7 @@ export class Power {
   }
 
   display() {
-    const { id, name, summary, cost, costStructure } = this;
+    const { id, name, summary, baseCost, costStructure } = this;
     const type = this.type.name;
     const modifiers = this.modifiers.map((modifier) => modifier.display());
     const categories = {};
@@ -444,7 +444,7 @@ export class Power {
       name,
       type,
       summary,
-      cost,
+      baseCost,
       costStructure,
       modifiers,
       categories,

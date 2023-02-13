@@ -267,15 +267,7 @@ export class Power {
         assert.precondition(attack !== undefined);
         return attack;
     }
-    get categories() {
-        if (this.type instanceof StandardPowerType) {
-            return this.type.categories;
-        }
-        else {
-            return Array.from(__classPrivateFieldGet(this, _Power_categories, "f").keys());
-        }
-    }
-    get cost() {
+    get baseCost() {
         const costStructure = this.costStructure;
         if (costStructure) {
             assert.that(this instanceof costStructure.constructor.expectedGameElement, `this isn't the right type of game element for the cost structure: this=${this}, expected ${costStructure.constructor.expectedGameElement}`);
@@ -287,6 +279,14 @@ export class Power {
             }
         }
         return this.costOverride ?? 0;
+    }
+    get categories() {
+        if (this.type instanceof StandardPowerType) {
+            return this.type.categories;
+        }
+        else {
+            return Array.from(__classPrivateFieldGet(this, _Power_categories, "f").keys());
+        }
     }
     get costStructure() {
         if (this.type instanceof StandardPowerType) {
@@ -311,7 +311,7 @@ export class Power {
         return mode;
     }
     display() {
-        const { id, name, summary, cost, costStructure } = this;
+        const { id, name, summary, baseCost, costStructure } = this;
         const type = this.type.name;
         const modifiers = this.modifiers.map((modifier) => modifier.display());
         const categories = {};
@@ -330,7 +330,7 @@ export class Power {
             name,
             type,
             summary,
-            cost,
+            baseCost,
             costStructure,
             modifiers,
             categories,

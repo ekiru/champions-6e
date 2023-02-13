@@ -517,7 +517,7 @@ describe("Power", function () {
                     summary: "",
                     description: "",
                 });
-                expect(power).toHaveProperty("cost", 0);
+                expect(power).toHaveProperty("baseCost", 0);
             });
             it("can be overridden with costOverride", function () {
                 const power = new Power("Charisma", {
@@ -526,7 +526,7 @@ describe("Power", function () {
                     description: "",
                     costOverride: 20,
                 });
-                expect(power).toHaveProperty("cost", 20);
+                expect(power).toHaveProperty("baseCost", 20);
             });
             it("is based on the cost structure for standard powers", function () {
                 const flight = new Power("Wings", {
@@ -537,7 +537,7 @@ describe("Power", function () {
                         [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(25) },
                     },
                 });
-                expect(flight).toHaveProperty("cost", 25);
+                expect(flight).toHaveProperty("baseCost", 25);
             });
             describe("costStructure", function () {
                 const makePower = (type, categories = {}) => new Power("Do Stuff", {
