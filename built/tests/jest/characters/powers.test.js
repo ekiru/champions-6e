@@ -688,6 +688,26 @@ describe("Power", function () {
                 });
                 expect(power).toHaveProperty("activeCost", 67);
             });
+            it("ignores limitations", function () {
+                const power = new Power(powerName, {
+                    ...powerData,
+                    advantages: [
+                        new PowerAdvantage("No Endurance Cost", {
+                            description: "",
+                            summary: "",
+                            value: +0.5,
+                        }),
+                    ],
+                    limitations: [
+                        new PowerLimitation("Only Works On Lightweight Objects", {
+                            description: "",
+                            summary: "",
+                            value: -0.5,
+                        }),
+                    ],
+                });
+                expect(power).toHaveProperty("activeCost", 67);
+            });
         });
         describe("modifier totals", function () {
             const powerName = "Love scent";
