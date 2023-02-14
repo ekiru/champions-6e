@@ -446,7 +446,8 @@ export class Power {
   }
 
   display() {
-    const { id, name, summary, baseCost, costStructure } = this;
+    const { id, name, summary, baseCost, activeCost, realCost, costStructure } =
+      this;
     const type = this.type.name;
     const modifiers = this.modifiers.map((modifier) => modifier.display());
     const categories = {};
@@ -466,6 +467,8 @@ export class Power {
       type,
       summary,
       baseCost,
+      activeCost,
+      realCost,
       costStructure,
       modifiers,
       categories,
