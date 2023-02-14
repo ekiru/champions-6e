@@ -319,6 +319,14 @@ export class Power {
         assert.precondition(mode !== undefined);
         return mode;
     }
+    /**
+     * The real cost of the power: the amount of CP it costs you to have
+     *
+     * @type {number}
+     */
+    get realCost() {
+        return round.favouringLower(this.activeCost / (1 + this.limitationTotal));
+    }
     display() {
         const { id, name, summary, baseCost, costStructure } = this;
         const type = this.type.name;

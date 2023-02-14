@@ -709,6 +709,48 @@ describe("Power", function () {
                 expect(power).toHaveProperty("activeCost", 67);
             });
         });
+        describe("real cost", function () {
+            const powerName = "Lightweight Telekinesis";
+            const powerData = {
+                type: StandardPowerType.get("Telekinesis"),
+                summary: "30 STR",
+                description: "",
+                costOverride: 45,
+            };
+            it("equals the active cost when there are no limitations", function () {
+                const power = new Power(powerName, {
+                    ...powerData,
+                    adders: [
+                        new PowerAdder("Fine Manipulation", {
+                            summary: "",
+                            description: "",
+                            value: +10,
+                        }),
+                    ],
+                });
+                expect(power).toHaveProperty("realCost", 55);
+            });
+            it("applies limitations", function () {
+                const power = new Power(powerName, {
+                    ...powerData,
+                    advantages: [
+                        new PowerAdvantage("No Endurance Cost", {
+                            description: "",
+                            summary: "",
+                            value: +0.5,
+                        }),
+                    ],
+                    limitations: [
+                        new PowerLimitation("Only Works On Lightweight Objects", {
+                            description: "",
+                            summary: "",
+                            value: -0.5,
+                        }),
+                    ],
+                });
+                expect(power).toHaveProperty("realCost", 45);
+            });
+        });
         describe("modifier totals", function () {
             const powerName = "Love scent";
             const powerData = {
