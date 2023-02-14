@@ -49,10 +49,12 @@ export default class PowerSheet extends ItemSheet {
       },
       cost: {
         structure: power.costStructure?.summary,
-        value: power.baseCost,
+        base: power.baseCost,
+        active: power.activeCost,
+        real: power.realCost,
         override:
           power.costStructure === null
-            ? fields.number("Cost", "system.cost.override")
+            ? fields.number("Base Cost", "system.cost.override")
             : null,
       },
       summary: fields.text("Summary", "system.summary"),

@@ -32,14 +32,24 @@
         </p>
       {{else}}
         <p>
-          Cost:
-          {{attributes.cost.value}}
+          Base Cost:
+          {{attributes.cost.base}}
           CP
           {{#if attributes.cost.structure}}
             ({{attributes.cost.structure}})
           {{/if}}
         </p>
       {{/if}}
+      <p>
+        Active Cost:
+        {{attributes.cost.active}}
+        CP
+      </p>
+      <p>
+        Real Cost:
+        {{attributes.cost.real}}
+        CP
+      </p>
       <p>
         {{field attributes.summary}}
       </p>
