@@ -137,7 +137,7 @@ export class Slot {
                 return this.allocatedCost > 0;
             default:
                 assert.notYetImplemented(`unrecognized slot type: ${SlotType[this.type]}`);
-                return 0;
+                return false;
         }
     }
     constructor({ power, active, type, fullCost, allocatedCost, id = null, }) {
@@ -254,8 +254,8 @@ export class Framework {
      * Adds framework modifiers to slots
      *
      * @protected
-     * @param {Slot[]} slots The slots
-     * @returns {Slot[]} The slots, with framework modifiers added
+     * @param slots The slots
+     * @returns The slots, with framework modifiers added
      */
     _applyModifiersToSlots(slots) {
         for (const slot of slots) {

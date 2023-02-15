@@ -4,7 +4,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _VPP_instances, _VPP_validate;
-import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
+import { Framework, Slot, SlotType, Warning, } from "./frameworks.js";
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
 import { Power } from "../power.js";
@@ -20,7 +20,7 @@ export class VPPSlot extends Slot {
         assert.precondition(Number.isInteger(realCost), "realCost must be an integer");
         this.realCost = realCost;
     }
-    static fromItemData(id, rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName } }) {
+    static fromItemData(id, rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName }, }) {
         if (rawSlot.powers.length !== 1) {
             assert.notYetImplemented("Slots with multiple powers not yet implemented");
         }
@@ -33,6 +33,7 @@ export class VPPSlot extends Slot {
             allocatedCost,
             fullCost,
             realCost,
+            type: SlotType.Variable,
             id: id,
             power: Power.fromItem(power),
         });

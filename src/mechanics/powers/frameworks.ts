@@ -115,12 +115,13 @@ export class Warning {
   }
 }
 
-interface SlotItemData {
+export interface SlotItemData {
   powers: string[];
   active?: boolean;
   fixed?: boolean;
   allocatedCost: number;
   fullCost: number;
+  realCost?: number;
 }
 
 export interface PowerCollection {
@@ -146,6 +147,15 @@ export enum SlotType {
   Fixed,
   /** Variable slots can be allocated a part of their reserve cost, but cost more CP. */
   Variable,
+}
+
+export interface SlotData {
+  power: Power;
+  active?: boolean;
+  type: SlotType;
+  fullCost: number;
+  allocatedCost: number;
+  id: string | null;
 }
 
 /**
@@ -195,14 +205,14 @@ export class Slot {
   get isActive() {
     switch (this.type) {
       case SlotType.Fixed:
-        return this.#isActive;
+        return this.#isActive!;
       case SlotType.Variable:
         return this.allocatedCost > 0;
       default:
         assert.notYetImplemented(
           `unrecognized slot type: ${SlotType[this.type]}`
         );
-        return 0;
+        return false;
     }
   }
   #isActive;
@@ -226,14 +236,7 @@ export class Slot {
     fullCost,
     allocatedCost,
     id = null,
-  }: {
-    power: Power;
-    active: boolean;
-    type: SlotType;
-    fullCost: number;
-    allocatedCost: number;
-    id: string | null;
-  }) {
+  }: SlotData) {
     this.power = power;
     this.id = id;
     this.#isActive = active;
@@ -436,10 +439,10 @@ export class Framework {
    * Adds framework modifiers to slots
    *
    * @protected
-   * @param {Slot[]} slots The slots
-   * @returns {Slot[]} The slots, with framework modifiers added
+   * @param slots The slots
+   * @returns The slots, with framework modifiers added
    */
-  _applyModifiersToSlots(slots: Slot[]) {
+  _applyModifiersToSlots<SlotType extends Slot>(slots: SlotType[]) {
     for (const slot of slots) {
       slot.power = slot.power.withFrameworkModifiers(this.modifiers);
     }

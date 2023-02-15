@@ -1,7 +1,21 @@
-import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
+import {
+  Framework,
+  FrameworkData,
+  FrameworkItemData,
+  PowerCollection,
+  Slot,
+  SlotData,
+  SlotItemData,
+  SlotType,
+  Warning,
+} from "./frameworks.js";
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
 import { Power } from "../power.js";
+
+interface VPPSlotData extends SlotData {
+  realCost: number;
+}
 
 export class VPPSlot extends Slot {
   get allocatedRealCost() {
@@ -20,7 +34,7 @@ export class VPPSlot extends Slot {
    */
   realCost;
 
-  constructor({ power, id, fullCost, allocatedCost, realCost }) {
+  constructor({ power, id, fullCost, allocatedCost, realCost }: VPPSlotData) {
     super({ power, id, fullCost, allocatedCost, type: SlotType.Variable });
     assert.precondition(
       Number.isInteger(realCost),
@@ -30,10 +44,12 @@ export class VPPSlot extends Slot {
   }
 
   static fromItemData(
-    id,
-    rawSlot,
-    powerCollection,
-    { framework: { id: frameworkId, name: frameworkName } }
+    id: string,
+    rawSlot: SlotItemData,
+    powerCollection: PowerCollection,
+    {
+      framework: { id: frameworkId, name: frameworkName },
+    }: { framework: { id: string; name: string } }
   ) {
     if (rawSlot.powers.length !== 1) {
       assert.notYetImplemented(
@@ -41,7 +57,7 @@ export class VPPSlot extends Slot {
       );
     }
     const [powerId] = rawSlot.powers;
-    const power = powerCollection.get(powerId);
+    const power = powerCollection.get(powerId!);
     assert.precondition(
       power !== undefined,
       `No such power ${powerId} in collection ${powerCollection}`
@@ -55,13 +71,14 @@ export class VPPSlot extends Slot {
       allocatedCost,
       fullCost,
       realCost,
+      type: SlotType.Variable,
       id: id,
       power: Power.fromItem(power),
     });
     return slot;
   }
 
-  display(warnings) {
+  display(warnings?: string[]) {
     const { realCost, allocatedRealCost } = this;
     return Object.assign(super.display(warnings), {
       realCost,
@@ -69,6 +86,15 @@ export class VPPSlot extends Slot {
     });
   }
 }
+
+interface VPPData extends FrameworkData {
+  control: number;
+  pool: number;
+  slots: VPPSlot[];
+}
+
+interface VPPItemData
+  extends FrameworkItemData<{ control: number; pool: number }> {}
 
 export class VPP extends Framework {
   /**
@@ -102,7 +128,7 @@ export class VPP extends Framework {
    *
    * @type {VPPSlot[]}
    */
-  slots;
+  override slots: VPPSlot[];
 
   /**
    * Problems with the VPP.
@@ -114,7 +140,10 @@ export class VPP extends Framework {
    */
   warnings;
 
-  constructor(name, { control, pool, slots = [], ...properties }) {
+  constructor(
+    name: string,
+    { control, pool, slots = [], ...properties }: VPPData
+  ) {
     super(name, properties);
     assert.precondition(
       Number.isInteger(control),
@@ -140,8 +169,8 @@ export class VPP extends Framework {
         framework: { control, pool, modifiers: rawModifiers, slots: rawSlots },
         description,
       },
-    },
-    powerCollection
+    }: VPPItemData,
+    powerCollection: PowerCollection
   ) {
     const slots = [];
     for (const [slotId, rawSlot] of Object.entries(rawSlots)) {
