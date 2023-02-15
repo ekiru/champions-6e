@@ -1,10 +1,6 @@
 // eslint-env jest
 
-import {
-  CustomPowerType,
-  Power,
-  StandardPowerType,
-} from "../../../src/mechanics/power.js";
+import { CustomPowerType, Power } from "../../../src/mechanics/power.js";
 import {
   Slot,
   SlotType,
@@ -13,6 +9,7 @@ import {
 import {
   FrameworkModifier,
   FrameworkModifierScope,
+  PowerAdder,
   PowerLimitation,
 } from "../../../src/mechanics/powers/modifiers.js";
 import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
@@ -53,6 +50,7 @@ describe("Multipowers", function () {
       const fireball = new Power("Fireball", {
         type: new CustomPowerType("Blast"),
         summary: "3d6 Explosion 16m",
+        costOverride: 30,
         description: "<p>Shoot out an explosive ball of fire.</p>",
       });
       expect(
@@ -65,7 +63,6 @@ describe("Multipowers", function () {
               active: false,
               allocatedCost: 0,
               type: SlotType.Fixed,
-              fullCost: 30,
             }),
           ],
         })
@@ -105,6 +102,7 @@ describe("Multipowers", function () {
           name: "Lightning Bolt",
           type: "power",
           system: {
+            cost: { override: 20 },
             power: {
               type: { isStandard: false, name: "Killing Attack" },
               categories: {},
@@ -167,7 +165,6 @@ describe("Multipowers", function () {
                   fixed: false,
                   powers: ["001"],
                   allocatedCost: 5,
-                  fullCost: 30,
                 },
                 b: { powers: ["002"] },
               },
@@ -223,32 +220,32 @@ describe("Multipowers", function () {
             power: new Power("Allure", {
               type: new CustomPowerType("Mind Control"),
               summary: "Mind Control 12d6 only to approach the singer",
+              costOverride: 60,
               description: "Lure people in with your mind control",
             }),
             type: SlotType.Variable,
-            fullCost: 60,
             allocatedCost: 30,
           }),
           new Slot({
             power: new Power("Beguile", {
               type: new CustomPowerType("Mental Illusions"),
               summary: "Mental Illusions 12d6",
+              costOverride: 60,
               description:
                 "Enchant your listeners into perceiving what you wish",
             }),
             type: SlotType.Fixed,
-            fullCost: 60,
             active: false,
           }),
           new Slot({
             power: new Power("Charm", {
               type: new CustomPowerType("PRE"),
+              costOverride: 15,
               summary: "+15 PRE",
               description:
                 "Subtly increase your charm with a charming lilt to your words.",
             }),
             active: true,
-            fullCost: 15,
             type: SlotType.Fixed,
           }),
         ],
@@ -268,21 +265,21 @@ describe("Multipowers", function () {
             power: new Power("Relaxing Aroma", {
               type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6 no end cost",
+              costOverride: 40,
               description: "A relaxing floral scent that puts people to sleep",
             }),
             type: SlotType.Fixed,
             active: true,
-            fullCost: 40,
           }),
           new Slot({
             power: new Power("Choking Pollen", {
               type: new CustomPowerType("Blast"),
               summary: "Blast 4d6 NND vs life support",
               description: "Choke people with your pollen",
+              costOverride: 40,
             }),
             type: SlotType.Variable,
             allocatedCost: 0,
-            fullCost: 40,
           }),
         ],
       });
@@ -300,10 +297,10 @@ describe("Multipowers", function () {
               type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6 no end cost",
               description: "A relaxing floral scent that puts people to sleep",
+              costOverride: 40,
             }),
             type: SlotType.Fixed,
             active: true,
-            fullCost: 40,
           }),
           new Slot({
             id: "chokingpollen",
@@ -311,10 +308,10 @@ describe("Multipowers", function () {
               type: new CustomPowerType("Blast"),
               summary: "Blast 4d6 NND vs life support",
               description: "Choke people with your pollen",
+              costOverride: 50,
             }),
             type: SlotType.Variable,
             allocatedCost: 0,
-            fullCost: 50,
           }),
         ],
       });
@@ -338,21 +335,21 @@ describe("Multipowers", function () {
               type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6",
               description: "A relaxing floral scent that puts people to sleep",
+              costOverride: 20,
             }),
             type: SlotType.Fixed,
             active: true,
-            fullCost: 20,
           }),
           new Slot({
             id: "chokingpollen",
             power: new Power("Choking Pollen", {
               type: new CustomPowerType("Blast"),
+              costOverride: 40,
               summary: "Blast 4d6 NND vs life support",
               description: "Choke people with your pollen",
             }),
             type: SlotType.Variable,
             allocatedCost: 25,
-            fullCost: 40,
           }),
         ],
       });
@@ -376,10 +373,10 @@ describe("Multipowers", function () {
               type: new CustomPowerType("Drain"),
               summary: "Drain END 2d6 no end cost",
               description: "A relaxing floral scent that puts people to sleep",
+              costOverride: 40,
             }),
             type: SlotType.Fixed,
             active: false,
-            fullCost: 40,
           }),
           new Slot({
             id: "chokingpollen",
@@ -387,10 +384,10 @@ describe("Multipowers", function () {
               type: new CustomPowerType("Blast"),
               summary: "Blast 3d6 NND vs life support",
               description: "Choke people with your pollen",
+              costOverride: 30,
             }),
             type: SlotType.Variable,
             allocatedCost: 40,
-            fullCost: 30,
           }),
         ],
       });
@@ -462,6 +459,7 @@ describe("Variable Power Pools", function () {
           name: "Lightning Bolt",
           type: "power",
           system: {
+            cost: { override: 30 },
             power: {
               type: { isStandard: false, name: "Killing Attack" },
               categories: {},
@@ -482,6 +480,7 @@ describe("Variable Power Pools", function () {
           name: "Arcane Shield",
           type: "power",
           system: {
+            cost: { override: 20 },
             power: {
               type: { isStandard: true, name: "Resistant Protection" },
               categories: {},
@@ -513,13 +512,11 @@ describe("Variable Power Pools", function () {
                 a: {
                   powers: ["001"],
                   allocatedCost: 6,
-                  fullCost: 30,
                   realCost: 20,
                 },
                 b: {
                   powers: ["002"],
                   allocatedCost: 0,
-                  fullCost: 20,
                   realCost: 20,
                 },
               },
@@ -568,23 +565,23 @@ describe("Variable Power Pools", function () {
           new VPPSlot({
             power: new Power("Fire Whip", {
               type: new CustomPowerType("Entangle"),
+              costOverride: 20,
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
             type: SlotType.Variable,
             allocatedCost: 0,
-            fullCost: 20,
             realCost: 20,
           }),
           new VPPSlot({
             power: new Power("Firewall", {
-              type: StandardPowerType.get("Barrier"),
+              type: new CustomPowerType("Barrier"),
+              costOverride: 30,
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
             type: SlotType.Variable,
             allocatedCost: 0,
-            fullCost: 30,
             realCost: 30,
           }),
         ],
@@ -602,21 +599,21 @@ describe("Variable Power Pools", function () {
           new VPPSlot({
             power: new Power("Fire Whip", {
               type: new CustomPowerType("Entangle"),
+              costOverride: 20,
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
             allocatedCost: 20,
-            fullCost: 20,
             realCost: 10,
           }),
           new VPPSlot({
             power: new Power("Firewall", {
-              type: StandardPowerType.get("Barrier"),
+              type: new CustomPowerType("Barrier"),
+              costOverride: 30,
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
             allocatedCost: 25,
-            fullCost: 30,
             realCost: 30,
           }),
         ],
@@ -636,21 +633,21 @@ describe("Variable Power Pools", function () {
           new VPPSlot({
             power: new Power("Fire Whip", {
               type: new CustomPowerType("Entangle"),
+              costOverride: 20,
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
             allocatedCost: 0,
-            fullCost: 20,
             realCost: 20,
           }),
           new VPPSlot({
             power: new Power("Firewall", {
-              type: StandardPowerType.get("Barrier"),
+              type: new CustomPowerType("Barrier"),
+              costOverride: 30,
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
             allocatedCost: 0,
-            fullCost: 30,
             realCost: 30,
           }),
         ],
@@ -669,22 +666,22 @@ describe("Variable Power Pools", function () {
             id: "firewhip",
             power: new Power("Fire Whip", {
               type: new CustomPowerType("Entangle"),
+              costOverride: 20,
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
             allocatedCost: 0,
-            fullCost: 20,
             realCost: 20,
           }),
           new VPPSlot({
             id: "firewall",
             power: new Power("Firewall", {
-              type: StandardPowerType.get("Barrier"),
+              type: new CustomPowerType("Barrier"),
+              costOverride: 50,
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
             allocatedCost: 0,
-            fullCost: 50,
             realCost: 25,
           }),
         ],
@@ -709,22 +706,22 @@ describe("Variable Power Pools", function () {
             id: "firewhip",
             power: new Power("Fire Whip", {
               type: new CustomPowerType("Entangle"),
+              costOverride: 20,
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
             }),
             allocatedCost: 15,
-            fullCost: 20,
             realCost: 20,
           }),
           new VPPSlot({
             id: "firewall",
             power: new Power("Firewall", {
-              type: StandardPowerType.get("Barrier"),
+              type: new CustomPowerType("Barrier"),
+              costOverride: 30,
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
             allocatedCost: 10,
-            fullCost: 30,
             realCost: 30,
           }),
         ],
@@ -750,20 +747,20 @@ describe("Variable Power Pools", function () {
               type: new CustomPowerType("Entangle"),
               summary: "Entangle 2d6 BODY, 2 DEF",
               description: "Lasso a foe in a whip of hell fire",
+              costOverride: 20,
             }),
             allocatedCost: 30,
-            fullCost: 20,
             realCost: 20,
           }),
           new VPPSlot({
             id: "firewall",
             power: new Power("Firewall", {
-              type: StandardPowerType.get("Barrier"),
+              type: new CustomPowerType("Barrier"),
+              costOverride: 30,
               summary: "3 DEF Barrier",
               description: "Throw up a wall of fire to bar the way",
             }),
             allocatedCost: 10,
-            fullCost: 30,
             realCost: 30,
           }),
         ],
@@ -785,6 +782,7 @@ describe("Slots", function () {
     type: new CustomPowerType("Flight"),
     summary: "",
     description: "",
+    costOverride: 33,
     id: "e23fs",
   });
 
@@ -794,7 +792,6 @@ describe("Slots", function () {
         power,
         active: false,
         type: SlotType.Variable,
-        fullCost: 33,
         allocatedCost: 2,
       });
 
@@ -806,7 +803,6 @@ describe("Slots", function () {
         power,
         active: true,
         type: SlotType.Variable,
-        fullCost: 33,
         allocatedCost: 0,
       });
 
@@ -820,7 +816,6 @@ describe("Slots", function () {
         power,
         active: true,
         type: SlotType.Fixed,
-        fullCost: 33,
         allocatedCost: 2,
       });
 
@@ -832,7 +827,6 @@ describe("Slots", function () {
         power,
         active: false,
         type: SlotType.Fixed,
-        fullCost: 33,
         allocatedCost: 2,
       });
 
@@ -841,11 +835,25 @@ describe("Slots", function () {
   });
 
   describe("VPP slots", function () {
+    const power = new Power("Shift", {
+      type: new CustomPowerType("Flight"),
+      summary: "",
+      description: "",
+      costOverride: 20,
+      adders: [
+        new PowerAdder("Instantaneous", {
+          description: "",
+          summary: "",
+          value: +10,
+        }),
+      ],
+      id: "e23fs",
+    });
+
     it("should always be a variable slot", function () {
       const slot = new VPPSlot({
         power,
         type: SlotType.Fixed,
-        fullCost: 30,
         allocatedCost: 5,
         realCost: 20,
       });
@@ -856,7 +864,6 @@ describe("Slots", function () {
       it("should have the same ratio to realCost as allocatedCost does to fullCost", function () {
         const slot = new VPPSlot({
           power,
-          fullCost: 30,
           allocatedCost: 15,
           realCost: 20,
         });
@@ -867,7 +874,6 @@ describe("Slots", function () {
       it("should round halves in the character's favor", function () {
         const slot = new VPPSlot({
           power,
-          fullCost: 30,
           allocatedCost: 15,
           realCost: 15,
         });
@@ -878,7 +884,6 @@ describe("Slots", function () {
       it("should still round e.g. x.6 to x+1", function () {
         const slot = new VPPSlot({
           power,
-          fullCost: 30,
           allocatedCost: 16,
           realCost: 20,
         });

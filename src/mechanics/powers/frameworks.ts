@@ -190,7 +190,9 @@ export class Slot {
    *
    * @type {number}
    */
-  fullCost;
+  get fullCost(): number {
+    return this.power.activeCost;
+  }
 
   /**
    * The ID used to reference the slot within the framework.
@@ -233,7 +235,7 @@ export class Slot {
     power,
     active,
     type,
-    fullCost,
+    fullCost: _fullCost,
     allocatedCost,
     id = null,
   }: SlotData) {
@@ -242,7 +244,6 @@ export class Slot {
     this.#isActive = active;
     this.type = type;
     this.#allocatedCost = allocatedCost;
-    this.fullCost = fullCost;
   }
 
   static fromItemData(

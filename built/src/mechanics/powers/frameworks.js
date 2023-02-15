@@ -125,6 +125,14 @@ export class Slot {
         }
     }
     /**
+     * The full active points cost of the slot.
+     *
+     * @type {number}
+     */
+    get fullCost() {
+        return this.power.activeCost;
+    }
+    /**
      * Is the power at all active currently?
      *
      * @type {boolean}
@@ -140,7 +148,7 @@ export class Slot {
                 return false;
         }
     }
-    constructor({ power, active, type, fullCost, allocatedCost, id = null, }) {
+    constructor({ power, active, type, fullCost: _fullCost, allocatedCost, id = null, }) {
         _Slot_allocatedCost.set(this, void 0);
         _Slot_isActive.set(this, void 0);
         this.power = power;
@@ -148,7 +156,6 @@ export class Slot {
         __classPrivateFieldSet(this, _Slot_isActive, active, "f");
         this.type = type;
         __classPrivateFieldSet(this, _Slot_allocatedCost, allocatedCost, "f");
-        this.fullCost = fullCost;
     }
     static fromItemData(id, rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName }, defaultSlotType, }) {
         if (rawSlot.powers.length !== 1) {
