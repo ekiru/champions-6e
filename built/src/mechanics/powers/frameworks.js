@@ -11,16 +11,16 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
 };
 var _Slot_allocatedCost, _Slot_isActive;
 import * as assert from "../../util/assert.js";
-import { Enum } from "../../util/enum.js";
 import { Power } from "../power.js";
-import { FrameworkModifier } from "./modifiers.js";
+import { FrameworkModifier, } from "./modifiers.js";
 /**
  * The scope to which a warning applies.
- *
- * @property {symbol} Framework The warning applies to an entire framework.
- * @property {symbol} Slot The warning applies to a single slot.
  */
-export const WarningScope = new Enum(["Framework", "Slot"]);
+export var WarningScope;
+(function (WarningScope) {
+    WarningScope[WarningScope["Framework"] = 0] = "Framework";
+    WarningScope[WarningScope["Slot"] = 1] = "Slot";
+})(WarningScope || (WarningScope = {}));
 export class Warning {
     /**
      * Warns that a slot has more points allocated to it than its full cost.
@@ -70,7 +70,7 @@ export class Warning {
         return new Warning({
             message: "More active points are allocated than fit in the framework's reserve",
             scope: WarningScope.Framework,
-            slotId: undefined,
+            slotId: null,
         });
     }
     /**
@@ -82,10 +82,10 @@ export class Warning {
         return new Warning({
             message: "More real points are allocated than fit in the framework's pool",
             scope: WarningScope.Framework,
-            slotId: undefined,
+            slotId: null,
         });
     }
-    constructor({ message, scope, slotId }) {
+    constructor({ message, scope, slotId, }) {
         this.message = message;
         this.scope = scope;
         this.slotId = slotId;
@@ -93,14 +93,14 @@ export class Warning {
 }
 /**
  * Slot types in multipowers.
- *
- * @constant {Enum}
- * @property {symbol} Fixed Fixed slots can only be allocated at full cost but cost
- * fewer CP.
- * @property {symbol} Variable Variable slots can be allocated a part of their
- * reserve cost, but cost more CP.
  */
-export const SlotType = new Enum(["Fixed", "Variable"]);
+export var SlotType;
+(function (SlotType) {
+    /** Fixed slots can only be allocated at full cost but cost fewer CP. */
+    SlotType[SlotType["Fixed"] = 0] = "Fixed";
+    /** Variable slots can be allocated a part of their reserve cost, but cost more CP. */
+    SlotType[SlotType["Variable"] = 1] = "Variable";
+})(SlotType || (SlotType = {}));
 /**
  * A slot in a multipower.
  */
@@ -120,7 +120,7 @@ export class Slot {
             case SlotType.Fixed:
                 return this.isActive ? this.fullCost : 0;
             default:
-                assert.notYetImplemented(`unrecognized slot type: ${this.type.description}`);
+                assert.notYetImplemented(`unrecognized slot type: ${SlotType[this.type]}`);
                 return 0;
         }
     }
@@ -136,11 +136,11 @@ export class Slot {
             case SlotType.Variable:
                 return this.allocatedCost > 0;
             default:
-                assert.notYetImplemented(`unrecognized slot type: ${this.type.description}`);
+                assert.notYetImplemented(`unrecognized slot type: ${SlotType[this.type]}`);
                 return 0;
         }
     }
-    constructor({ power, active, type, fullCost, allocatedCost, id = null }) {
+    constructor({ power, active, type, fullCost, allocatedCost, id = null, }) {
         _Slot_allocatedCost.set(this, void 0);
         _Slot_isActive.set(this, void 0);
         this.power = power;
@@ -150,7 +150,7 @@ export class Slot {
         __classPrivateFieldSet(this, _Slot_allocatedCost, allocatedCost, "f");
         this.fullCost = fullCost;
     }
-    static fromItemData(id, rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName }, defaultSlotType }) {
+    static fromItemData(id, rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName }, defaultSlotType, }) {
         if (rawSlot.powers.length !== 1) {
             assert.notYetImplemented("Slots with multiple powers not yet implemented");
         }
@@ -165,7 +165,7 @@ export class Slot {
             type,
             allocatedCost,
             fullCost,
-            id: id,
+            id,
             power: Power.fromItem(power),
         });
         return slot;
@@ -173,7 +173,7 @@ export class Slot {
     display(warnings) {
         return {
             id: this.id,
-            type: this.type.description.charAt(0).toLowerCase(),
+            type: SlotType[this.type].charAt(0).toLowerCase(),
             isActive: this.isActive,
             isFixed: this.type === SlotType.Fixed,
             allocatedCost: this.allocatedCost,
@@ -188,7 +188,9 @@ _Slot_allocatedCost = new WeakMap(), _Slot_isActive = new WeakMap();
  * A base class to represent any type of power framework.
  */
 export class Framework {
-    constructor(name, { id, description, modifiers = [] }) {
+    constructor(name, { id, description, modifiers = [], }) {
+        this.slots = [];
+        this.warnings = [];
         assert.precondition(typeof name === "string", "name must be a string");
         assert.precondition(id === undefined || typeof id === "string", "id must be a string if present");
         assert.precondition(typeof description === "string", "description must be a string");
@@ -227,6 +229,9 @@ export class Framework {
         };
         for (const modifier of this.modifiers) {
             const scope = modifier.scope.description.replace(/^[A-Z]/, (first) => first.toLowerCase());
+            assert.that(scope === "frameworkOnly" ||
+                scope === "frameworkAndSlots" ||
+                scope === "slotsOnly");
             modifiers[scope].push(modifier.modifier.display());
         }
         return {

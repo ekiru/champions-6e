@@ -3,18 +3,18 @@ import { Enum } from "../../util/enum.js";
 import { NumberLike } from "../../util/number-like.js";
 import { TaggedNumber } from "../../util/tagged-number.js";
 
-interface ModifierData {
+export interface ModifierData {
   id?: string;
   value: NumberLike;
   summary: string;
   description: string;
 }
 
-interface ModifierItemData extends ModifierData {
+export interface ModifierItemData extends ModifierData {
   name: string;
 }
 
-interface ModifierDisplay {
+export interface ModifierDisplay {
   name: string;
   value: string;
   summary: string;
@@ -91,7 +91,7 @@ export class PowerModifier {
     };
   }
 
-  display() {
+  display(): ModifierDisplay {
     return {
       name: this.name,
       value: this.value.toString(),
@@ -213,7 +213,7 @@ export const FrameworkModifierScope = new Enum([
 ]) as Enum &
   Record<"FrameworkOnly" | "FrameworkAndSlots" | "SlotsOnly", symbol>;
 
-interface FrameworkModifierItemData {
+export interface FrameworkModifierItemData {
   id?: string;
   scope: "FrameworkOnly" | "FrameworkAndSlots" | "SlotsOnly";
   type: "advantage" | "limitation";

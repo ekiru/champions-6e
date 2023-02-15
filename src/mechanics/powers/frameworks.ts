@@ -1,37 +1,34 @@
 import * as assert from "../../util/assert.js";
-import { Enum } from "../../util/enum.js";
 import { Power } from "../power.js";
-import { FrameworkModifier } from "./modifiers.js";
+import {
+  FrameworkModifier,
+  ModifierDisplay,
+  FrameworkModifierItemData,
+} from "./modifiers.js";
 
 /**
  * The scope to which a warning applies.
- *
- * @property {symbol} Framework The warning applies to an entire framework.
- * @property {symbol} Slot The warning applies to a single slot.
  */
-export const WarningScope = new Enum(["Framework", "Slot"]);
+export enum WarningScope {
+  Framework,
+  Slot,
+}
 
 export class Warning {
   /**
    * A message describing the issue.
-   *
-   * @type {string}
    */
-  message;
+  message: string;
 
   /**
    * The scope to which the warning applies, drawn from `WarningScope`.
-   *
-   * @type {symbol}
    */
-  scope;
+  scope: WarningScope;
 
   /**
    * The ID of the slot that a slot-scoped warning applies to.
-   *
-   * @type {string?}
    */
-  slotId;
+  slotId: string | null;
 
   /**
    * Warns that a slot has more points allocated to it than its full cost.
@@ -39,7 +36,7 @@ export class Warning {
    * @param {Slot} slot The slot.
    * @returns {Warning} The warning.
    */
-  static slotHasTooManyPointsAllocated(slot) {
+  static slotHasTooManyPointsAllocated(slot: Slot) {
     return new Warning({
       message: "This slot has more points allocated to it than it can use",
       scope: WarningScope.Slot,
@@ -53,7 +50,7 @@ export class Warning {
    * @param {Slot} slot The slot that is too big.
    * @returns {Warning} The warning.
    */
-  static slotIsTooBigForControl(slot) {
+  static slotIsTooBigForControl(slot: Slot) {
     return new Warning({
       message: "Slot active points are larger than the framework's control",
       scope: WarningScope.Slot,
@@ -67,7 +64,7 @@ export class Warning {
    * @param {Slot} slot The slot that is too big.
    * @returns {Warning} The warning.
    */
-  static slotIsTooBigForReserve(slot) {
+  static slotIsTooBigForReserve(slot: Slot) {
     return new Warning({
       message: "Slot active points are larger than the framework's reserve",
       scope: WarningScope.Slot,
@@ -85,7 +82,7 @@ export class Warning {
       message:
         "More active points are allocated than fit in the framework's reserve",
       scope: WarningScope.Framework,
-      slotId: undefined,
+      slotId: null,
     });
   }
 
@@ -99,27 +96,57 @@ export class Warning {
       message:
         "More real points are allocated than fit in the framework's pool",
       scope: WarningScope.Framework,
-      slotId: undefined,
+      slotId: null,
     });
   }
 
-  constructor({ message, scope, slotId }) {
+  constructor({
+    message,
+    scope,
+    slotId,
+  }: {
+    message: string;
+    scope: WarningScope;
+    slotId: string | null;
+  }) {
     this.message = message;
     this.scope = scope;
     this.slotId = slotId;
   }
 }
 
+interface SlotItemData {
+  powers: string[];
+  active?: boolean;
+  fixed?: boolean;
+  allocatedCost: number;
+  fullCost: number;
+}
+
+interface PowerCollection {
+  get(id: string): PowerItem | undefined;
+}
+
+interface PowerItem {
+  name: string;
+  id: string;
+  type: "power";
+  system: {
+    power: {
+      framework: string | null;
+    };
+  };
+}
+
 /**
  * Slot types in multipowers.
- *
- * @constant {Enum}
- * @property {symbol} Fixed Fixed slots can only be allocated at full cost but cost
- * fewer CP.
- * @property {symbol} Variable Variable slots can be allocated a part of their
- * reserve cost, but cost more CP.
  */
-export const SlotType = new Enum(["Fixed", "Variable"]);
+export enum SlotType {
+  /** Fixed slots can only be allocated at full cost but cost fewer CP. */
+  Fixed,
+  /** Variable slots can be allocated a part of their reserve cost, but cost more CP. */
+  Variable,
+}
 
 /**
  * A slot in a multipower.
@@ -133,20 +160,20 @@ export class Slot {
    *
    * @type {number}
    */
-  get allocatedCost() {
+  get allocatedCost(): number {
     switch (this.type) {
       case SlotType.Variable:
-        return this.#allocatedCost;
+        return this.#allocatedCost!;
       case SlotType.Fixed:
         return this.isActive ? this.fullCost : 0;
       default:
         assert.notYetImplemented(
-          `unrecognized slot type: ${this.type.description}`
+          `unrecognized slot type: ${SlotType[this.type]}`
         );
         return 0;
     }
   }
-  #allocatedCost;
+  #allocatedCost?: number;
 
   /**
    * The full active points cost of the slot.
@@ -157,10 +184,8 @@ export class Slot {
 
   /**
    * The ID used to reference the slot within the framework.
-   *
-   * @type {string?}
    */
-  id;
+  id: string | null;
 
   /**
    * Is the power at all active currently?
@@ -175,7 +200,7 @@ export class Slot {
         return this.allocatedCost > 0;
       default:
         assert.notYetImplemented(
-          `unrecognized slot type: ${this.type.description}`
+          `unrecognized slot type: ${SlotType[this.type]}`
         );
         return 0;
     }
@@ -191,12 +216,24 @@ export class Slot {
 
   /**
    * Is the slot fixed or variable? Must be a member of `SlotType`.
-   *
-   * @type {symbol}
    */
-  type;
+  type: SlotType;
 
-  constructor({ power, active, type, fullCost, allocatedCost, id = null }) {
+  constructor({
+    power,
+    active,
+    type,
+    fullCost,
+    allocatedCost,
+    id = null,
+  }: {
+    power: Power;
+    active: boolean;
+    type: SlotType;
+    fullCost: number;
+    allocatedCost: number;
+    id: string | null;
+  }) {
     this.power = power;
     this.id = id;
     this.#isActive = active;
@@ -206,10 +243,13 @@ export class Slot {
   }
 
   static fromItemData(
-    id,
-    rawSlot,
-    powerCollection,
-    { framework: { id: frameworkId, name: frameworkName }, defaultSlotType }
+    id: string | null,
+    rawSlot: SlotItemData,
+    powerCollection: PowerCollection,
+    {
+      framework: { id: frameworkId, name: frameworkName },
+      defaultSlotType,
+    }: { framework: { id: string; name: string }; defaultSlotType: SlotType }
   ) {
     if (rawSlot.powers.length !== 1) {
       assert.notYetImplemented(
@@ -217,7 +257,7 @@ export class Slot {
       );
     }
     const [powerId] = rawSlot.powers;
-    const power = powerCollection.get(powerId);
+    const power = powerCollection.get(powerId!);
     assert.precondition(
       power !== undefined,
       `No such power ${powerId} in collection ${powerCollection}`
@@ -238,16 +278,16 @@ export class Slot {
       type,
       allocatedCost,
       fullCost,
-      id: id,
+      id,
       power: Power.fromItem(power),
     });
     return slot;
   }
 
-  display(warnings) {
+  display(warnings?: string[]) {
     return {
       id: this.id,
-      type: this.type.description.charAt(0).toLowerCase(),
+      type: SlotType[this.type].charAt(0).toLowerCase(),
       isActive: this.isActive,
       isFixed: this.type === SlotType.Fixed,
       allocatedCost: this.allocatedCost,
@@ -290,7 +330,17 @@ export class Framework {
    */
   modifiers;
 
-  constructor(name, { id, description, modifiers = [] }) {
+  slots: Slot[] = [];
+  warnings: Warning[] = [];
+
+  constructor(
+    name: string,
+    {
+      id,
+      description,
+      modifiers = [],
+    }: { id?: string; description: string; modifiers: FrameworkModifier[] }
+  ) {
     assert.precondition(typeof name === "string", "name must be a string");
     assert.precondition(
       id === undefined || typeof id === "string",
@@ -332,13 +382,18 @@ export class Framework {
       slot.display(slotWarnings.get(slot.id))
     );
     const modifiers = {
-      frameworkOnly: [],
-      frameworkAndSlots: [],
-      slotsOnly: [],
+      frameworkOnly: [] as ModifierDisplay[],
+      frameworkAndSlots: [] as ModifierDisplay[],
+      slotsOnly: [] as ModifierDisplay[],
     };
     for (const modifier of this.modifiers) {
-      const scope = modifier.scope.description.replace(/^[A-Z]/, (first) =>
+      const scope = modifier.scope.description!.replace(/^[A-Z]/, (first) =>
         first.toLowerCase()
+      );
+      assert.that(
+        scope === "frameworkOnly" ||
+          scope === "frameworkAndSlots" ||
+          scope === "slotsOnly"
       );
       modifiers[scope].push(modifier.modifier.display());
     }
@@ -351,7 +406,9 @@ export class Framework {
     };
   }
 
-  static modifiersFromItemData(rawModifiers) {
+  static modifiersFromItemData(
+    rawModifiers: Record<string, Omit<FrameworkModifierItemData, "id">>
+  ) {
     const modifiers = [];
     for (const [id, rawModifier] of Object.entries(rawModifiers)) {
       const modifier = FrameworkModifier.fromItemData({ id, ...rawModifier });
@@ -367,7 +424,7 @@ export class Framework {
    * @param {Slot[]} slots The slots
    * @returns {Slot[]} The slots, with framework modifiers added
    */
-  _applyModifiersToSlots(slots) {
+  _applyModifiersToSlots(slots: Slot[]) {
     for (const slot of slots) {
       slot.power = slot.power.withFrameworkModifiers(this.modifiers);
     }
