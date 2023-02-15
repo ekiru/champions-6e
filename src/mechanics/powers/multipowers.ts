@@ -1,5 +1,20 @@
 import * as assert from "../../util/assert.js";
-import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
+import {
+  Framework,
+  FrameworkData,
+  FrameworkItemData,
+  PowerCollection,
+  Slot,
+  SlotType,
+  Warning,
+} from "./frameworks.js";
+
+interface MultipowerData extends FrameworkData {
+  reserve: number;
+  slots: Slot[];
+}
+
+interface MultipowerItemData extends FrameworkItemData<{ reserve: number }> {}
 
 export class Multipower extends Framework {
   get allocatedReserve() {
@@ -32,7 +47,10 @@ export class Multipower extends Framework {
    */
   warnings;
 
-  constructor(name, { reserve, slots = [], ...properties }) {
+  constructor(
+    name: string,
+    { reserve, slots = [], ...properties }: MultipowerData
+  ) {
     super(name, properties);
     assert.precondition(
       Number.isInteger(reserve),
@@ -53,8 +71,8 @@ export class Multipower extends Framework {
         framework: { reserve, modifiers: rawModifiers, slots: rawSlots },
         description,
       },
-    },
-    powerCollection
+    }: MultipowerItemData,
+    powerCollection: PowerCollection
   ) {
     const slots = [];
     for (const [slotId, rawSlot] of Object.entries(rawSlots)) {

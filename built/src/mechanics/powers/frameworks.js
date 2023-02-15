@@ -188,7 +188,7 @@ _Slot_allocatedCost = new WeakMap(), _Slot_isActive = new WeakMap();
  * A base class to represent any type of power framework.
  */
 export class Framework {
-    constructor(name, { id, description, modifiers = [], }) {
+    constructor(name, { id, description, modifiers = [] }) {
         this.slots = [];
         this.warnings = [];
         assert.precondition(typeof name === "string", "name must be a string");

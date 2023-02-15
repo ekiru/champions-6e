@@ -5,7 +5,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _Multipower_instances, _Multipower_validate;
 import * as assert from "../../util/assert.js";
-import { Framework, Slot, SlotType, Warning } from "./frameworks.js";
+import { Framework, Slot, SlotType, Warning, } from "./frameworks.js";
 export class Multipower extends Framework {
     get allocatedReserve() {
         return this.slots

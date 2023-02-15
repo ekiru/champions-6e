@@ -123,7 +123,7 @@ interface SlotItemData {
   fullCost: number;
 }
 
-interface PowerCollection {
+export interface PowerCollection {
   get(id: string): PowerItem | undefined;
 }
 
@@ -298,6 +298,25 @@ export class Slot {
   }
 }
 
+export interface FrameworkData {
+  id?: string;
+  description: string;
+  modifiers: FrameworkModifier[];
+}
+
+export interface FrameworkItemData<ExtraFrameworkFields = {}> {
+  id: string;
+  name: string;
+  type: string;
+  system: {
+    framework: {
+      modifiers: Record<string, Omit<FrameworkModifierItemData, "id">>;
+      slots: Record<string, SlotItemData>;
+    } & ExtraFrameworkFields;
+    description: string;
+  };
+}
+
 /**
  * A base class to represent any type of power framework.
  */
@@ -335,11 +354,7 @@ export class Framework {
 
   constructor(
     name: string,
-    {
-      id,
-      description,
-      modifiers = [],
-    }: { id?: string; description: string; modifiers: FrameworkModifier[] }
+    { id, description, modifiers = [] }: FrameworkData
   ) {
     assert.precondition(typeof name === "string", "name must be a string");
     assert.precondition(
