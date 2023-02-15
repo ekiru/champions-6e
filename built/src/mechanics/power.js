@@ -213,7 +213,7 @@ export class Power {
      * @returns {Power} The modified power
      */
     withFrameworkModifiers(frameworkModifiers) {
-        const { id, type, summary, description } = this;
+        const { id, type, summary, costOverride, description } = this;
         const _categories = __classPrivateFieldGet(this, _Power_categories, "f");
         const adders = __classPrivateFieldGet(this, _Power_adders, "f").slice();
         const advantages = __classPrivateFieldGet(this, _Power_advantages, "f").slice();
@@ -240,6 +240,7 @@ export class Power {
             type,
             summary,
             description,
+            costOverride,
             _categories,
             adders,
             advantages,

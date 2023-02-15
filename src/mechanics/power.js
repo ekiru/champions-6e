@@ -311,7 +311,7 @@ export class Power {
    * @returns {Power} The modified power
    */
   withFrameworkModifiers(frameworkModifiers) {
-    const { id, type, summary, description } = this;
+    const { id, type, summary, costOverride, description } = this;
     const _categories = this.#categories;
     const adders = this.#adders.slice();
     const advantages = this.#advantages.slice();
@@ -337,6 +337,7 @@ export class Power {
       type,
       summary,
       description,
+      costOverride,
       _categories,
       adders,
       advantages,

@@ -404,8 +404,9 @@ describe("Power", function () {
 
   describe("withFrameworkModifiers", function () {
     const power = new Power("Geokinesis", {
-      type: StandardPowerType.get("Telekinesis"),
+      type: new CustomPowerType("Telekinesis"),
       summary: "Telekinesis 80 STR",
+      costOverride: 30,
       description: "<p>Move earth and rocks at your will</p>",
       adders: [
         new PowerAdder("Fine Manipulation", {
@@ -474,6 +475,15 @@ describe("Power", function () {
       expect(frameworkPower.adders).toHaveLength(1);
       expect(frameworkPower.advantages).toHaveLength(1);
       expect(frameworkPower.limitations).toHaveLength(2);
+    });
+
+    it("should preserve costOverride", function () {
+      const frameworkPower = power.withFrameworkModifiers([
+        concentration,
+        reducedEnd,
+        frameworkOnlyRequiredRoll,
+      ]);
+      expect(frameworkPower).toHaveProperty("costOverride", power.costOverride);
     });
   });
 
