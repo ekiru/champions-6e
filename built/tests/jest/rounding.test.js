@@ -35,4 +35,7 @@ describe("favouringLower", function () {
         expect(favouringLower(4.6)).toBe(5);
         expect(favouringLower(5.5000001)).toBe(6);
     });
+    it("should round +0 to +0", function () {
+        expect(favouringLower(+0)).toBe(+0);
+    });
 });

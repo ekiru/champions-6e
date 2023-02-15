@@ -14,5 +14,8 @@ export function favouringHigher(n) {
  * @returns {number} The rounded number
  */
 export function favouringLower(n) {
+    if (Number.isInteger(n)) {
+        return n;
+    }
     return Math.round(n - 0.0000001);
 }
