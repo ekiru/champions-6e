@@ -22,7 +22,7 @@ export class VPPSlot extends Slot {
     if (this.fullCost === 0) {
       return 0;
     }
-    return favouringLower((this.realCost * this.allocatedCost) / this.fullCost);
+    return favouringLower(this.realCost * (this.allocatedCost / this.fullCost));
   }
 
   /**
@@ -32,15 +32,12 @@ export class VPPSlot extends Slot {
    *
    * @type {number}
    */
-  realCost;
+  get realCost(): number {
+    return this.power.realCost;
+  }
 
-  constructor({ power, id, fullCost, allocatedCost, realCost }: VPPSlotData) {
+  constructor({ power, id, fullCost, allocatedCost }: VPPSlotData) {
     super({ power, id, fullCost, allocatedCost, type: SlotType.Variable });
-    assert.precondition(
-      Number.isInteger(realCost),
-      "realCost must be an integer"
-    );
-    this.realCost = realCost;
   }
 
   static fromItemData(

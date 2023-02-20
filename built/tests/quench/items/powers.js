@@ -452,8 +452,6 @@ export function register(system, quench) {
                             active: false,
                             type: SlotType.Variable,
                             allocatedCost: 0,
-                            fullCost: 0,
-                            realCost: 0,
                             allocatedRealCost: 0,
                         }),
                     ]);
@@ -512,8 +510,6 @@ export function register(system, quench) {
                             active: false,
                             type: SlotType.Variable,
                             allocatedCost: 0,
-                            fullCost: 0,
-                            realCost: 0,
                             allocatedRealCost: 0,
                         }),
                     ]);

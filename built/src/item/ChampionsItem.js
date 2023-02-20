@@ -145,9 +145,7 @@ export default class ChampionsItem extends Item {
                 [`system.framework.slots.${power.id}`]: {
                     active: false,
                     fixed: this.type === "multipower",
-                    fullCost: 0,
                     allocatedCost: 0,
-                    realCost: 0,
                     powers: [power.id],
                 },
             },

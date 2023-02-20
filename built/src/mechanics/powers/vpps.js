@@ -13,12 +13,20 @@ export class VPPSlot extends Slot {
         if (this.fullCost === 0) {
             return 0;
         }
-        return favouringLower((this.realCost * this.allocatedCost) / this.fullCost);
+        return favouringLower(this.realCost * (this.allocatedCost / this.fullCost));
     }
-    constructor({ power, id, fullCost, allocatedCost, realCost }) {
+    /**
+     * The maximum Real Cost of the slot.
+     *
+     * The (allocated) Real Cost determines how much of the VPP's pool the slot uses.
+     *
+     * @type {number}
+     */
+    get realCost() {
+        return this.power.realCost;
+    }
+    constructor({ power, id, fullCost, allocatedCost }) {
         super({ power, id, fullCost, allocatedCost, type: SlotType.Variable });
-        assert.precondition(Number.isInteger(realCost), "realCost must be an integer");
-        this.realCost = realCost;
     }
     static fromItemData(id, rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName }, }) {
         if (rawSlot.powers.length !== 1) {

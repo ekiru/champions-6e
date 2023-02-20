@@ -425,12 +425,10 @@ describe("Variable Power Pools", function () {
                             a: {
                                 powers: ["001"],
                                 allocatedCost: 6,
-                                realCost: 20,
                             },
                             b: {
                                 powers: ["002"],
                                 allocatedCost: 0,
-                                realCost: 20,
                             },
                         },
                     },
@@ -446,7 +444,7 @@ describe("Variable Power Pools", function () {
             expect(vpp.slots[0]).toHaveProperty("power.name", "Lightning Bolt");
             expect(vpp.slots[0]).toHaveProperty("id", "a");
             expect(vpp.slots[0]).toHaveProperty("fullCost", 30);
-            expect(vpp.slots[0]).toHaveProperty("realCost", 20);
+            expect(vpp.slots[0]).toHaveProperty("realCost", 30);
             expect(vpp.slots[0]).toHaveProperty("allocatedCost", 6);
             expect(vpp.slots[0]).toHaveProperty("isActive", true);
             expect(vpp.slots[1]).toBeInstanceOf(VPPSlot);
@@ -474,7 +472,6 @@ describe("Variable Power Pools", function () {
                         }),
                         type: SlotType.Variable,
                         allocatedCost: 0,
-                        realCost: 20,
                     }),
                     new VPPSlot({
                         power: new Power("Firewall", {
@@ -485,7 +482,6 @@ describe("Variable Power Pools", function () {
                         }),
                         type: SlotType.Variable,
                         allocatedCost: 0,
-                        realCost: 30,
                     }),
                 ],
             });
@@ -503,9 +499,15 @@ describe("Variable Power Pools", function () {
                             costOverride: 20,
                             summary: "Entangle 2d6 BODY, 2 DEF",
                             description: "Lasso a foe in a whip of hell fire",
+                            limitations: [
+                                new PowerLimitation("Reduced Range", {
+                                    description: "",
+                                    summary: "",
+                                    value: -1,
+                                }),
+                            ],
                         }),
-                        allocatedCost: 20,
-                        realCost: 10,
+                        allocatedCost: 20, // real cost = 10/10
                     }),
                     new VPPSlot({
                         power: new Power("Firewall", {
@@ -514,8 +516,7 @@ describe("Variable Power Pools", function () {
                             summary: "3 DEF Barrier",
                             description: "Throw up a wall of fire to bar the way",
                         }),
-                        allocatedCost: 25,
-                        realCost: 30,
+                        allocatedCost: 25, // real cost = 25/25
                     }),
                 ],
             });
@@ -537,7 +538,6 @@ describe("Variable Power Pools", function () {
                             description: "Lasso a foe in a whip of hell fire",
                         }),
                         allocatedCost: 0,
-                        realCost: 20,
                     }),
                     new VPPSlot({
                         power: new Power("Firewall", {
@@ -547,7 +547,6 @@ describe("Variable Power Pools", function () {
                             description: "Throw up a wall of fire to bar the way",
                         }),
                         allocatedCost: 0,
-                        realCost: 30,
                     }),
                 ],
             });
@@ -568,7 +567,6 @@ describe("Variable Power Pools", function () {
                             description: "Lasso a foe in a whip of hell fire",
                         }),
                         allocatedCost: 0,
-                        realCost: 20,
                     }),
                     new VPPSlot({
                         id: "firewall",
@@ -577,9 +575,15 @@ describe("Variable Power Pools", function () {
                             costOverride: 50,
                             summary: "3 DEF Barrier",
                             description: "Throw up a wall of fire to bar the way",
+                            limitations: [
+                                new PowerLimitation("Increased Endurance Cost", {
+                                    summary: "",
+                                    description: "",
+                                    value: -1,
+                                }),
+                            ],
                         }),
                         allocatedCost: 0,
-                        realCost: 25,
                     }),
                 ],
             });
@@ -603,7 +607,6 @@ describe("Variable Power Pools", function () {
                             description: "Lasso a foe in a whip of hell fire",
                         }),
                         allocatedCost: 15,
-                        realCost: 20,
                     }),
                     new VPPSlot({
                         id: "firewall",
@@ -614,7 +617,6 @@ describe("Variable Power Pools", function () {
                             description: "Throw up a wall of fire to bar the way",
                         }),
                         allocatedCost: 10,
-                        realCost: 30,
                     }),
                 ],
             });
@@ -637,7 +639,6 @@ describe("Variable Power Pools", function () {
                             costOverride: 20,
                         }),
                         allocatedCost: 30,
-                        realCost: 20,
                     }),
                     new VPPSlot({
                         id: "firewall",
@@ -648,7 +649,6 @@ describe("Variable Power Pools", function () {
                             description: "Throw up a wall of fire to bar the way",
                         }),
                         allocatedCost: 10,
-                        realCost: 30,
                     }),
                 ],
             });
@@ -720,6 +720,13 @@ describe("Slots", function () {
                     value: +10,
                 }),
             ],
+            limitations: [
+                new PowerLimitation("Concentration", {
+                    summary: "",
+                    description: "",
+                    value: -1,
+                }),
+            ],
             id: "e23fs",
         });
         it("should always be a variable slot", function () {
@@ -727,32 +734,56 @@ describe("Slots", function () {
                 power,
                 type: SlotType.Fixed,
                 allocatedCost: 5,
-                realCost: 20,
             });
             expect(slot).toHaveProperty("type", SlotType.Variable);
+        });
+        it("should have a realCost calculated from the power", function () {
+            const slot = new VPPSlot({
+                power,
+                allocatedCost: 0,
+            });
+            expect(slot).toHaveProperty("realCost", 15);
         });
         describe("allocatedRealCost", function () {
             it("should have the same ratio to realCost as allocatedCost does to fullCost", function () {
                 const slot = new VPPSlot({
                     power,
-                    allocatedCost: 15,
-                    realCost: 20,
+                    allocatedCost: 10,
                 });
-                expect(slot.allocatedRealCost).toBe(10);
+                expect(slot.allocatedRealCost).toBe(5);
             });
             it("should round halves in the character's favor", function () {
                 const slot = new VPPSlot({
                     power,
-                    allocatedCost: 15,
-                    realCost: 15,
+                    allocatedCost: 15, // allocated real cost = 7.5 rounds to 7
                 });
                 expect(slot.allocatedRealCost).toBe(7);
             });
             it("should still round e.g. x.6 to x+1", function () {
+                const power = new Power("Shift", {
+                    type: new CustomPowerType("Flight"),
+                    summary: "",
+                    description: "",
+                    costOverride: 20,
+                    adders: [
+                        new PowerAdder("Instantaneous", {
+                            description: "",
+                            summary: "",
+                            value: +10,
+                        }),
+                    ],
+                    limitations: [
+                        new PowerLimitation("Concentration", {
+                            summary: "",
+                            description: "",
+                            value: -0.5,
+                        }),
+                    ],
+                    id: "e23fs",
+                });
                 const slot = new VPPSlot({
                     power,
-                    allocatedCost: 16,
-                    realCost: 20,
+                    allocatedCost: 16, // allocated real cost = 10.6… ronds to 11
                 });
                 expect(slot.allocatedRealCost).toBe(11);
             });
