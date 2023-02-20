@@ -52,7 +52,12 @@
               {{partial "item/partials/power-data.hbs" display.power}}
               <td>
                 {{#with attributes.fullCost}}
-                  <input type="number" value="{{value}}" name="{{path}}" />
+                  <input
+                    type="number"
+                    readonly
+                    value="{{value}}"
+                    name="{{path}}"
+                  />
                 {{/with}}
               </td>
               <td class="item-controls">
