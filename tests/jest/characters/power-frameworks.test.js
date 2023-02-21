@@ -953,7 +953,7 @@ describe("Framework costs", function () {
         description: "",
         modifiers: [],
       });
-      expect(mp).toHaveProperty("baseCost", 25);
+      expect(mp).toHaveProperty("realCost", 25);
     });
 
     it("costs ⅒th the real cost of a fixed slot", function () {
@@ -964,7 +964,7 @@ describe("Framework costs", function () {
         description: "",
         modifiers: [],
       });
-      expect(mp).toHaveProperty("baseCost", 2);
+      expect(mp).toHaveProperty("realCost", 2);
     });
 
     it("costs ⅕th the real cost of a variable slot", function () {
@@ -975,7 +975,27 @@ describe("Framework costs", function () {
         description: "",
         modifiers: [],
       });
-      expect(mp).toHaveProperty("baseCost", 5);
+      expect(mp).toHaveProperty("realCost", 5);
+    });
+
+    it("applies framework-only modifiers to the reserve cost", function () {
+      const power = aPower(20, 0);
+      const mp = new Multipower("Power Pool", {
+        reserve: 60,
+        slots: [new Slot({ power, active: true, type: SlotType.Fixed })],
+        description: "",
+        modifiers: [
+          new FrameworkModifier(
+            new PowerLimitation("Extra time", {
+              description: "",
+              summary: "",
+              value: -1,
+            }),
+            FrameworkModifierScope.FrameworkOnly
+          ),
+        ],
+      });
+      expect(mp).toHaveProperty("realCost", 32);
     });
   });
 });

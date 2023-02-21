@@ -6,16 +6,19 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _Multipower_instances, _Multipower_reserveCost, _Multipower_slotCost, _Multipower_validate;
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
+import { calculateRealCost } from "../costs/modified-costs.js";
 import { Framework, Slot, SlotType, Warning, } from "./frameworks.js";
+import { FrameworkModifierScope, PowerAdvantage, PowerLimitation, } from "./modifiers.js";
 export class Multipower extends Framework {
     get allocatedReserve() {
         return this.slots
             .map((slot) => slot.allocatedCost)
             .reduce((a, b) => a + b, 0);
     }
-    get baseCost() {
-        return (__classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_reserveCost).call(this) +
-            this.slots.reduce((sum, slot) => sum + favouringLower(__classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_slotCost).call(this, slot)), 0));
+    get realCost() {
+        const reserveCost = __classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_reserveCost).call(this);
+        const slotsCost = this.slots.reduce((sum, slot) => sum + favouringLower(__classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_slotCost).call(this, slot)), 0);
+        return reserveCost + slotsCost;
     }
     constructor(name, { reserve, slots = [], ...properties }) {
         super(name, properties);
@@ -55,7 +58,28 @@ export class Multipower extends Framework {
     }
 }
 _Multipower_instances = new WeakSet(), _Multipower_reserveCost = function _Multipower_reserveCost() {
-    return this.reserve;
+    let frameworkAdvantages = 0;
+    let frameworkLimitations = 0;
+    for (const mod of this.modifiers) {
+        if (mod.scope === FrameworkModifierScope.FrameworkAndSlots ||
+            mod.scope === FrameworkModifierScope.FrameworkOnly) {
+            if (mod.modifier instanceof PowerAdvantage) {
+                frameworkAdvantages += +mod.value;
+            }
+            else if (mod.modifier instanceof PowerLimitation) {
+                frameworkLimitations += Math.abs(+mod.value);
+            }
+            else {
+                assert.notYetImplemented("non-advantage/limitation framework modifiers not yet supported");
+            }
+        }
+    }
+    return calculateRealCost({
+        base: this.reserve,
+        adders: 0,
+        advantages: frameworkAdvantages,
+        limitations: frameworkLimitations,
+    });
 }, _Multipower_slotCost = function _Multipower_slotCost(slot) {
     switch (slot.type) {
         case SlotType.Fixed:
