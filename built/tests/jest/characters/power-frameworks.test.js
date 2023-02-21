@@ -1,4 +1,5 @@
 // eslint-env jest
+import { describe, expect, it } from "@jest/globals";
 import { CustomPowerType, Power } from "../../../src/mechanics/power.js";
 import { Slot, SlotType, WarningScope, } from "../../../src/mechanics/powers/frameworks.js";
 import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerLimitation, } from "../../../src/mechanics/powers/modifiers.js";
@@ -787,6 +788,54 @@ describe("Slots", function () {
                 });
                 expect(slot.allocatedRealCost).toBe(11);
             });
+        });
+    });
+});
+describe("Framework costs", function () {
+    const aPower = (activeCost, limitationTotal) => new Power("Surf", {
+        type: new CustomPowerType("Surf"),
+        summary: "",
+        description: "",
+        costOverride: activeCost,
+        limitations: limitationTotal
+            ? [
+                new PowerLimitation("Only on water", {
+                    summary: "",
+                    description: "",
+                    value: limitationTotal,
+                }),
+            ]
+            : [],
+    });
+    describe("for a multipower", function () {
+        it("costs 1 CP per point in the reserve", function () {
+            const mp = new Multipower("Power Pool", {
+                reserve: 25,
+                slots: [],
+                description: "",
+                modifiers: [],
+            });
+            expect(mp).toHaveProperty("baseCost", 25);
+        });
+        it("costs ⅒th the real cost of a fixed slot", function () {
+            const power = aPower(50, -1); // real cost = 25, divided by 10 rounds to 2
+            const mp = new Multipower("Power Pool", {
+                reserve: 0,
+                slots: [new Slot({ power, active: false, type: SlotType.Fixed })],
+                description: "",
+                modifiers: [],
+            });
+            expect(mp).toHaveProperty("baseCost", 2);
+        });
+        it("costs ⅕th the real cost of a variable slot", function () {
+            const power = aPower(50, -1); // real cost = 25, divided by 5 = 5
+            const mp = new Multipower("Power Pool", {
+                reserve: 0,
+                slots: [new Slot({ power, allocatedCost: 0, type: SlotType.Variable })],
+                description: "",
+                modifiers: [],
+            });
+            expect(mp).toHaveProperty("baseCost", 5);
         });
     });
 });

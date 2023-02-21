@@ -3,14 +3,19 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Multipower_instances, _Multipower_validate;
+var _Multipower_instances, _Multipower_reserveCost, _Multipower_slotCost, _Multipower_validate;
 import * as assert from "../../util/assert.js";
+import { favouringLower } from "../../util/round.js";
 import { Framework, Slot, SlotType, Warning, } from "./frameworks.js";
 export class Multipower extends Framework {
     get allocatedReserve() {
         return this.slots
             .map((slot) => slot.allocatedCost)
             .reduce((a, b) => a + b, 0);
+    }
+    get baseCost() {
+        return (__classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_reserveCost).call(this) +
+            this.slots.reduce((sum, slot) => sum + favouringLower(__classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_slotCost).call(this, slot)), 0));
     }
     constructor(name, { reserve, slots = [], ...properties }) {
         super(name, properties);
@@ -49,7 +54,18 @@ export class Multipower extends Framework {
         });
     }
 }
-_Multipower_instances = new WeakSet(), _Multipower_validate = function _Multipower_validate() {
+_Multipower_instances = new WeakSet(), _Multipower_reserveCost = function _Multipower_reserveCost() {
+    return this.reserve;
+}, _Multipower_slotCost = function _Multipower_slotCost(slot) {
+    switch (slot.type) {
+        case SlotType.Fixed:
+            return slot.power.realCost / 10;
+        case SlotType.Variable:
+            return slot.power.realCost / 5;
+        default:
+            assert.notYetImplemented(`haven't implemented costs for ${SlotType[slot.type]} (${slot.type}) slots`);
+    }
+}, _Multipower_validate = function _Multipower_validate() {
     const warnings = [];
     if (this.allocatedReserve > this.reserve) {
         warnings.push(Warning.tooManyPointsAllocated());

@@ -1,4 +1,5 @@
 import * as assert from "../../util/assert.js";
+import { favouringLower } from "../../util/round.js";
 import {
   Framework,
   FrameworkData,
@@ -21,6 +22,16 @@ export class Multipower extends Framework {
     return this.slots
       .map((slot) => slot.allocatedCost)
       .reduce((a, b) => a + b, 0);
+  }
+
+  get baseCost(): number {
+    return (
+      this.#reserveCost() +
+      this.slots.reduce(
+        (sum, slot) => sum + favouringLower(this.#slotCost(slot)),
+        0
+      )
+    );
   }
 
   /**
@@ -101,6 +112,25 @@ export class Multipower extends Framework {
       allocatedReserve,
       reserve,
     });
+  }
+
+  #reserveCost(): number {
+    return this.reserve;
+  }
+
+  #slotCost(slot: Slot): number {
+    switch (slot.type) {
+      case SlotType.Fixed:
+        return slot.power.realCost / 10;
+      case SlotType.Variable:
+        return slot.power.realCost / 5;
+      default:
+        assert.notYetImplemented(
+          `haven't implemented costs for ${SlotType[slot.type]} (${
+            slot.type
+          }) slots`
+        );
+    }
   }
 
   #validate() {
