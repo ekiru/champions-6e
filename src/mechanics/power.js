@@ -1,5 +1,4 @@
 import * as assert from "../util/assert.js";
-import * as round from "../util/round.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
 import { CostPerDie, CostPerMeter } from "./costs/power-costs.js";
@@ -21,6 +20,10 @@ import {
   PowerLimitation,
   PowerModifier,
 } from "./powers/modifiers.js";
+import {
+  calculateActiveCost,
+  calculateRealCost,
+} from "./costs/modified-costs.js";
 
 const compareByNameWithFrameworkModifiersLast = compareByLexically(
   (mod) => mod instanceof FrameworkModifier,
@@ -351,9 +354,12 @@ export class Power {
    * @type {number}
    */
   get activeCost() {
-    return round.favouringLower(
-      (this.baseCost + this.adderTotal) * (1 + this.advantageTotal)
-    );
+    return calculateActiveCost({
+      base: this.baseCost,
+      adders: this.adderTotal,
+      advantages: this.advantageTotal,
+      limitations: this.limitationTotal,
+    });
   }
 
   get adders() {
@@ -443,7 +449,12 @@ export class Power {
    * @type {number}
    */
   get realCost() {
-    return round.favouringLower(this.activeCost / (1 + this.limitationTotal));
+    return calculateRealCost({
+      base: this.baseCost,
+      adders: this.adderTotal,
+      advantages: this.advantageTotal,
+      limitations: this.limitationTotal,
+    });
   }
 
   display() {

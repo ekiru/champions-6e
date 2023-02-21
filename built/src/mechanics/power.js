@@ -11,7 +11,6 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _StandardPowerType_power, _CustomPowerType_name, _Power_instances, _Power_adders, _Power_advantages, _Power_limitations, _Power_categories, _Power_prepareCategoryData, _Power_sumModifierValues;
 import * as assert from "../util/assert.js";
-import * as round from "../util/round.js";
 import { compareByLexically } from "../util/sort.js";
 import { Attack } from "./attack.js";
 import { CostPerDie, CostPerMeter } from "./costs/power-costs.js";
@@ -21,6 +20,7 @@ import { isPowerCategoryName, getPowerCategoryByName, isPowerCategory, PowerCate
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
 import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerAdvantage, PowerLimitation, PowerModifier, } from "./powers/modifiers.js";
+import { calculateActiveCost, calculateRealCost, } from "./costs/modified-costs.js";
 const compareByNameWithFrameworkModifiersLast = compareByLexically((mod) => mod instanceof FrameworkModifier, (mod) => mod.name);
 export const PowerCategory = _PowerCategory;
 export class PowerType {
@@ -253,7 +253,12 @@ export class Power {
      * @type {number}
      */
     get activeCost() {
-        return round.favouringLower((this.baseCost + this.adderTotal) * (1 + this.advantageTotal));
+        return calculateActiveCost({
+            base: this.baseCost,
+            adders: this.adderTotal,
+            advantages: this.advantageTotal,
+            limitations: this.limitationTotal,
+        });
     }
     get adders() {
         return __classPrivateFieldGet(this, _Power_adders, "f");
@@ -326,7 +331,12 @@ export class Power {
      * @type {number}
      */
     get realCost() {
-        return round.favouringLower(this.activeCost / (1 + this.limitationTotal));
+        return calculateRealCost({
+            base: this.baseCost,
+            adders: this.adderTotal,
+            advantages: this.advantageTotal,
+            limitations: this.limitationTotal,
+        });
     }
     display() {
         const { id, name, summary, baseCost, activeCost, realCost, costStructure } = this;
