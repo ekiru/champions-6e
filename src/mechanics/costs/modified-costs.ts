@@ -1,6 +1,6 @@
 import * as round from "../../util/round.js";
 
-type CostInformation = {
+export type CostInformation = {
   base: number;
   adders?: number;
   advantages?: number;

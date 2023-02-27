@@ -1,6 +1,10 @@
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
-import { calculateRealCost } from "../costs/modified-costs.js";
+import {
+  calculateActiveCost,
+  calculateRealCost,
+  CostInformation,
+} from "../costs/modified-costs.js";
 import {
   Framework,
   FrameworkData,
@@ -38,6 +42,10 @@ export class MultipowerSlot extends Slot {
     );
   }
 
+  get activeCost(): number {
+    return favouringLower(this.power.activeCost / this.discountFactor);
+  }
+
   get realCost(): number {
     return favouringLower(this.power.realCost / this.discountFactor);
   }
@@ -71,10 +79,12 @@ export class Multipower extends Framework<MultipowerSlot> {
       .reduce((a, b) => a + b, 0);
   }
 
+  get activeCost(): number {
+    return this.totalCost(calculateActiveCost);
+  }
+
   get realCost(): number {
-    const reserveCost = this.#reserveCost();
-    const slotsCost = this.slots.reduce((sum, slot) => sum + slot.realCost, 0);
-    return reserveCost + slotsCost;
+    return this.totalCost(calculateRealCost);
   }
 
   /**
@@ -156,7 +166,9 @@ export class Multipower extends Framework<MultipowerSlot> {
     });
   }
 
-  #reserveCost(): number {
+  private reserveCost(
+    calculateCost: (costs: CostInformation) => number
+  ): number {
     let frameworkAdvantages = 0;
     let frameworkLimitations = 0;
     for (const mod of this.modifiers) {
@@ -175,12 +187,18 @@ export class Multipower extends Framework<MultipowerSlot> {
         }
       }
     }
-    return calculateRealCost({
+    return calculateCost({
       base: this.reserve,
       adders: 0,
       advantages: frameworkAdvantages,
       limitations: frameworkLimitations,
     });
+  }
+
+  private totalCost(calculateCost: (costs: CostInformation) => number) {
+    const reserveCost = this.reserveCost(calculateCost);
+    const slotsCost = this.slots.reduce((sum, slot) => sum + slot.realCost, 0);
+    return reserveCost + slotsCost;
   }
 
   #validate() {

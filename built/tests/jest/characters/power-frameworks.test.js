@@ -863,5 +863,27 @@ describe("Framework costs", function () {
             });
             expect(mp).toHaveProperty("realCost", 32);
         });
+        it("ignores limitations for the active cost", function () {
+            const power = aPower(50, -1); // active cost = 50, divided by 5 = 5
+            const mp = new Multipower("Power Pool", {
+                reserve: 25,
+                slots: [
+                    new MultipowerSlot({
+                        power,
+                        allocatedCost: 0,
+                        type: SlotType.Variable,
+                    }),
+                ],
+                description: "",
+                modifiers: [
+                    new FrameworkModifier(new PowerLimitation("Hard to change", {
+                        description: "",
+                        summary: "",
+                        value: -1,
+                    }), FrameworkModifierScope.FrameworkOnly),
+                ],
+            });
+            expect(mp).toHaveProperty("activeCost", 30);
+        });
     });
 });
