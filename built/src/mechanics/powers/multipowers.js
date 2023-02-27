@@ -74,10 +74,11 @@ export class Multipower extends Framework {
         });
     }
     display() {
-        const { allocatedReserve, reserve } = this;
+        const { allocatedReserve, reserve, realCost } = this;
         return Object.assign(super.display(), {
             allocatedReserve,
             reserve,
+            realCost,
         });
     }
 }

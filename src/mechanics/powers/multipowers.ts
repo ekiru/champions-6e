@@ -148,10 +148,11 @@ export class Multipower extends Framework<MultipowerSlot> {
   }
 
   display() {
-    const { allocatedReserve, reserve } = this;
+    const { allocatedReserve, reserve, realCost } = this;
     return Object.assign(super.display(), {
       allocatedReserve,
       reserve,
+      realCost,
     });
   }
 
