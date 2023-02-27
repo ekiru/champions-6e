@@ -466,7 +466,7 @@
             </caption>
             <thead>
               <tr>
-                <td>Type</td>
+                <td>CP</td>
                 <th>Name</th>
                 <th>Power</th>
                 <th>Summary</th>
@@ -477,7 +477,10 @@
             <tbody>
               {{#each slots}}
                 <tr class="framework-slot">
-                  <td>{{type}}</td>
+                  <td>
+                    {{realCost}}
+                    <span class="slot-type">{{type}}</span>
+                  </td>
                   {{partial "item/partials/power-data.hbs" power}}
                   <td class="slot-status">
                     {{#if isFixed}}

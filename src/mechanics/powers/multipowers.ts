@@ -56,6 +56,12 @@ export class MultipowerSlot extends Slot {
     }
     return favouringLower(result);
   }
+
+  display() {
+    return Object.assign(super.display(), {
+      realCost: this.realCost,
+    });
+  }
 }
 
 export class Multipower extends Framework<MultipowerSlot> {
