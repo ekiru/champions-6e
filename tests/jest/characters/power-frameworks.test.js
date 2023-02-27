@@ -1012,7 +1012,7 @@ describe("Framework costs", function () {
     });
 
     it("ignores limitations for the active cost", function () {
-      const power = aPower(50, -1); // active cost = 50, divided by 5 = 5
+      const power = aPower(50, -1); // active cost = 50, divided by 5 = 10
       const mp = new Multipower("Power Pool", {
         reserve: 25,
         slots: [
@@ -1034,7 +1034,7 @@ describe("Framework costs", function () {
           ),
         ],
       });
-      expect(mp).toHaveProperty("activeCost", 30);
+      expect(mp).toHaveProperty("activeCost", 35);
     });
   });
 });

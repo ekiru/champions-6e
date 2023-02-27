@@ -80,11 +80,11 @@ export class Multipower extends Framework<MultipowerSlot> {
   }
 
   get activeCost(): number {
-    return this.totalCost(calculateActiveCost);
+    return this.totalCost("activeCost", calculateActiveCost);
   }
 
   get realCost(): number {
-    return this.totalCost(calculateRealCost);
+    return this.totalCost("realCost", calculateRealCost);
   }
 
   /**
@@ -196,9 +196,12 @@ export class Multipower extends Framework<MultipowerSlot> {
     });
   }
 
-  private totalCost(calculateCost: (costs: CostInformation) => number) {
+  private totalCost(
+    cost: "activeCost" | "realCost",
+    calculateCost: (costs: CostInformation) => number
+  ) {
     const reserveCost = this.reserveCost(calculateCost);
-    const slotsCost = this.slots.reduce((sum, slot) => sum + slot.realCost, 0);
+    const slotsCost = this.slots.reduce((sum, slot) => sum + slot[cost], 0);
     return reserveCost + slotsCost;
   }
 
