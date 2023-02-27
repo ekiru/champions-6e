@@ -39,6 +39,7 @@ export default class FrameworkSheet extends ItemSheet {
         context.bio = {
             description: await fields.html("Description", "system.description"),
         };
+        context.display = framework.display();
         context.modifiers = {
             advantages: [],
             limitations: [],

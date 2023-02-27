@@ -12,6 +12,9 @@
     </div>
   </header>
 
+  <div class="costs">
+    <p>Total Real Cost: {{display.realCost}}</p>
+  </div>
   <div class="reserve">
     {{field attributes.reserve}}
   </div>
@@ -27,6 +30,7 @@
       <table>
         <thead>
           <tr>
+            <th>CP</th>
             <th>Type</th>
             <th>Name</th>
             <th>Power</th>
@@ -42,6 +46,7 @@
         <tbody>
           {{#each slots}}
             <tr class="embedded-item" data-item-id="{{display.power.id}}">
+              <td>{{display.realCost}}</td>
               <td>
                 {{#with attributes.type}}
                   <select data-dtype="Boolean" name="{{path}}">
