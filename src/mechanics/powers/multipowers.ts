@@ -23,7 +23,9 @@ interface MultipowerData extends FrameworkData {
 
 interface MultipowerItemData extends FrameworkItemData<{ reserve: number }> {}
 
-export class Multipower extends Framework {
+export class MultipowerSlot extends Slot {}
+
+export class Multipower extends Framework<MultipowerSlot> {
   get allocatedReserve() {
     return this.slots
       .map((slot) => slot.allocatedCost)
@@ -45,13 +47,6 @@ export class Multipower extends Framework {
    * @type {number}
    */
   reserve;
-
-  /**
-   * The slots of the multipower.
-   *
-   * @type {Slot[]}
-   */
-  slots;
 
   /**
    * Problems with the multipower.
@@ -92,13 +87,18 @@ export class Multipower extends Framework {
   ) {
     const slots = [];
     for (const [slotId, rawSlot] of Object.entries(rawSlots)) {
-      const slot = Slot.fromItemData(slotId, rawSlot, powerCollection, {
-        framework: {
-          id,
-          name,
-        },
-        defaultSlotType: SlotType.Fixed,
-      });
+      const slot = MultipowerSlot.fromItemData(
+        slotId,
+        rawSlot,
+        powerCollection,
+        {
+          framework: {
+            id,
+            name,
+          },
+          defaultSlotType: SlotType.Fixed,
+        }
+      );
       slots.push(slot);
     }
     const modifiers = Framework.modifiersFromItemData(rawModifiers);

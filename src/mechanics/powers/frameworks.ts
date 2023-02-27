@@ -324,7 +324,7 @@ export interface FrameworkItemData<ExtraFrameworkFields = {}> {
 /**
  * A base class to represent any type of power framework.
  */
-export class Framework {
+export class Framework<S extends Slot> {
   /**
    * A name given to the framework.
    *
@@ -353,7 +353,7 @@ export class Framework {
    */
   modifiers;
 
-  slots: Slot[] = [];
+  slots: S[] = [];
   warnings: Warning[] = [];
 
   constructor(
@@ -443,7 +443,7 @@ export class Framework {
    * @param slots The slots
    * @returns The slots, with framework modifiers added
    */
-  _applyModifiersToSlots<SlotType extends Slot>(slots: SlotType[]) {
+  _applyModifiersToSlots(slots: S[]): S[] {
     for (const slot of slots) {
       slot.power = slot.power.withFrameworkModifiers(this.modifiers);
     }

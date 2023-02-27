@@ -93,7 +93,7 @@ interface VPPData extends FrameworkData {
 interface VPPItemData
   extends FrameworkItemData<{ control: number; pool: number }> {}
 
-export class VPP extends Framework {
+export class VPP extends Framework<VPPSlot> {
   /**
    * The number of points in the pool currently allocated.
    *

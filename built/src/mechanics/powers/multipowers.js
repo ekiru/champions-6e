@@ -9,6 +9,8 @@ import { favouringLower } from "../../util/round.js";
 import { calculateRealCost } from "../costs/modified-costs.js";
 import { Framework, Slot, SlotType, Warning, } from "./frameworks.js";
 import { FrameworkModifierScope, PowerAdvantage, PowerLimitation, } from "./modifiers.js";
+export class MultipowerSlot extends Slot {
+}
 export class Multipower extends Framework {
     get allocatedReserve() {
         return this.slots
@@ -31,7 +33,7 @@ export class Multipower extends Framework {
     static fromItem({ id, name, system: { framework: { reserve, modifiers: rawModifiers, slots: rawSlots }, description, }, }, powerCollection) {
         const slots = [];
         for (const [slotId, rawSlot] of Object.entries(rawSlots)) {
-            const slot = Slot.fromItemData(slotId, rawSlot, powerCollection, {
+            const slot = MultipowerSlot.fromItemData(slotId, rawSlot, powerCollection, {
                 framework: {
                     id,
                     name,
