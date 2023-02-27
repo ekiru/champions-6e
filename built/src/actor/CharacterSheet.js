@@ -95,6 +95,7 @@ Hooks.once("init", function () {
     registerPartial("actor/partials/framework-modifiers-summary.hbs");
     registerPartial("item/partials/modifier-summaries.hbs");
     registerPartial("item/partials/power-data.hbs");
+    registerPartial("item/partials/real-active-cost.hbs");
 });
 export default class CharacterSheet extends ActorSheet {
     /** @override */

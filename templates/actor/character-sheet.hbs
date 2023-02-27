@@ -407,8 +407,7 @@
           {{#each powers}}
             <tr class="actor-item" data-item-id="{{id}}">
               <td>
-                {{realCost}}
-                {{#if (ne activeCost realCost)}}[{{activeCost}}]{{/if}}
+                {{partial "item/partials/real-active-cost.hbs" this}}
               </td>
               {{partial "item/partials/power-data.hbs" this}}
               <td class="item-controls">
@@ -479,7 +478,7 @@
               {{#each slots}}
                 <tr class="framework-slot">
                   <td>
-                    {{realCost}}
+                    {{partial "item/partials/real-active-cost.hbs" this}}
                     <span class="slot-type">{{type}}</span>
                   </td>
                   {{partial "item/partials/power-data.hbs" power}}

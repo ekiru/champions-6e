@@ -67,6 +67,7 @@ export class MultipowerSlot extends Slot {
 
   display() {
     return Object.assign(super.display(), {
+      activeCost: this.activeCost,
       realCost: this.realCost,
     });
   }
