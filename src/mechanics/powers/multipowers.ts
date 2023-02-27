@@ -39,14 +39,15 @@ export class MultipowerSlot extends Slot {
   }
 
   get realCost(): number {
-    let result: number;
+    return favouringLower(this.power.realCost / this.discountFactor);
+  }
+
+  private get discountFactor(): number {
     switch (this.type) {
       case SlotType.Fixed:
-        result = this.power.realCost / 10;
-        break;
+        return 10;
       case SlotType.Variable:
-        result = this.power.realCost / 5;
-        break;
+        return 5;
       default:
         assert.notYetImplemented(
           `haven't implemented costs for ${SlotType[this.type]} (${
@@ -54,7 +55,6 @@ export class MultipowerSlot extends Slot {
           }) slots`
         );
     }
-    return favouringLower(result);
   }
 
   display() {

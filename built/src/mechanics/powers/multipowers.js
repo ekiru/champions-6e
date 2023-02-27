@@ -14,18 +14,17 @@ export class MultipowerSlot extends Slot {
         return new MultipowerSlot(slotDataFromItemData(rawSlot, powerCollection, options, id));
     }
     get realCost() {
-        let result;
+        return favouringLower(this.power.realCost / this.discountFactor);
+    }
+    get discountFactor() {
         switch (this.type) {
             case SlotType.Fixed:
-                result = this.power.realCost / 10;
-                break;
+                return 10;
             case SlotType.Variable:
-                result = this.power.realCost / 5;
-                break;
+                return 5;
             default:
                 assert.notYetImplemented(`haven't implemented costs for ${SlotType[this.type]} (${this.type}) slots`);
         }
-        return favouringLower(result);
     }
     display() {
         return Object.assign(super.display(), {
