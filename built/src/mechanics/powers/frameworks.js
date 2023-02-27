@@ -101,6 +101,26 @@ export var SlotType;
     /** Variable slots can be allocated a part of their reserve cost, but cost more CP. */
     SlotType[SlotType["Variable"] = 1] = "Variable";
 })(SlotType || (SlotType = {}));
+export function slotDataFromItemData(rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName }, defaultSlotType, }, id) {
+    if (rawSlot.powers.length !== 1) {
+        assert.notYetImplemented("Slots with multiple powers not yet implemented");
+    }
+    const [powerId] = rawSlot.powers;
+    const power = powerCollection.get(powerId);
+    assert.precondition(power !== undefined, `No such power ${powerId} in collection ${powerCollection}`);
+    assert.precondition(power.system.power.framework === frameworkId, `Power ${power.name} (${power.id}) is not part of framework ${frameworkName} (${frameworkId})`);
+    const { active = false, fixed = defaultSlotType === SlotType.Fixed, allocatedCost = 0, fullCost = 0, } = rawSlot;
+    const type = fixed ? SlotType.Fixed : SlotType.Variable;
+    const data = {
+        active,
+        type,
+        allocatedCost,
+        fullCost,
+        id,
+        power: Power.fromItem(power),
+    };
+    return data;
+}
 /**
  * A slot in a multipower.
  */
@@ -157,24 +177,9 @@ export class Slot {
         this.type = type;
         __classPrivateFieldSet(this, _Slot_allocatedCost, allocatedCost, "f");
     }
-    static fromItemData(id, rawSlot, powerCollection, { framework: { id: frameworkId, name: frameworkName }, defaultSlotType, }) {
-        if (rawSlot.powers.length !== 1) {
-            assert.notYetImplemented("Slots with multiple powers not yet implemented");
-        }
-        const [powerId] = rawSlot.powers;
-        const power = powerCollection.get(powerId);
-        assert.precondition(power !== undefined, `No such power ${powerId} in collection ${powerCollection}`);
-        assert.precondition(power.system.power.framework === frameworkId, `Power ${power.name} (${power.id}) is not part of framework ${frameworkName} (${frameworkId})`);
-        const { active = false, fixed = defaultSlotType === SlotType.Fixed, allocatedCost = 0, fullCost = 0, } = rawSlot;
-        const type = fixed ? SlotType.Fixed : SlotType.Variable;
-        const slot = new Slot({
-            active,
-            type,
-            allocatedCost,
-            fullCost,
-            id,
-            power: Power.fromItem(power),
-        });
+    static fromItemData(id, rawSlot, powerCollection, options) {
+        const data = slotDataFromItemData(rawSlot, powerCollection, options, id);
+        const slot = new Slot(data);
         return slot;
     }
     display(warnings) {

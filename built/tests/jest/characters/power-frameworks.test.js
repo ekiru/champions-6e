@@ -3,7 +3,7 @@ import { describe, expect, it } from "@jest/globals";
 import { CustomPowerType, Power } from "../../../src/mechanics/power.js";
 import { Slot, SlotType, WarningScope, } from "../../../src/mechanics/powers/frameworks.js";
 import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerLimitation, } from "../../../src/mechanics/powers/modifiers.js";
-import { Multipower } from "../../../src/mechanics/powers/multipowers.js";
+import { Multipower, MultipowerSlot, } from "../../../src/mechanics/powers/multipowers.js";
 import { VPP, VPPSlot } from "../../../src/mechanics/powers/vpps.js";
 describe("Multipowers", function () {
     describe("new multipowers", function () {
@@ -33,7 +33,7 @@ describe("Multipowers", function () {
                 description,
                 reserve,
                 slots: [
-                    new Slot({
+                    new MultipowerSlot({
                         power: fireball,
                         active: false,
                         allocatedCost: 0,
@@ -167,7 +167,7 @@ describe("Multipowers", function () {
                 description: "The magical power of a siren's song",
                 reserve: 60,
                 slots: [
-                    new Slot({
+                    new MultipowerSlot({
                         power: new Power("Allure", {
                             type: new CustomPowerType("Mind Control"),
                             summary: "Mind Control 12d6 only to approach the singer",
@@ -177,7 +177,7 @@ describe("Multipowers", function () {
                         type: SlotType.Variable,
                         allocatedCost: 30,
                     }),
-                    new Slot({
+                    new MultipowerSlot({
                         power: new Power("Beguile", {
                             type: new CustomPowerType("Mental Illusions"),
                             summary: "Mental Illusions 12d6",
@@ -187,7 +187,7 @@ describe("Multipowers", function () {
                         type: SlotType.Fixed,
                         active: false,
                     }),
-                    new Slot({
+                    new MultipowerSlot({
                         power: new Power("Charm", {
                             type: new CustomPowerType("PRE"),
                             costOverride: 15,
@@ -208,7 +208,7 @@ describe("Multipowers", function () {
                 description: "The power of flowers~~",
                 reserve: 40,
                 slots: [
-                    new Slot({
+                    new MultipowerSlot({
                         power: new Power("Relaxing Aroma", {
                             type: new CustomPowerType("Drain"),
                             summary: "Drain END 2d6 no end cost",
@@ -218,7 +218,7 @@ describe("Multipowers", function () {
                         type: SlotType.Fixed,
                         active: true,
                     }),
-                    new Slot({
+                    new MultipowerSlot({
                         power: new Power("Choking Pollen", {
                             type: new CustomPowerType("Blast"),
                             summary: "Blast 4d6 NND vs life support",
@@ -237,7 +237,7 @@ describe("Multipowers", function () {
                 description: "The power of flowers~~",
                 reserve: 40,
                 slots: [
-                    new Slot({
+                    new MultipowerSlot({
                         id: "relaxingaroma",
                         power: new Power("Relaxing Aroma", {
                             type: new CustomPowerType("Drain"),
@@ -248,7 +248,7 @@ describe("Multipowers", function () {
                         type: SlotType.Fixed,
                         active: true,
                     }),
-                    new Slot({
+                    new MultipowerSlot({
                         id: "chokingpollen",
                         power: new Power("Choking Pollen", {
                             type: new CustomPowerType("Blast"),
@@ -271,7 +271,7 @@ describe("Multipowers", function () {
                 description: "The power of flowers~~",
                 reserve: 40,
                 slots: [
-                    new Slot({
+                    new MultipowerSlot({
                         id: "relaxingaroma",
                         power: new Power("Relaxing Aroma", {
                             type: new CustomPowerType("Drain"),
@@ -282,7 +282,7 @@ describe("Multipowers", function () {
                         type: SlotType.Fixed,
                         active: true,
                     }),
-                    new Slot({
+                    new MultipowerSlot({
                         id: "chokingpollen",
                         power: new Power("Choking Pollen", {
                             type: new CustomPowerType("Blast"),
@@ -304,7 +304,7 @@ describe("Multipowers", function () {
                 description: "The power of flowers~~",
                 reserve: 40,
                 slots: [
-                    new Slot({
+                    new MultipowerSlot({
                         id: "relaxingaroma",
                         power: new Power("Relaxing Aroma", {
                             type: new CustomPowerType("Drain"),
@@ -315,7 +315,7 @@ describe("Multipowers", function () {
                         type: SlotType.Fixed,
                         active: false,
                     }),
-                    new Slot({
+                    new MultipowerSlot({
                         id: "chokingpollen",
                         power: new Power("Choking Pollen", {
                             type: new CustomPowerType("Blast"),
@@ -821,7 +821,9 @@ describe("Framework costs", function () {
             const power = aPower(50, -1); // real cost = 25, divided by 10 rounds to 2
             const mp = new Multipower("Power Pool", {
                 reserve: 0,
-                slots: [new Slot({ power, active: false, type: SlotType.Fixed })],
+                slots: [
+                    new MultipowerSlot({ power, active: false, type: SlotType.Fixed }),
+                ],
                 description: "",
                 modifiers: [],
             });
@@ -831,7 +833,13 @@ describe("Framework costs", function () {
             const power = aPower(50, -1); // real cost = 25, divided by 5 = 5
             const mp = new Multipower("Power Pool", {
                 reserve: 0,
-                slots: [new Slot({ power, allocatedCost: 0, type: SlotType.Variable })],
+                slots: [
+                    new MultipowerSlot({
+                        power,
+                        allocatedCost: 0,
+                        type: SlotType.Variable,
+                    }),
+                ],
                 description: "",
                 modifiers: [],
             });
@@ -841,7 +849,9 @@ describe("Framework costs", function () {
             const power = aPower(20, 0);
             const mp = new Multipower("Power Pool", {
                 reserve: 60,
-                slots: [new Slot({ power, active: true, type: SlotType.Fixed })],
+                slots: [
+                    new MultipowerSlot({ power, active: true, type: SlotType.Fixed }),
+                ],
                 description: "",
                 modifiers: [
                     new FrameworkModifier(new PowerLimitation("Extra time", {

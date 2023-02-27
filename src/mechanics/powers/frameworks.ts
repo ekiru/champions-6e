@@ -158,6 +158,54 @@ export interface SlotData {
   id: string | null;
 }
 
+export type SlotFromItemDataOptions = {
+  framework: {
+    id: string;
+    name: string;
+  };
+  defaultSlotType: SlotType;
+};
+
+export function slotDataFromItemData(
+  rawSlot: SlotItemData,
+  powerCollection: PowerCollection,
+  {
+    framework: { id: frameworkId, name: frameworkName },
+    defaultSlotType,
+  }: SlotFromItemDataOptions,
+  id: string | null
+): SlotData {
+  if (rawSlot.powers.length !== 1) {
+    assert.notYetImplemented("Slots with multiple powers not yet implemented");
+  }
+  const [powerId] = rawSlot.powers;
+  const power = powerCollection.get(powerId!);
+  assert.precondition(
+    power !== undefined,
+    `No such power ${powerId} in collection ${powerCollection}`
+  );
+  assert.precondition(
+    power.system.power.framework === frameworkId,
+    `Power ${power.name} (${power.id}) is not part of framework ${frameworkName} (${frameworkId})`
+  );
+  const {
+    active = false,
+    fixed = defaultSlotType === SlotType.Fixed,
+    allocatedCost = 0,
+    fullCost = 0,
+  } = rawSlot;
+  const type = fixed ? SlotType.Fixed : SlotType.Variable;
+  const data = {
+    active,
+    type,
+    allocatedCost,
+    fullCost,
+    id,
+    power: Power.fromItem(power),
+  };
+  return data;
+}
+
 /**
  * A slot in a multipower.
  */
@@ -250,41 +298,10 @@ export class Slot {
     id: string | null,
     rawSlot: SlotItemData,
     powerCollection: PowerCollection,
-    {
-      framework: { id: frameworkId, name: frameworkName },
-      defaultSlotType,
-    }: { framework: { id: string; name: string }; defaultSlotType: SlotType }
-  ) {
-    if (rawSlot.powers.length !== 1) {
-      assert.notYetImplemented(
-        "Slots with multiple powers not yet implemented"
-      );
-    }
-    const [powerId] = rawSlot.powers;
-    const power = powerCollection.get(powerId!);
-    assert.precondition(
-      power !== undefined,
-      `No such power ${powerId} in collection ${powerCollection}`
-    );
-    assert.precondition(
-      power.system.power.framework === frameworkId,
-      `Power ${power.name} (${power.id}) is not part of framework ${frameworkName} (${frameworkId})`
-    );
-    const {
-      active = false,
-      fixed = defaultSlotType === SlotType.Fixed,
-      allocatedCost = 0,
-      fullCost = 0,
-    } = rawSlot;
-    const type = fixed ? SlotType.Fixed : SlotType.Variable;
-    const slot = new Slot({
-      active,
-      type,
-      allocatedCost,
-      fullCost,
-      id,
-      power: Power.fromItem(power),
-    });
+    options: SlotFromItemDataOptions
+  ): Slot {
+    const data = slotDataFromItemData(rawSlot, powerCollection, options, id);
+    const slot = new Slot(data);
     return slot;
   }
 

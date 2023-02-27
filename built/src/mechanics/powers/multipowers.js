@@ -3,13 +3,30 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Multipower_instances, _Multipower_reserveCost, _Multipower_slotCost, _Multipower_validate;
+var _Multipower_instances, _Multipower_reserveCost, _Multipower_validate;
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
 import { calculateRealCost } from "../costs/modified-costs.js";
-import { Framework, Slot, SlotType, Warning, } from "./frameworks.js";
+import { Framework, Slot, slotDataFromItemData, SlotType, Warning, } from "./frameworks.js";
 import { FrameworkModifierScope, PowerAdvantage, PowerLimitation, } from "./modifiers.js";
 export class MultipowerSlot extends Slot {
+    static fromItemData(id, rawSlot, powerCollection, options) {
+        return new MultipowerSlot(slotDataFromItemData(rawSlot, powerCollection, options, id));
+    }
+    get realCost() {
+        let result;
+        switch (this.type) {
+            case SlotType.Fixed:
+                result = this.power.realCost / 10;
+                break;
+            case SlotType.Variable:
+                result = this.power.realCost / 5;
+                break;
+            default:
+                assert.notYetImplemented(`haven't implemented costs for ${SlotType[this.type]} (${this.type}) slots`);
+        }
+        return favouringLower(result);
+    }
 }
 export class Multipower extends Framework {
     get allocatedReserve() {
@@ -19,7 +36,7 @@ export class Multipower extends Framework {
     }
     get realCost() {
         const reserveCost = __classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_reserveCost).call(this);
-        const slotsCost = this.slots.reduce((sum, slot) => sum + favouringLower(__classPrivateFieldGet(this, _Multipower_instances, "m", _Multipower_slotCost).call(this, slot)), 0);
+        const slotsCost = this.slots.reduce((sum, slot) => sum + slot.realCost, 0);
         return reserveCost + slotsCost;
     }
     constructor(name, { reserve, slots = [], ...properties }) {
@@ -82,15 +99,6 @@ _Multipower_instances = new WeakSet(), _Multipower_reserveCost = function _Multi
         advantages: frameworkAdvantages,
         limitations: frameworkLimitations,
     });
-}, _Multipower_slotCost = function _Multipower_slotCost(slot) {
-    switch (slot.type) {
-        case SlotType.Fixed:
-            return slot.power.realCost / 10;
-        case SlotType.Variable:
-            return slot.power.realCost / 5;
-        default:
-            assert.notYetImplemented(`haven't implemented costs for ${SlotType[slot.type]} (${slot.type}) slots`);
-    }
 }, _Multipower_validate = function _Multipower_validate() {
     const warnings = [];
     if (this.allocatedReserve > this.reserve) {

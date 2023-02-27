@@ -7,6 +7,9 @@ import {
   FrameworkItemData,
   PowerCollection,
   Slot,
+  slotDataFromItemData,
+  SlotFromItemDataOptions,
+  SlotItemData,
   SlotType,
   Warning,
 } from "./frameworks.js";
@@ -18,12 +21,42 @@ import {
 
 interface MultipowerData extends FrameworkData {
   reserve: number;
-  slots: Slot[];
+  slots: MultipowerSlot[];
 }
 
 interface MultipowerItemData extends FrameworkItemData<{ reserve: number }> {}
 
-export class MultipowerSlot extends Slot {}
+export class MultipowerSlot extends Slot {
+  static fromItemData(
+    id: string | null,
+    rawSlot: SlotItemData,
+    powerCollection: PowerCollection,
+    options: SlotFromItemDataOptions
+  ): MultipowerSlot {
+    return new MultipowerSlot(
+      slotDataFromItemData(rawSlot, powerCollection, options, id)
+    );
+  }
+
+  get realCost(): number {
+    let result: number;
+    switch (this.type) {
+      case SlotType.Fixed:
+        result = this.power.realCost / 10;
+        break;
+      case SlotType.Variable:
+        result = this.power.realCost / 5;
+        break;
+      default:
+        assert.notYetImplemented(
+          `haven't implemented costs for ${SlotType[this.type]} (${
+            this.type
+          }) slots`
+        );
+    }
+    return favouringLower(result);
+  }
+}
 
 export class Multipower extends Framework<MultipowerSlot> {
   get allocatedReserve() {
@@ -34,10 +67,7 @@ export class Multipower extends Framework<MultipowerSlot> {
 
   get realCost(): number {
     const reserveCost = this.#reserveCost();
-    const slotsCost = this.slots.reduce(
-      (sum, slot) => sum + favouringLower(this.#slotCost(slot)),
-      0
-    );
+    const slotsCost = this.slots.reduce((sum, slot) => sum + slot.realCost, 0);
     return reserveCost + slotsCost;
   }
 
@@ -85,7 +115,7 @@ export class Multipower extends Framework<MultipowerSlot> {
     }: MultipowerItemData,
     powerCollection: PowerCollection
   ) {
-    const slots = [];
+    const slots: MultipowerSlot[] = [];
     for (const [slotId, rawSlot] of Object.entries(rawSlots)) {
       const slot = MultipowerSlot.fromItemData(
         slotId,
@@ -144,21 +174,6 @@ export class Multipower extends Framework<MultipowerSlot> {
       advantages: frameworkAdvantages,
       limitations: frameworkLimitations,
     });
-  }
-
-  #slotCost(slot: Slot): number {
-    switch (slot.type) {
-      case SlotType.Fixed:
-        return slot.power.realCost / 10;
-      case SlotType.Variable:
-        return slot.power.realCost / 5;
-      default:
-        assert.notYetImplemented(
-          `haven't implemented costs for ${SlotType[slot.type]} (${
-            slot.type
-          }) slots`
-        );
-    }
   }
 
   #validate() {
