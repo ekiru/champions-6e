@@ -1037,4 +1037,39 @@ describe("Framework costs", function () {
       expect(mp).toHaveProperty("activeCost", 35);
     });
   });
+
+  describe("for a VPP", function () {
+    it("should be 1 CP per point in the pool", function () {
+      const vpp = new VPP("Power of Love", {
+        control: 0,
+        pool: 23,
+        slots: [],
+        description: "",
+        modifiers: [],
+      });
+      expect(vpp).toHaveProperty("realCost", 23);
+    });
+
+    it("should be 2 CP per point in the control", function () {
+      const vpp = new VPP("Power of Love", {
+        control: 20,
+        pool: 0,
+        slots: [],
+        modifiers: [],
+        description: "",
+      });
+      expect(vpp).toHaveProperty("realCost", 40);
+    });
+
+    it("should add the pool and control costs", function () {
+      const vpp = new VPP("Power of Love", {
+        control: 5,
+        pool: 7,
+        slots: [],
+        modifiers: [],
+        description: "",
+      });
+      expect(vpp).toHaveProperty("realCost", 17);
+    });
+  });
 });

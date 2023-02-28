@@ -191,6 +191,10 @@ export class VPP extends Framework<VPPSlot> {
     });
   }
 
+  get realCost(): number {
+    return this.control * 2 + this.pool;
+  }
+
   display() {
     const { control, pool, allocatedPool } = this;
     return Object.assign(super.display(), { control, pool, allocatedPool });
