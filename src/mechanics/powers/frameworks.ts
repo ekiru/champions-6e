@@ -4,6 +4,9 @@ import {
   FrameworkModifier,
   ModifierDisplay,
   FrameworkModifierItemData,
+  FrameworkModifierScope,
+  PowerAdvantage,
+  PowerLimitation,
 } from "./modifiers.js";
 
 /**
@@ -465,5 +468,32 @@ export class Framework<S extends Slot> {
       slot.power = slot.power.withFrameworkModifiers(this.modifiers);
     }
     return slots;
+  }
+
+  protected _costInformationFor(base: number) {
+    let frameworkAdvantages = 0;
+    let frameworkLimitations = 0;
+    for (const mod of this.modifiers) {
+      if (
+        mod.scope === FrameworkModifierScope.FrameworkAndSlots ||
+        mod.scope === FrameworkModifierScope.FrameworkOnly
+      ) {
+        if (mod.modifier instanceof PowerAdvantage) {
+          frameworkAdvantages += +mod.value;
+        } else if (mod.modifier instanceof PowerLimitation) {
+          frameworkLimitations += Math.abs(+mod.value);
+        } else {
+          assert.notYetImplemented(
+            "non-advantage/limitation framework modifiers not yet supported"
+          );
+        }
+      }
+    }
+    return {
+      base,
+      adders: 0,
+      advantages: frameworkAdvantages,
+      limitations: frameworkLimitations,
+    };
   }
 }

@@ -12,7 +12,7 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
 var _Slot_allocatedCost, _Slot_isActive;
 import * as assert from "../../util/assert.js";
 import { Power } from "../power.js";
-import { FrameworkModifier, } from "./modifiers.js";
+import { FrameworkModifier, FrameworkModifierScope, PowerAdvantage, PowerLimitation, } from "./modifiers.js";
 /**
  * The scope to which a warning applies.
  */
@@ -274,5 +274,29 @@ export class Framework {
             slot.power = slot.power.withFrameworkModifiers(this.modifiers);
         }
         return slots;
+    }
+    _costInformationFor(base) {
+        let frameworkAdvantages = 0;
+        let frameworkLimitations = 0;
+        for (const mod of this.modifiers) {
+            if (mod.scope === FrameworkModifierScope.FrameworkAndSlots ||
+                mod.scope === FrameworkModifierScope.FrameworkOnly) {
+                if (mod.modifier instanceof PowerAdvantage) {
+                    frameworkAdvantages += +mod.value;
+                }
+                else if (mod.modifier instanceof PowerLimitation) {
+                    frameworkLimitations += Math.abs(+mod.value);
+                }
+                else {
+                    assert.notYetImplemented("non-advantage/limitation framework modifiers not yet supported");
+                }
+            }
+        }
+        return {
+            base,
+            adders: 0,
+            advantages: frameworkAdvantages,
+            limitations: frameworkLimitations,
+        };
     }
 }

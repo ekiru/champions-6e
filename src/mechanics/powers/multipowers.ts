@@ -171,30 +171,8 @@ export class Multipower extends Framework<MultipowerSlot> {
   private reserveCost(
     calculateCost: (costs: CostInformation) => number
   ): number {
-    let frameworkAdvantages = 0;
-    let frameworkLimitations = 0;
-    for (const mod of this.modifiers) {
-      if (
-        mod.scope === FrameworkModifierScope.FrameworkAndSlots ||
-        mod.scope === FrameworkModifierScope.FrameworkOnly
-      ) {
-        if (mod.modifier instanceof PowerAdvantage) {
-          frameworkAdvantages += +mod.value;
-        } else if (mod.modifier instanceof PowerLimitation) {
-          frameworkLimitations += Math.abs(+mod.value);
-        } else {
-          assert.notYetImplemented(
-            "non-advantage/limitation framework modifiers not yet supported"
-          );
-        }
-      }
-    }
-    return calculateCost({
-      base: this.reserve,
-      adders: 0,
-      advantages: frameworkAdvantages,
-      limitations: frameworkLimitations,
-    });
+    const cost = this._costInformationFor(this.reserve);
+    return calculateCost(cost);
   }
 
   private totalCost(

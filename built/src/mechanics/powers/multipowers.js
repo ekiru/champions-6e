@@ -8,7 +8,6 @@ import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
 import { calculateActiveCost, calculateRealCost, } from "../costs/modified-costs.js";
 import { Framework, Slot, slotDataFromItemData, SlotType, Warning, } from "./frameworks.js";
-import { FrameworkModifierScope, PowerAdvantage, PowerLimitation, } from "./modifiers.js";
 export class MultipowerSlot extends Slot {
     static fromItemData(id, rawSlot, powerCollection, options) {
         return new MultipowerSlot(slotDataFromItemData(rawSlot, powerCollection, options, id));
@@ -87,28 +86,8 @@ export class Multipower extends Framework {
         });
     }
     reserveCost(calculateCost) {
-        let frameworkAdvantages = 0;
-        let frameworkLimitations = 0;
-        for (const mod of this.modifiers) {
-            if (mod.scope === FrameworkModifierScope.FrameworkAndSlots ||
-                mod.scope === FrameworkModifierScope.FrameworkOnly) {
-                if (mod.modifier instanceof PowerAdvantage) {
-                    frameworkAdvantages += +mod.value;
-                }
-                else if (mod.modifier instanceof PowerLimitation) {
-                    frameworkLimitations += Math.abs(+mod.value);
-                }
-                else {
-                    assert.notYetImplemented("non-advantage/limitation framework modifiers not yet supported");
-                }
-            }
-        }
-        return calculateCost({
-            base: this.reserve,
-            adders: 0,
-            advantages: frameworkAdvantages,
-            limitations: frameworkLimitations,
-        });
+        const cost = this._costInformationFor(this.reserve);
+        return calculateCost(cost);
     }
     totalCost(cost, calculateCost) {
         const reserveCost = this.reserveCost(calculateCost);
