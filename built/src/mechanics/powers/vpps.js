@@ -8,6 +8,7 @@ import { Framework, Slot, SlotType, Warning, } from "./frameworks.js";
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
 import { Power } from "../power.js";
+import { calculateActiveCost, calculateBaseCost, calculateRealCost, } from "../costs/modified-costs.js";
 export class VPPSlot extends Slot {
     get allocatedRealCost() {
         if (this.fullCost === 0) {
@@ -98,12 +99,24 @@ export class VPP extends Framework {
             slots,
         });
     }
+    get baseCost() {
+        return this.totalCost(calculateBaseCost);
+    }
+    get activeCost() {
+        return this.totalCost(calculateActiveCost);
+    }
     get realCost() {
-        return this.control * 2 + this.pool;
+        return this.totalCost(calculateRealCost);
     }
     display() {
         const { control, pool, allocatedPool } = this;
         return Object.assign(super.display(), { control, pool, allocatedPool });
+    }
+    totalCost(calculateCost) {
+        // modifiers apply only to the pool.
+        const controlCost = calculateCost(this._costInformationFor(this.control * 2));
+        const poolCost = this.pool;
+        return controlCost + poolCost;
     }
 }
 _VPP_instances = new WeakSet(), _VPP_validate = function _VPP_validate() {

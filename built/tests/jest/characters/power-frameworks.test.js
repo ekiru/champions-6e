@@ -2,7 +2,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { CustomPowerType, Power } from "../../../src/mechanics/power.js";
 import { Slot, SlotType, WarningScope, } from "../../../src/mechanics/powers/frameworks.js";
-import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerLimitation, } from "../../../src/mechanics/powers/modifiers.js";
+import { FrameworkModifier, FrameworkModifierScope, PowerAdder, PowerAdvantage, PowerLimitation, } from "../../../src/mechanics/powers/modifiers.js";
 import { Multipower, MultipowerSlot, } from "../../../src/mechanics/powers/multipowers.js";
 import { VPP, VPPSlot } from "../../../src/mechanics/powers/vpps.js";
 describe("Multipowers", function () {
@@ -916,6 +916,28 @@ describe("Framework costs", function () {
                 description: "",
             });
             expect(vpp).toHaveProperty("realCost", 17);
+        });
+        it("should apply framework-scoped modifiers only to the Control Cost only", function () {
+            const vpp = new VPP("Power of Love", {
+                control: 15,
+                pool: 45,
+                slots: [],
+                modifiers: [
+                    new FrameworkModifier(new PowerAdvantage("No Skill Roll Required", {
+                        description: "",
+                        summary: "",
+                        value: +1,
+                    }), FrameworkModifierScope.FrameworkOnly),
+                    new FrameworkModifier(new PowerLimitation("Slightly Limited Class", {
+                        description: "",
+                        summary: "",
+                        value: -1,
+                    }), FrameworkModifierScope.FrameworkOnly),
+                ],
+                description: "",
+            });
+            expect(vpp).toHaveProperty("activeCost", 105);
+            expect(vpp).toHaveProperty("realCost", 75);
         });
     });
 });

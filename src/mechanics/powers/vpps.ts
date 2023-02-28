@@ -12,6 +12,12 @@ import {
 import * as assert from "../../util/assert.js";
 import { favouringLower } from "../../util/round.js";
 import { Power } from "../power.js";
+import {
+  calculateActiveCost,
+  calculateBaseCost,
+  calculateRealCost,
+  CostInformation,
+} from "../costs/modified-costs.js";
 
 interface VPPSlotData extends SlotData {
   realCost: number;
@@ -191,13 +197,30 @@ export class VPP extends Framework<VPPSlot> {
     });
   }
 
+  get baseCost(): number {
+    return this.totalCost(calculateBaseCost);
+  }
+
+  get activeCost(): number {
+    return this.totalCost(calculateActiveCost);
+  }
+
   get realCost(): number {
-    return this.control * 2 + this.pool;
+    return this.totalCost(calculateRealCost);
   }
 
   display() {
     const { control, pool, allocatedPool } = this;
     return Object.assign(super.display(), { control, pool, allocatedPool });
+  }
+
+  private totalCost(calculateCost: (costs: CostInformation) => number): number {
+    // modifiers apply only to the pool.
+    const controlCost = calculateCost(
+      this._costInformationFor(this.control * 2)
+    );
+    const poolCost = this.pool;
+    return controlCost + poolCost;
   }
 
   #validate() {

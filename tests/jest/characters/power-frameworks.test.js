@@ -10,6 +10,7 @@ import {
   FrameworkModifier,
   FrameworkModifierScope,
   PowerAdder,
+  PowerAdvantage,
   PowerLimitation,
 } from "../../../src/mechanics/powers/modifiers.js";
 import {
@@ -1070,6 +1071,35 @@ describe("Framework costs", function () {
         description: "",
       });
       expect(vpp).toHaveProperty("realCost", 17);
+    });
+
+    it("should apply framework-scoped modifiers only to the Control Cost only", function () {
+      const vpp = new VPP("Power of Love", {
+        control: 15,
+        pool: 45,
+        slots: [],
+        modifiers: [
+          new FrameworkModifier(
+            new PowerAdvantage("No Skill Roll Required", {
+              description: "",
+              summary: "",
+              value: +1,
+            }),
+            FrameworkModifierScope.FrameworkOnly
+          ),
+          new FrameworkModifier(
+            new PowerLimitation("Slightly Limited Class", {
+              description: "",
+              summary: "",
+              value: -1,
+            }),
+            FrameworkModifierScope.FrameworkOnly
+          ),
+        ],
+        description: "",
+      });
+      expect(vpp).toHaveProperty("activeCost", 105);
+      expect(vpp).toHaveProperty("realCost", 75);
     });
   });
 });

@@ -7,11 +7,14 @@ export type CostInformation = {
   limitations?: number;
 };
 
+export function calculateBaseCost({ base }: CostInformation): number {
+  return base;
+}
+
 export function calculateActiveCost({
   base,
   adders = 0,
   advantages = 0,
-  limitations = 0,
 }: CostInformation): number {
   return round.favouringLower((base + adders) * (1 + advantages));
 }

@@ -1,5 +1,8 @@
 import * as round from "../../util/round.js";
-export function calculateActiveCost({ base, adders = 0, advantages = 0, limitations = 0, }) {
+export function calculateBaseCost({ base }) {
+    return base;
+}
+export function calculateActiveCost({ base, adders = 0, advantages = 0, }) {
     return round.favouringLower((base + adders) * (1 + advantages));
 }
 export function calculateRealCost(info) {
