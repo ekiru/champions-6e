@@ -72,6 +72,7 @@ details.modifier {
 
 .framework .framework-cost {
   float: left;
+  margin-left: 2px;
 }
 
 .framework .warning {
