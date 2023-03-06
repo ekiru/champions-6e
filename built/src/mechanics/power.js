@@ -24,6 +24,11 @@ import { calculateActiveCost, calculateRealCost, } from "./costs/modified-costs.
 const compareByNameWithFrameworkModifiersLast = compareByLexically((mod) => mod instanceof FrameworkModifier, (mod) => mod.name);
 export const PowerCategory = _PowerCategory;
 export class PowerType {
+    /**
+     * The name of the power.
+     *
+     * @type {string}
+     */
     get name() {
         return assert.abstract(PowerType, "name");
     }

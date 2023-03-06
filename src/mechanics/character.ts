@@ -10,6 +10,7 @@ import { Power, StandardPowerType } from "./power.js";
 import { PowerCategory } from "./power-category.js";
 import { Multipower } from "./powers/multipowers.js";
 import { VPP } from "./powers/vpps.js";
+import { capitalizeFirst } from "../util/strings.js";
 
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
   new MovementMode("Running", {
@@ -26,7 +27,7 @@ const DEFAULT_MOVEMENT_MODES = Object.freeze([
   }),
 ]);
 
-const MOVEMENT_TYPES_BY_NAME = {
+const MOVEMENT_TYPES_BY_NAME: Record<string, StandardPowerType> = {
   run: StandardPowerType.get("Running"),
   leap: StandardPowerType.get("Leaping"),
   swim: StandardPowerType.get("Swimming"),
@@ -39,6 +40,56 @@ const MOVEMENT_TYPES_BY_NAME = {
  * value.
  * @property {number?} modifier A modifier applied to the characteristic's base value.
  */
+
+interface CharacteristicValue {
+  value: number;
+  modifier?: number;
+}
+
+interface CharacterData {
+  characteristics?: Record<string, CharacteristicValue>;
+  movementModes?: readonly MovementMode[];
+  powers?: Power[];
+  multipowers?: Multipower[];
+  vpps?: VPP[];
+}
+
+interface MovementModeItemData {
+  value: number;
+  modifier: number;
+}
+
+interface MultipowerItem {
+  type: "multipower";
+  readonly asMultipower: Multipower;
+}
+
+interface PowerItem {
+  type: "power";
+  readonly asPower: Power;
+  system: {
+    power: {
+      framework: string | null;
+    };
+  };
+}
+
+interface VPPItem {
+  type: "vpp";
+  readonly asVPP: VPP;
+}
+
+type CharacterOwnedItem = MultipowerItem | PowerItem | VPPItem;
+
+interface CharacterActorData {
+  name: string;
+  type: "character";
+  items: CharacterOwnedItem[];
+  system: {
+    characteristics: Record<string, CharacteristicValue>;
+    movements: Record<string, MovementModeItemData>;
+  };
+}
 
 /**
  * Represents a HERO System 6E Character.
@@ -60,21 +111,21 @@ export class Character {
    */
   name;
 
-  #characteristics = new Map();
-  #multipowers = [];
-  #powers = [];
-  #vpps = [];
-  #movementModes = [];
+  #characteristics = new Map<Characteristic, CharacteristicValue>();
+  #multipowers: Multipower[] = [];
+  #powers: Power[] = [];
+  #vpps: VPP[] = [];
+  #movementModes: MovementMode[] = [];
 
   constructor(
-    name,
+    name: string,
     {
       characteristics = {},
       movementModes = DEFAULT_MOVEMENT_MODES,
       multipowers = [],
       powers = [],
       vpps = [],
-    } = {}
+    }: CharacterData = {}
   ) {
     assert.precondition(
       typeof name === "string",
@@ -109,18 +160,19 @@ export class Character {
     }
   }
 
-  static fromActor({ name, items, type, system }) {
+  static fromActor({ name, items, type, system }: CharacterActorData) {
     assert.precondition(type === "character", "The actor is not a character");
-    const characteristics = {};
+    const characteristics: Record<string, CharacteristicValue> = {};
     for (const [charName, data] of Object.entries(system.characteristics)) {
       characteristics[charName] = data;
     }
     const movementModes = [];
     for (const [mode, data] of Object.entries(system.movements)) {
-      const name = mode.at(0).toUpperCase() + mode.substring(1);
+      const name = capitalizeFirst(mode);
+      assert.that(mode in MOVEMENT_TYPES_BY_NAME);
       movementModes.push(
         new MovementMode(name, {
-          type: MOVEMENT_TYPES_BY_NAME[mode],
+          type: MOVEMENT_TYPES_BY_NAME[mode]!,
           distance: new ModifiableValue(data.value, data.modifier),
         })
       );
@@ -186,8 +238,10 @@ export class Character {
    * @param {Characteristic} char The characteristic.
    * @returns {CharacteristicValue} The value and other information for the characteristic.
    */
-  characteristic(char) {
-    return this.#characteristics.get(char);
+  characteristic(char: Characteristic): CharacteristicValue {
+    const value = this.#characteristics.get(char);
+    assert.that(value !== undefined);
+    return value;
   }
 
   /**
@@ -196,7 +250,10 @@ export class Character {
    * @param {Characteristic} charName The characteristic to update.
    * @param {*} changes Changes to apply to the characteristic values.
    */
-  setCharacteristic(charName, changes) {
+  setCharacteristic(
+    charName: Characteristic,
+    changes: Partial<CharacteristicValue>
+  ) {
     const char = this.characteristic(charName);
     Object.assign(char, changes);
   }

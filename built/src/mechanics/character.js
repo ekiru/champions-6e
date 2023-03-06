@@ -6,13 +6,12 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _Character_characteristics, _Character_multipowers, _Character_powers, _Character_vpps, _Character_movementModes;
 import * as assert from "../util/assert.js";
 import { compareBy } from "../util/sort.js";
-import { Characteristic, byName as characteristicByName, } from "./characteristics.js";
+import { byName as characteristicByName, } from "./characteristics.js";
 import { ModifiableValue } from "./modifiable-value.js";
 import { MovementMode } from "./movement-mode.js";
-import { Power, StandardPowerType } from "./power.js";
+import { StandardPowerType } from "./power.js";
 import { PowerCategory } from "./power-category.js";
-import { Multipower } from "./powers/multipowers.js";
-import { VPP } from "./powers/vpps.js";
+import { capitalizeFirst } from "../util/strings.js";
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
     new MovementMode("Running", {
         type: StandardPowerType.get("Running"),
@@ -32,13 +31,6 @@ const MOVEMENT_TYPES_BY_NAME = {
     leap: StandardPowerType.get("Leaping"),
     swim: StandardPowerType.get("Swimming"),
 };
-/**
- * @typedef CharacteristicValue
- * @property {number} value The base or current value of the characteristic. For
- * modifiable characteristics, it's the base value. For resources, it's the current
- * value.
- * @property {number?} modifier A modifier applied to the characteristic's base value.
- */
 /**
  * Represents a HERO System 6E Character.
  *
@@ -89,7 +81,8 @@ export class Character {
         }
         const movementModes = [];
         for (const [mode, data] of Object.entries(system.movements)) {
-            const name = mode.at(0).toUpperCase() + mode.substring(1);
+            const name = capitalizeFirst(mode);
+            assert.that(mode in MOVEMENT_TYPES_BY_NAME);
             movementModes.push(new MovementMode(name, {
                 type: MOVEMENT_TYPES_BY_NAME[mode],
                 distance: new ModifiableValue(data.value, data.modifier),
@@ -154,7 +147,9 @@ export class Character {
      * @returns {CharacteristicValue} The value and other information for the characteristic.
      */
     characteristic(char) {
-        return __classPrivateFieldGet(this, _Character_characteristics, "f").get(char);
+        const value = __classPrivateFieldGet(this, _Character_characteristics, "f").get(char);
+        assert.that(value !== undefined);
+        return value;
     }
     /**
      * Updates a characteristic with new values.
