@@ -210,8 +210,14 @@ export class VPP extends Framework<VPPSlot> {
   }
 
   display() {
-    const { control, pool, allocatedPool } = this;
-    return Object.assign(super.display(), { control, pool, allocatedPool });
+    const { control, pool, allocatedPool, activeCost, realCost } = this;
+    return Object.assign(super.display(), {
+      control,
+      pool,
+      allocatedPool,
+      activeCost,
+      realCost,
+    });
   }
 
   private totalCost(calculateCost: (costs: CostInformation) => number): number {

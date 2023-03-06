@@ -109,8 +109,14 @@ export class VPP extends Framework {
         return this.totalCost(calculateRealCost);
     }
     display() {
-        const { control, pool, allocatedPool } = this;
-        return Object.assign(super.display(), { control, pool, allocatedPool });
+        const { control, pool, allocatedPool, activeCost, realCost } = this;
+        return Object.assign(super.display(), {
+            control,
+            pool,
+            allocatedPool,
+            activeCost,
+            realCost,
+        });
     }
     totalCost(calculateCost) {
         // modifiers apply only to the pool.
