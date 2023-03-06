@@ -433,6 +433,8 @@ export default class CharacterSheet extends ActorSheet {
     );
     context.vpps = character.vpps.map((vpp) => vpp.display());
 
+    context.pointTotals = character.pointTotals();
+
     context.effects = [];
     for (const effect of this.actor.effects) {
       context.effects.push({
