@@ -11,6 +11,7 @@ import { PowerCategory } from "./power-category.js";
 import { Multipower } from "./powers/multipowers.js";
 import { VPP } from "./powers/vpps.js";
 import { capitalizeFirst } from "../util/strings.js";
+import { sum } from "../util/aggregation.js";
 
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
   new MovementMode("Running", {
@@ -242,6 +243,16 @@ export class Character {
     const value = this.#characteristics.get(char);
     assert.that(value !== undefined);
     return value;
+  }
+
+  pointTotals(): { powers: number } {
+    return {
+      powers: sum(
+        this.#powers.map((power) => power.realCost),
+        this.#multipowers.map((mp) => mp.realCost),
+        this.#vpps.map((vpp) => vpp.realCost)
+      ),
+    };
   }
 
   /**

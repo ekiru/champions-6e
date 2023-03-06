@@ -12,6 +12,7 @@ import { MovementMode } from "./movement-mode.js";
 import { StandardPowerType } from "./power.js";
 import { PowerCategory } from "./power-category.js";
 import { capitalizeFirst } from "../util/strings.js";
+import { sum } from "../util/aggregation.js";
 const DEFAULT_MOVEMENT_MODES = Object.freeze([
     new MovementMode("Running", {
         type: StandardPowerType.get("Running"),
@@ -150,6 +151,11 @@ export class Character {
         const value = __classPrivateFieldGet(this, _Character_characteristics, "f").get(char);
         assert.that(value !== undefined);
         return value;
+    }
+    pointTotals() {
+        return {
+            powers: sum(__classPrivateFieldGet(this, _Character_powers, "f").map((power) => power.realCost), __classPrivateFieldGet(this, _Character_multipowers, "f").map((mp) => mp.realCost), __classPrivateFieldGet(this, _Character_vpps, "f").map((vpp) => vpp.realCost)),
+        };
     }
     /**
      * Updates a characteristic with new values.

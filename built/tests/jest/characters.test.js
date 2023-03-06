@@ -4,8 +4,10 @@ import { Character } from "../../src/mechanics/character.js";
 import { SPD, STR } from "../../src/mechanics/characteristics.js";
 import { ModifiableValue } from "../../src/mechanics/modifiable-value.js";
 import { MovementMode } from "../../src/mechanics/movement-mode.js";
-import { StandardPowerType } from "../../src/mechanics/power.js";
+import { Power, StandardPowerType } from "../../src/mechanics/power.js";
 import { PowerCategory } from "../../src/mechanics/power-category";
+import { Multipower } from "../../src/mechanics/powers/multipowers.js";
+import { VPP } from "../../src/mechanics/powers/vpps.js";
 describe("Characters", function () {
     describe("constructor", function () {
         it("should succeed", function () {
@@ -278,6 +280,40 @@ describe("Characters", function () {
                 expect(swim).toHaveProperty("type", StandardPowerType.get("Swimming"));
                 expect(swim).toHaveProperty("distance.total", 20);
             });
+        });
+    });
+    describe("pointTotals", function () {
+        it("powers should total the point totals of any powers and frameworks", function () {
+            const fly = new Power("Fly", {
+                // cost = 20 CP
+                description: "",
+                summary: "",
+                type: StandardPowerType.get("Flight"),
+                categories: {
+                    [PowerCategory.MOVEMENT]: { distance: new ModifiableValue(20) },
+                },
+                id: "fly",
+            });
+            const psychic = new Multipower("Martian Psychic Powers", {
+                reserve: 30,
+                slots: [],
+                description: "",
+                modifiers: [],
+            });
+            const shapeshifting = new VPP("Martian Shapeshifting", {
+                pool: 50,
+                control: 0,
+                slots: [],
+                description: "",
+                modifiers: [],
+            });
+            const character = new Character("M'gann", {
+                powers: [fly],
+                multipowers: [psychic],
+                vpps: [shapeshifting],
+            });
+            const pointTotals = character.pointTotals();
+            expect(pointTotals).toHaveProperty("powers", 100);
         });
     });
 });
