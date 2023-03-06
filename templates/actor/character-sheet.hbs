@@ -584,17 +584,24 @@
             </caption>
             <thead>
               <tr>
+                <th
+                  title="Allocated cost. VPP slot costs do not count against the character's CP total."
+                >
+                  CP*
+                </th>
                 <th>Name</th>
                 <th>Power</th>
                 <th>Summary</th>
                 <th>Value</th>
                 <th>AP</th>
-                <th>Real</th>
               </tr>
             </thead>
             <tbody>
               {{#each slots}}
                 <tr class="framework-slot">
+                  <td>
+                    {{allocatedRealCost}}
+                  </td>
                   {{partial "item/partials/power-data.hbs" power}}
                   <td class="slot-status">
                     {{#if warnings}}
@@ -621,35 +628,6 @@
                       />
                       /
                       <input disabled type="number" value="{{fullCost}}" />
-                    {{/if}}
-                  </td>
-                  <td class="slot-status">
-                    {{#if warnings}}
-                      <span class="warning" title="{{warnings}}">
-                        <input
-                          class="slot-allocated-real-cost"
-                          type="number"
-                          value="{{allocatedRealCost}}"
-                          data-slot-id="{{id}}"
-                          min="0"
-                          max="{{realCost}}"
-                          disabled
-                        />
-                        /
-                        <input disabled type="number" value="{{realCost}}" />
-                      </span>
-                    {{else}}
-                      <input
-                        class="slot-allocated-real-cost"
-                        type="number"
-                        value="{{allocatedRealCost}}"
-                        data-slot-id="{{id}}"
-                        min="0"
-                        max="{{realCost}}"
-                        disabled
-                      />
-                      /
-                      <input disabled type="number" value="{{realCost}}" />
                     {{/if}}
                   </td>
                 </tr>
